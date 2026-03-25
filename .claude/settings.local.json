@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm --version)",
+      "Bash(echo $PATH)",
+      "Bash(printenv PATH)",
+      "Bash(dir:*)",
+      "Bash(cmd /c \"dir C:\\\\Projects\\\\vadavali-app\")",
+      "Bash(cmd.exe /c \"dir C:\\\\Projects\\\\vadavali-app\")",
+      "Bash(powershell -Command \"Get-ChildItem 'C:\\\\Projects\\\\vadavali-app' | Select-Object Name\" 2>&1)",
+      "Bash(npm install:*)",
+      "Bash(del /f \"C:\\\\Projects\\\\vadavali-app\\\\app\\\\page.tsx\")",
+      "Bash(npx tsc:*)",
+      "Bash(node -e \"const {execSync} = require\\(''child_process''\\); try { const out = execSync\\(''npx tsc --noEmit'', {encoding:''utf8''}\\); console.log\\(''OK:'', out || ''no output''\\); } catch\\(e\\) { console.log\\(''ERRORS:'', e.stdout, e.stderr\\); }\")",
+      "Bash(echo \"exit: $?\")",
+      "Bash(powershell -Command \"cd 'C:\\\\Projects\\\\vadavali-app'; git status 2>&1\")",
+      "Bash(git init:*)",
+      "Bash(git:*)",
+      "Bash(echo \"Exit code: $?\")",
+      "Bash(printf:*)"
+    ]
+  }
+}

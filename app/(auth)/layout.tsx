@@ -1,0 +1,13 @@
+export default function AuthLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-stone-100 px-4">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-stone-900 tracking-tight">Śāstra Adhyayana</h1>
+          <p className="mt-2 text-stone-500 font-devanagari text-lg">शास्त्राध्ययन</p>
+        </div>
+        {children}
+      </div>
+    </div>
+  )
+}

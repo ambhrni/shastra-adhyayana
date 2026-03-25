@@ -1,0 +1,78 @@
+On branch master
+
+No commits yet
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+	new file:   .claude/settings.local.json
+	new file:   .env.example
+	new file:   .eslintrc.json
+	new file:   .gitignore
+	new file:   README.md
+	new file:   app/(app)/curator/page.tsx
+	new file:   app/(app)/dashboard/page.tsx
+	new file:   app/(app)/layout.tsx
+	new file:   app/(app)/page.tsx
+	new file:   app/(app)/pariksha/[textId]/page.tsx
+	new file:   app/(app)/study/[textId]/[passageId]/page.tsx
+	new file:   app/(auth)/layout.tsx
+	new file:   app/(auth)/login/page.tsx
+	new file:   app/(auth)/register/page.tsx
+	new file:   app/api/flags/route.ts
+	new file:   app/api/pariksha/route.ts
+	new file:   app/api/progress/route.ts
+	new file:   app/api/tutor/route.ts
+	new file:   app/favicon.ico
+	new file:   app/fonts/GeistMonoVF.woff
+	new file:   app/fonts/GeistVF.woff
+	new file:   app/globals.css
+	new file:   app/layout.tsx
+	new file:   components/curator/FlaggedErrorsList.tsx
+	new file:   components/curator/PassageList.tsx
+	new file:   components/dashboard/ProgressOverview.tsx
+	new file:   components/dashboard/ScoreChart.tsx
+	new file:   components/dashboard/StreakCard.tsx
+	new file:   components/layout/Navbar.tsx
+	new file:   components/library/TextCard.tsx
+	new file:   components/pariksha/ExamSession.tsx
+	new file:   components/pariksha/ExamSetup.tsx
+	new file:   components/study/CommentaryTabs.tsx
+	new file:   components/study/FlagErrorModal.tsx
+	new file:   components/study/InlineEditor.tsx
+	new file:   components/study/LogicalRoleBadge.tsx
+	new file:   components/study/MulaPanel.tsx
+	new file:   components/study/NyayaPanel.tsx
+	new file:   components/study/PassageNotesPanel.tsx
+	new file:   components/study/ProgressControls.tsx
+	new file:   components/study/StudyRightPanel.tsx
+	new file:   components/tutor/ChatMessage.tsx
+	new file:   components/tutor/TutorSidebar.tsx
+	new file:   components/ui/Badge.tsx
+	new file:   components/ui/Spinner.tsx
+	new file:   hello.txt
+	new file:   lib/supabase/client.ts
+	new file:   lib/supabase/server.ts
+	new file:   middleware.ts
+	new file:   next.config.mjs
+	new file:   package-lock.json
+	new file:   package.json
+	new file:   postcss.config.mjs
+	new file:   scripts/fix-commentaries.sql
+	new file:   scripts/ingest-text.ts
+	new file:   scripts/seed-text-record.ts
+	new file:   supabase/migrations/add_section_name_to_passages.sql
+	new file:   supabase/schema.sql
+	new file:   tailwind.config.ts
+	new file:   tsconfig.json
+	new file:   tsconfig.scripts.json
+	new file:   types/database.ts
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   .claude/settings.local.json
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	git_log.txt
+
