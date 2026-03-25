@@ -53,7 +53,7 @@ export default function ExamSession({ textId, passageId, onReset }: ExamSessionP
   const [input, setInput] = useState('')
   const [streaming, setStreaming] = useState(false)
   const [done, setDone] = useState(false)
-  const [sessionId, setSessionId] = useState<string | undefined>()
+  const [sessionId, _setSessionId] = useState<string | undefined>()
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {

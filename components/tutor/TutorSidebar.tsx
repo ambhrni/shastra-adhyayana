@@ -10,7 +10,7 @@ interface TutorSidebarProps {
   commentaries: Commentary[]
 }
 
-export default function TutorSidebar({ passage, commentaries }: TutorSidebarProps) {
+export default function TutorSidebar({ passage }: TutorSidebarProps) {
   const [messages, setMessages] = useState<TutorMessage[]>([])
   const [input, setInput] = useState('')
   const [streaming, setStreaming] = useState(false)
@@ -73,7 +73,7 @@ export default function TutorSidebar({ passage, commentaries }: TutorSidebarProp
           return updated
         })
       }
-    } catch (err) {
+    } catch (_err) {
       setMessages(prev => {
         const updated = [...prev]
         updated[updated.length - 1] = {

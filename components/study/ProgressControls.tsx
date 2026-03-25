@@ -9,8 +9,6 @@ interface ProgressControlsProps {
   initialStatus: ProgressStatus
 }
 
-const statusOrder: ProgressStatus[] = ['not_started', 'studied', 'reviewed', 'mastered']
-
 const nextAction: Partial<Record<ProgressStatus, { label: string; next: ProgressStatus }>> = {
   studied:   { label: 'Mark as reviewed',  next: 'reviewed' },
   reviewed:  { label: 'Mark as mastered',  next: 'mastered' },
