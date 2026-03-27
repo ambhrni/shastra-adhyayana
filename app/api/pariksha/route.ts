@@ -101,7 +101,7 @@ export async function POST(req: Request) {
   )
 
   const stream = anthropic.messages.stream({
-    model: 'claude-sonnet-4-5',
+    model: 'claude-sonnet-4-6',
     max_tokens: 2048,
     system: systemPrompt,
     messages: messages.length > 0 ? messages : [{ role: 'user', content: 'Begin the examination.' }],
