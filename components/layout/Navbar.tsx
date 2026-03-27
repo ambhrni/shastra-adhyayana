@@ -42,7 +42,7 @@ export default function Navbar({ displayName, role }: NavbarProps) {
   return (
     <nav className="h-14 bg-stone-900 text-white flex items-center px-6 gap-6 shrink-0">
       <Link href="/" className="font-semibold tracking-tight text-amber-400 mr-2">
-        Tattvasūdhā
+        Tattvasudhā
       </Link>
 
       <div className="flex items-center gap-1 flex-1">
