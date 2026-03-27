@@ -17,8 +17,15 @@ const devanagari = Noto_Sans_Devanagari({
 })
 
 export const metadata: Metadata = {
-  title: 'Śāstra Adhyayana',
-  description: 'Learn Sanskrit philosophical texts with AI guidance',
+  title: {
+    default: 'Tattvasudhā — तत्त्वसुधा',
+    template: '%s | Tattvasudhā',
+  },
+  description: 'A jñānayajña platform for mastering Veda & śāstra through Dvaita Siddhānta.',
+  openGraph: {
+    title: 'Tattvasudhā — तत्त्वसुधा',
+    description: 'A jñānayajña platform for mastering Veda & śāstra through Dvaita Siddhānta.',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
