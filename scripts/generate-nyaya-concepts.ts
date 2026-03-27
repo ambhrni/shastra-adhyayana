@@ -43,6 +43,7 @@ loadEnv()
 const TEXT_ID = 'c0219559-a8a9-4ebb-be5b-eca29b921457'
 const BATCH_SIZE = 5
 const BATCH_DELAY_MS = 2000
+const TERM_DEF_DELAY_MS = 300
 const MODEL = 'claude-sonnet-4-6'
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -64,9 +65,9 @@ interface NyayaTerm {
   term_transliterated: string
   definition_english: string
   definition_sanskrit: string
-  example_text: string
   difficulty_level: number
-  source_note: string
+  example_text?: string
+  source_note?: string
 }
 
 interface Passage {
@@ -142,47 +143,66 @@ function cleanJsonResponse(raw: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// Step 2 — Call Claude to extract nyāya terms from a single passage
+// Step 2a — Call 1: list nyāya terms present in a passage (one per line, no JSON)
 // ---------------------------------------------------------------------------
-async function extractTerms(passage: Passage): Promise<NyayaTerm[]> {
-  const prompt = `You are an expert in Dvaita Vedānta and nyāya-śāstra, with deep knowledge of Jayatīrtha's Pramāṇapaddhati and the Mādhva philosophical tradition.
-
-Read this Sanskrit passage from vādāvalī by Jayatīrtha and identify all nyāya-śāstra technical terms present. Only include genuine nyāya-śāstra technical terms — not common Sanskrit words.
-
-For each term provide as JSON:
-- term_sanskrit: the term in Devanāgarī (canonical form)
-- term_transliterated: IAST transliteration
-- definition_english: precise definition in English (3-5 sentences) from Dvaita Vedānta / Mādhva perspective, drawing on Jayatīrtha's Pramāṇapaddhati
-- definition_sanskrit: brief definition in Sanskrit (1-2 sentences)
-- example_text: a brief example of how this term is used in nyāya argumentation
-- difficulty_level: 1-5 (1=basic like anumāna, 5=highly technical like kevalānvayin)
-- source_note: which texts/traditions inform this definition (e.g. 'Pramāṇapaddhati, standard nyāya tradition')
-
-Return ONLY a valid JSON array, no other text.
-
-Passage:
-${passage.mula_text}`
-
+async function listTerms(passage: Passage): Promise<string[]> {
   const message = await anthropic.messages.create({
     model: MODEL,
-    max_tokens: 4096,
-    messages: [{ role: 'user', content: prompt }],
+    max_tokens: 512,
+    messages: [{
+      role: 'user',
+      content:
+        `You are an expert in Dvaita Vedānta and nyāya-śāstra.\n\n` +
+        `List only the nyāya-śāstra technical terms present in this Sanskrit passage, ` +
+        `one per line, in Devanāgarī only. No definitions, no JSON, no numbering, no other text. ` +
+        `If there are no technical terms, reply with the single word: NONE\n\n` +
+        `Passage:\n${passage.mula_text}`,
+    }],
   })
 
   const raw = (message.content[0] as { type: string; text: string }).text.trim()
+  if (!raw || raw.toUpperCase() === 'NONE') return []
 
+  return raw
+    .split('\n')
+    .map(l => l.trim())
+    .filter(l => l.length > 0)
+}
+
+// ---------------------------------------------------------------------------
+// Step 2b — Call 2: define a single nyāya term (small JSON object)
+// ---------------------------------------------------------------------------
+async function defineTerm(termSanskrit: string, seqOrder: number): Promise<NyayaTerm | null> {
+  const message = await anthropic.messages.create({
+    model: MODEL,
+    max_tokens: 512,
+    messages: [{
+      role: 'user',
+      content:
+        `Define this nyāya term: ${termSanskrit} in the context of Mādhva Dvaita Vedānta.\n` +
+        `Return JSON with exactly these fields:\n` +
+        `{\n` +
+        `  "term_sanskrit": string,\n` +
+        `  "term_transliterated": string,\n` +
+        `  "definition_english": string (max 2 sentences),\n` +
+        `  "definition_sanskrit": string (max 1 sentence),\n` +
+        `  "difficulty_level": number 1-5\n` +
+        `}\n` +
+        `Return ONLY the JSON object, nothing else.`,
+    }],
+  })
+
+  const raw = (message.content[0] as { type: string; text: string }).text.trim()
   const jsonText = cleanJsonResponse(raw)
 
-  if (!jsonText.endsWith(']')) {
-    console.warn(`  [passage ${passage.sequence_order}] Response appears truncated`)
-  }
-
   try {
-    const terms: NyayaTerm[] = JSON.parse(jsonText)
-    return Array.isArray(terms) ? terms : []
+    const term = JSON.parse(jsonText) as NyayaTerm
+    if (!term.term_sanskrit || !term.definition_english) return null
+    term.difficulty_level = Math.min(5, Math.max(1, Math.round(term.difficulty_level)))
+    return term
   } catch {
-    console.warn(`  [passage ${passage.sequence_order}] Failed to parse JSON — skipping. Raw:\n${raw.slice(0, 200)}`)
-    return []
+    console.warn(`  [seq ${seqOrder}] Failed to parse definition for "${termSanskrit}" — skipping. Raw:\n${raw.slice(0, 150)}`)
+    return null
   }
 }
 
@@ -224,9 +244,9 @@ async function upsertConcept(
       term_transliterated: term.term_transliterated,
       definition_english: term.definition_english,
       definition_sanskrit: term.definition_sanskrit,
-      example_text: term.example_text,
+      example_text: term.example_text ?? null,
       difficulty_level: Math.min(5, Math.max(1, Math.round(term.difficulty_level))),
-      source_note: term.source_note,
+      source_note: term.source_note ?? null,
     })
     .select('id')
     .single()
@@ -308,12 +328,17 @@ async function main() {
     console.log(`--- Batch ${bi + 1}/${batches.length} (passages ${bi * BATCH_SIZE + 1}–${bi * BATCH_SIZE + batch.length}) ---`)
 
     for (const passage of batch) {
-      console.log(`  [seq ${passage.sequence_order}] Extracting terms…`)
-      const terms = await extractTerms(passage)
-      console.log(`  → ${terms.length} term(s) found`)
+      console.log(`  [seq ${passage.sequence_order}] Listing terms…`)
+      const termNames = await listTerms(passage)
+      console.log(`  → ${termNames.length} term(s) identified: ${termNames.join(', ') || '(none)'}`)
 
-      for (const term of terms) {
-        if (!term.term_sanskrit) continue
+      for (const termSanskrit of termNames) {
+        await sleep(TERM_DEF_DELAY_MS)
+
+        console.log(`    Defining: ${termSanskrit}`)
+        const term = await defineTerm(termSanskrit, passage.sequence_order)
+        if (!term) continue
+
         allTermsSeen.set(term.term_sanskrit, {
           transliterated: term.term_transliterated,
           difficulty: term.difficulty_level,
