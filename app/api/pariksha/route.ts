@@ -32,7 +32,13 @@ SCORE_PHILOSOPHY: [0-10]
 SCORE_SANSKRIT: [0-10 if they answered in Sanskrit, else null]
 FEEDBACK: [2-3 sentences: what was correct, what was incomplete or incorrect, with textual references]
 
-Then immediately ask the next question.
+आदर्शोत्तरम् (Ideal Answer):
+[The complete, precise answer a top vidvat parīkṣā candidate would give, written in classical Sanskrit Devanāgarī script]
+
+English:
+[Clear English translation and explanation of the ideal answer above]
+
+Then ask the next question.
 
 6. After 5 questions, end the examination with a comprehensive summary in this EXACT format:
 
