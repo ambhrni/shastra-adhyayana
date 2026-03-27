@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 import type { Passage, Commentary, NyayaConcept, PassageNote, UserProgress, Commentator } from '@/types/database'
 import LogicalRoleBadge from './LogicalRoleBadge'
 import NyayaPanel from './NyayaPanel'
@@ -9,6 +10,13 @@ import ProgressControls from './ProgressControls'
 import FlagErrorModal from './FlagErrorModal'
 import TutorSidebar from '@/components/tutor/TutorSidebar'
 import Link from 'next/link'
+
+interface NavPassage {
+  id: string
+  section_number: number | null
+  section_name: string | null
+  sequence_order: number
+}
 
 interface StudyRightPanelProps {
   passage: Passage
@@ -20,15 +28,30 @@ interface StudyRightPanelProps {
   nextPassageId: string | null
   textId: string
   commentators: Commentator[]
+  allPassages: NavPassage[]
 }
 
 export default function StudyRightPanel({
   passage, commentaries, nyayaConcepts, notes,
-  progress, prevPassageId, nextPassageId, textId, commentators
+  progress, prevPassageId, nextPassageId, textId, commentators, allPassages
 }: StudyRightPanelProps) {
+  const router = useRouter()
   const [tutorOpen, setTutorOpen] = useState(false)
   const [flagOpen, setFlagOpen] = useState(false)
   const [currentStatus, setCurrentStatus] = useState(progress?.status ?? 'not_started')
+
+  // Derive ordered sections and per-section passage lists from allPassages
+  const sections = useMemo(() => {
+    const map = new Map<number, { sectionNumber: number; sectionName: string | null; passages: NavPassage[] }>()
+    for (const p of allPassages) {
+      const key = p.section_number ?? 0
+      if (!map.has(key)) map.set(key, { sectionNumber: key, sectionName: p.section_name, passages: [] })
+      map.get(key)!.passages.push(p)
+    }
+    return Array.from(map.values())
+  }, [allPassages])
+
+  const currentSection = sections.find(s => s.sectionNumber === (passage.section_number ?? 0))
 
   // Auto-mark as studied on first visit
   useEffect(() => {
@@ -85,6 +108,46 @@ export default function StudyRightPanel({
           </div>
         </div>
 
+        {/* Section dropdown + passage pills */}
+        {sections.length > 0 && (
+          <div className="shrink-0 border-b border-stone-200 bg-white px-4 py-2 space-y-2">
+            {/* Section dropdown */}
+            <select
+              value={passage.section_number ?? 0}
+              onChange={e => {
+                const sec = sections.find(s => s.sectionNumber === Number(e.target.value))
+                if (sec?.passages[0]) router.push(`/study/${textId}/${sec.passages[0].id}`)
+              }}
+              className="w-full text-xs border border-stone-200 rounded-lg px-2 py-1.5 bg-stone-50 text-stone-700 focus:outline-none focus:ring-2 focus:ring-saffron-500"
+            >
+              {sections.map(s => (
+                <option key={s.sectionNumber} value={s.sectionNumber}>
+                  {s.sectionName ?? `Section ${s.sectionNumber}`}
+                </option>
+              ))}
+            </select>
+
+            {/* Passage pills for current section */}
+            {currentSection && currentSection.passages.length > 1 && (
+              <div className="flex flex-wrap gap-1">
+                {currentSection.passages.map((p, i) => (
+                  <button
+                    key={p.id}
+                    onClick={() => router.push(`/study/${textId}/${p.id}`)}
+                    className={`w-7 h-7 text-xs rounded-md font-medium transition-colors ${
+                      p.id === passage.id
+                        ? 'bg-saffron-600 text-white'
+                        : 'bg-stone-100 text-stone-500 hover:bg-stone-200'
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Panel content */}
         {tutorOpen ? (
           <TutorSidebar passage={passage} commentaries={commentaries} />
@@ -123,6 +186,16 @@ export default function StudyRightPanel({
               Previous
             </Link>
           ) : <div />}
+
+          <Link
+            href={`/pariksha/${textId}`}
+            className="flex items-center gap-1 text-xs font-medium text-saffron-600 hover:text-saffron-700 transition-colors"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.438 60.438 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.906 59.906 0 0112 3.493a59.903 59.903 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />
+            </svg>
+            Parīkṣā
+          </Link>
 
           {nextPassageId ? (
             <Link

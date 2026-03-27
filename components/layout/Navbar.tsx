@@ -20,13 +20,23 @@ export default function Navbar({ displayName, role }: NavbarProps) {
     router.push('/login')
   }
 
+  // Extract textId when on a study or parīkṣā page
+  const pathParts = pathname.split('/')
+  const textId = (pathname.startsWith('/study/') || pathname.startsWith('/pariksha/'))
+    ? pathParts[2]
+    : null
+
   const links = [
-    { href: '/', label: 'Library' },
-    { href: '/dashboard', label: 'Dashboard' },
+    { href: '/', label: 'Library', exact: true },
+    { href: '/dashboard', label: 'Dashboard', exact: true },
   ]
 
+  if (textId) {
+    links.push({ href: `/pariksha/${textId}`, label: 'Parīkṣā', exact: false })
+  }
+
   if (role === 'curator' || role === 'admin') {
-    links.push({ href: '/curator', label: 'Curator' })
+    links.push({ href: '/curator', label: 'Curator', exact: true })
   }
 
   return (
@@ -41,7 +51,7 @@ export default function Navbar({ displayName, role }: NavbarProps) {
             key={link.href}
             href={link.href}
             className={`px-3 py-1.5 rounded-md text-sm transition-colors ${
-              pathname === link.href
+              (link.exact ? pathname === link.href : pathname.startsWith(link.href))
                 ? 'bg-stone-700 text-white'
                 : 'text-stone-300 hover:text-white hover:bg-stone-800'
             }`}

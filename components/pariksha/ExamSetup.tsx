@@ -74,7 +74,7 @@ export default function ExamSetup({ text, passages, onStart }: ExamSetupProps) {
                 <option key={p.id} value={p.id}>
                   {p.section_number != null ? `§${p.section_number}` : ''}
                   {p.subsection_number != null ? `.${p.subsection_number}` : ''}{' '}
-                  — {p.mula_text.slice(0, 60)}…
+                  — {p.mula_text.length > 60 ? p.mula_text.slice(0, 60) + '…' : p.mula_text}
                 </option>
               ))}
             </select>
@@ -84,7 +84,7 @@ export default function ExamSetup({ text, passages, onStart }: ExamSetupProps) {
         <div className="bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 text-sm text-amber-800">
           <p className="font-medium mb-0.5">How the parīkṣā works</p>
           <ul className="text-xs text-amber-700 space-y-0.5 list-disc list-inside">
-            <li>The paṇḍit will ask 5–7 questions, one at a time</li>
+            <li>The paṇḍit will ask 5 questions, one at a time</li>
             <li>You may answer in English or Sanskrit</li>
             <li>Each answer receives a score (0–10) and brief feedback</li>
             <li>You receive a full assessment at the end</li>
