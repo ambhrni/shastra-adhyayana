@@ -173,6 +173,10 @@ ${passage.mula_text}`
 
   const jsonText = cleanJsonResponse(raw)
 
+  if (!jsonText.endsWith(']')) {
+    console.warn(`  [passage ${passage.sequence_order}] Response appears truncated`)
+  }
+
   try {
     const terms: NyayaTerm[] = JSON.parse(jsonText)
     return Array.isArray(terms) ? terms : []
