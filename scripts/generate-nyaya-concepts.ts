@@ -123,6 +123,25 @@ async function fetchPassages(): Promise<Passage[]> {
 }
 
 // ---------------------------------------------------------------------------
+// JSON cleaning — extracts the JSON content by finding first [ / { and last ] / }
+// ---------------------------------------------------------------------------
+function cleanJsonResponse(raw: string): string {
+  const firstBracket = Math.min(
+    raw.indexOf('[') === -1 ? Infinity : raw.indexOf('['),
+    raw.indexOf('{') === -1 ? Infinity : raw.indexOf('{')
+  )
+  if (firstBracket === Infinity) return raw.trim()
+
+  const lastCloseBracket = Math.max(
+    raw.lastIndexOf(']'),
+    raw.lastIndexOf('}')
+  )
+  if (lastCloseBracket === -1) return raw.trim()
+
+  return raw.slice(firstBracket, lastCloseBracket + 1).trim()
+}
+
+// ---------------------------------------------------------------------------
 // Step 2 — Call Claude to extract nyāya terms from a single passage
 // ---------------------------------------------------------------------------
 async function extractTerms(passage: Passage): Promise<NyayaTerm[]> {
@@ -152,12 +171,7 @@ ${passage.mula_text}`
 
   const raw = (message.content[0] as { type: string; text: string }).text.trim()
 
-  // Strip markdown code fences if present
-  const jsonText = raw
-    .replace(/^```json\s*/i, '')
-    .replace(/^```\s*/i, '')
-    .replace(/\s*```$/i, '')
-    .trim()
+  const jsonText = cleanJsonResponse(raw)
 
   try {
     const terms: NyayaTerm[] = JSON.parse(jsonText)
