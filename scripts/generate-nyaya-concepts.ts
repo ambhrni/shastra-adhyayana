@@ -6,7 +6,7 @@
  * via passage_nyaya_links.
  *
  * Usage:
- *   npx ts-node --project tsconfig.scripts.json scripts/generate-nyaya-concepts.ts
+ *   npx ts-node --project tsconfig.scripts.json scripts/generate-nyaya-concepts.ts [--start-from N]
  */
 
 import * as fs from 'fs'
@@ -296,6 +296,11 @@ async function linkToPassage(passageId: string, conceptId: string): Promise<bool
 // ---------------------------------------------------------------------------
 function sleep(ms: number) { return new Promise(resolve => setTimeout(resolve, ms)) }
 
+function getArg(name: string): string | undefined {
+  const idx = process.argv.indexOf(name)
+  return idx !== -1 ? process.argv[idx + 1] : undefined
+}
+
 function chunk<T>(arr: T[], size: number): T[][] {
   const out: T[][] = []
   for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size))
@@ -308,9 +313,14 @@ function chunk<T>(arr: T[], size: number): T[][] {
 async function main() {
   console.log('=== generate-nyaya-concepts ===\n')
 
+  const startFrom = parseInt(getArg('--start-from') ?? '1')
+  if (startFrom > 1) console.log(`Skipping passages with sequence_order < ${startFrom}`)
+
   await ensureSourceNoteColumn()
 
-  const passages = await fetchPassages()
+  const allPassages = await fetchPassages()
+  const passages = allPassages.filter(p => p.sequence_order >= startFrom)
+  if (startFrom > 1) console.log(`Processing ${passages.length} of ${allPassages.length} passages (starting from seq ${startFrom}).`)
   const conceptMap = await loadExistingConcepts()
 
   const newCount = { n: 0 }
