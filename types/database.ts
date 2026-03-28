@@ -158,6 +158,19 @@ export interface FlaggedError {
   resolved_by: string | null
 }
 
+export interface Notebook {
+  id: string
+  title: string
+  description: string | null
+  topic_area: string
+  notebooklm_url: string
+  thumbnail_url: string | null
+  display_order: number
+  is_published: boolean
+  created_at: string
+  updated_at: string
+}
+
 export interface StudyStreak {
   id: string
   user_id: string
