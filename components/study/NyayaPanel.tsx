@@ -3,14 +3,22 @@
 import { useState } from 'react'
 import type { NyayaConcept } from '@/types/database'
 
-const difficultyLabel = ['', 'Introductory', 'Basic', 'Intermediate', 'Advanced', 'Expert']
-const difficultyColor = ['', 'text-emerald-600', 'text-blue-600', 'text-amber-600', 'text-orange-600', 'text-red-600']
+const difficultyBadge = [
+  '',
+  'bg-green-100 text-green-700',   // 1
+  'bg-green-100 text-green-700',   // 2
+  'bg-amber-100 text-amber-700',   // 3
+  'bg-red-100 text-red-700',       // 4
+  'bg-red-100 text-red-700',       // 5
+]
 
 export default function NyayaPanel({ concepts }: { concepts: NyayaConcept[] }) {
-  const [open, setOpen] = useState(true)
-  const [expanded, setExpanded] = useState<string | null>(null)
+  const [open, setOpen] = useState(false)
+  const [expandedSkt, setExpandedSkt] = useState<Set<string>>(new Set())
 
   if (concepts.length === 0) return null
+
+  const sorted = [...concepts].sort((a, b) => (a.difficulty_level ?? 0) - (b.difficulty_level ?? 0))
 
   return (
     <div className="border border-stone-200 rounded-xl overflow-hidden">
@@ -18,9 +26,12 @@ export default function NyayaPanel({ concepts }: { concepts: NyayaConcept[] }) {
         onClick={() => setOpen(o => !o)}
         className="w-full flex items-center justify-between px-4 py-3 bg-stone-50 text-left"
       >
-        <span className="text-sm font-semibold text-stone-700">
-          Nyāya Concepts
-          <span className="ml-2 text-xs font-normal text-stone-400">({concepts.length})</span>
+        <span className="flex items-center gap-2">
+          <span className="font-devanagari text-sm font-semibold text-stone-700">न्यायसंकल्पाः</span>
+          <span className="text-xs text-stone-400 font-normal">Nyāya Concepts</span>
+          <span className="bg-stone-200 text-stone-600 text-xs font-medium px-1.5 py-0.5 rounded-full">
+            {concepts.length}
+          </span>
         </span>
         <svg
           className={`w-4 h-4 text-stone-400 transition-transform ${open ? 'rotate-180' : ''}`}
@@ -32,40 +43,36 @@ export default function NyayaPanel({ concepts }: { concepts: NyayaConcept[] }) {
 
       {open && (
         <div className="divide-y divide-stone-100">
-          {concepts.map(c => (
+          {sorted.map(c => (
             <div key={c.id} className="px-4 py-3">
-              <button
-                onClick={() => setExpanded(expanded === c.id ? null : c.id)}
-                className="w-full text-left"
-              >
-                <div className="flex items-baseline justify-between gap-2">
-                  <div>
-                    <span className="font-devanagari text-base text-stone-900">{c.term_sanskrit}</span>
-                    <span className="ml-2 text-xs text-stone-500 italic">{c.term_transliterated}</span>
-                  </div>
-                  {c.difficulty_level && (
-                    <span className={`text-xs shrink-0 ${difficultyColor[c.difficulty_level]}`}>
-                      {difficultyLabel[c.difficulty_level]}
-                    </span>
-                  )}
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <span className="font-devanagari text-base font-bold text-stone-900">{c.term_sanskrit}</span>
+                  <span className="ml-2 text-xs text-stone-400 italic">{c.term_transliterated}</span>
                 </div>
-                <p className="text-sm text-stone-600 mt-1 leading-relaxed">
-                  {c.definition_english}
+                {c.difficulty_level && (
+                  <span className={`shrink-0 text-xs font-medium px-1.5 py-0.5 rounded-full ${difficultyBadge[c.difficulty_level]}`}>
+                    {c.difficulty_level}
+                  </span>
+                )}
+              </div>
+              <p className="text-sm text-stone-600 mt-1 leading-relaxed">{c.definition_english}</p>
+              {c.definition_sanskrit && (
+                <button
+                  onClick={() => setExpandedSkt(s => {
+                    const next = new Set(s)
+                    next.has(c.id) ? next.delete(c.id) : next.add(c.id)
+                    return next
+                  })}
+                  className="mt-1.5 text-xs text-stone-400 hover:text-stone-600 transition-colors"
+                >
+                  {expandedSkt.has(c.id) ? 'Hide Sanskrit' : 'Show Sanskrit'}
+                </button>
+              )}
+              {expandedSkt.has(c.id) && c.definition_sanskrit && (
+                <p className="mt-2 font-devanagari text-sm text-stone-600 commentary-text leading-relaxed">
+                  {c.definition_sanskrit}
                 </p>
-              </button>
-
-              {expanded === c.id && (
-                <div className="mt-3 space-y-2 text-sm text-stone-600">
-                  {c.definition_sanskrit && (
-                    <p className="font-devanagari commentary-text">{c.definition_sanskrit}</p>
-                  )}
-                  {c.example_text && (
-                    <div className="bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
-                      <span className="text-xs font-medium text-amber-700 uppercase tracking-wide">Example</span>
-                      <p className="mt-1">{c.example_text}</p>
-                    </div>
-                  )}
-                </div>
               )}
             </div>
           ))}
