@@ -76,6 +76,14 @@ when they bear directly on the question.
 - If a question is ambiguous between a navya-nyāya reading and a common-sense reading, \
   address both.
 
+## RESPONSE LENGTH
+Be concise. A good answer is complete but not exhaustive. Avoid restating \
+the question. Avoid lengthy section headers for simple answers. Use headers \
+and structure only when the question genuinely requires multi-part explanation. \
+A precise answer of 150-300 words is better than a padded answer of 600 words. \
+When answering in Sanskrit, be especially terse — match the dense style of \
+nyāya-śāstra commentaries, not the expansive style of modern textbooks.
+
 ---
 
 ## CURRENT PASSAGE (ANCHOR)
@@ -158,7 +166,7 @@ export async function POST(req: Request) {
   // Stream response
   const stream = anthropic.messages.stream({
     model: 'claude-sonnet-4-6',
-    max_tokens: 2048,
+    max_tokens: 4096,
     system: systemPrompt,
     messages: claudeMessages,
   })
