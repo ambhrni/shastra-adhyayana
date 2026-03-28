@@ -22,6 +22,10 @@ export const metadata: Metadata = {
     template: '%s | Tattvasudhā',
   },
   description: 'A jñānayajña platform for mastering Veda & śāstra through Dvaita Siddhānta.',
+  icons: {
+    icon: '/icon.svg',
+    apple: '/apple-icon.svg',
+  },
   openGraph: {
     title: 'Tattvasudhā — तत्त्वसुधा',
     description: 'A jñānayajña platform for mastering Veda & śāstra through Dvaita Siddhānta.',

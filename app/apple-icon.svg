@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" width="180" height="180">
+  <rect width="180" height="180" rx="20" fill="#2D0A00"/>
+  <text
+    x="90"
+    y="90"
+    font-family="serif"
+    font-size="52"
+    font-weight="bold"
+    fill="#FF6B00"
+    text-anchor="middle"
+    dominant-baseline="central"
+  >॥श्रीः॥</text>
+</svg>
