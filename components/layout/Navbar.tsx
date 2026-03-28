@@ -6,8 +6,8 @@ import { createClient } from '@/lib/supabase/client'
 import type { UserRole } from '@/types/database'
 
 interface NavbarProps {
-  displayName: string
-  role: UserRole
+  displayName: string | null
+  role: UserRole | null
 }
 
 export default function Navbar({ displayName, role }: NavbarProps) {
@@ -28,8 +28,11 @@ export default function Navbar({ displayName, role }: NavbarProps) {
 
   const links = [
     { href: '/', label: 'Library', exact: true },
-    { href: '/dashboard', label: 'Dashboard', exact: true },
   ]
+
+  if (displayName) {
+    links.push({ href: '/dashboard', label: 'Dashboard', exact: true })
+  }
 
   if (textId) {
     links.push({ href: `/pariksha/${textId}`, label: 'Parīkṣā', exact: false })
@@ -62,13 +65,32 @@ export default function Navbar({ displayName, role }: NavbarProps) {
       </div>
 
       <div className="flex items-center gap-3">
-        <span className="text-sm text-stone-400">{displayName}</span>
-        <button
-          onClick={handleSignOut}
-          className="text-sm text-stone-400 hover:text-white transition-colors"
-        >
-          Sign out
-        </button>
+        {displayName ? (
+          <>
+            <span className="text-sm text-stone-400">{displayName}</span>
+            <button
+              onClick={handleSignOut}
+              className="text-sm text-stone-400 hover:text-white transition-colors"
+            >
+              Sign out
+            </button>
+          </>
+        ) : (
+          <>
+            <Link
+              href="/login"
+              className="text-sm text-stone-300 hover:text-white transition-colors"
+            >
+              Login
+            </Link>
+            <Link
+              href="/register"
+              className="text-sm bg-saffron-600 hover:bg-saffron-700 text-white px-3 py-1.5 rounded-md transition-colors"
+            >
+              Register
+            </Link>
+          </>
+        )}
       </div>
     </nav>
   )
