@@ -28,6 +28,7 @@ export default function Navbar({ displayName, role }: NavbarProps) {
 
   const links = [
     { href: '/', label: 'Library', exact: true },
+    { href: '/about', label: 'About', exact: true },
   ]
 
   if (displayName) {
