@@ -22,6 +22,7 @@ export const metadata: Metadata = {
     template: '%s | Tattvasudhā',
   },
   description: 'A jñānayajña platform for mastering Veda & śāstra through Dvaita Siddhānta.',
+  robots: { index: true, follow: true },
   icons: {
     icon: '/icon.svg',
     apple: '/apple-icon.svg',

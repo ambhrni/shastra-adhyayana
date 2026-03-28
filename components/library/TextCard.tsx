@@ -3,7 +3,7 @@ import type { Text } from '@/types/database'
 
 interface TextCardProps {
   text: Text
-  progressPercent: number
+  progressPercent: number | null
   firstUnfinishedPassageId: string | null
 }
 
@@ -11,6 +11,12 @@ export default function TextCard({ text, progressPercent, firstUnfinishedPassage
   const href = firstUnfinishedPassageId
     ? `/study/${text.id}/${firstUnfinishedPassageId}`
     : `/study/${text.id}`
+
+  const buttonLabel = progressPercent === null
+    ? 'Begin studying'
+    : progressPercent === 0 ? 'Begin studying'
+    : progressPercent === 100 ? 'Review'
+    : 'Continue'
 
   return (
     <div className="bg-white rounded-2xl border border-stone-200 p-6 flex flex-col gap-4 hover:shadow-md transition-shadow">
@@ -28,24 +34,26 @@ export default function TextCard({ text, progressPercent, firstUnfinishedPassage
         <p className="text-sm text-stone-600 leading-relaxed">{text.description}</p>
       )}
 
-      <div className="space-y-1">
-        <div className="flex justify-between text-xs text-stone-500">
-          <span>Progress</span>
-          <span>{progressPercent}%</span>
+      {progressPercent !== null && (
+        <div className="space-y-1">
+          <div className="flex justify-between text-xs text-stone-500">
+            <span>Progress</span>
+            <span>{progressPercent}%</span>
+          </div>
+          <div className="h-1.5 bg-stone-100 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-saffron-500 rounded-full transition-all"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
         </div>
-        <div className="h-1.5 bg-stone-100 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-saffron-500 rounded-full transition-all"
-            style={{ width: `${progressPercent}%` }}
-          />
-        </div>
-      </div>
+      )}
 
       <Link
         href={href}
         className="mt-auto inline-flex items-center justify-center bg-saffron-600 hover:bg-saffron-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors"
       >
-        {progressPercent === 0 ? 'Begin studying' : progressPercent === 100 ? 'Review' : 'Continue'}
+        {buttonLabel}
       </Link>
     </div>
   )

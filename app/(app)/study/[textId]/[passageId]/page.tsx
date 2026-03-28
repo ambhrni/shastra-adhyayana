@@ -1,11 +1,38 @@
-import { notFound, redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import MulaPanel from '@/components/study/MulaPanel'
 import CommentaryTabs from '@/components/study/CommentaryTabs'
 import StudyRightPanel from '@/components/study/StudyRightPanel'
+import Link from 'next/link'
 
 interface Props {
   params: { textId: string; passageId: string }
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const supabase = createClient()
+  const { data: passage } = await supabase
+    .from('passages')
+    .select('mula_text, section_name')
+    .eq('id', params.passageId)
+    .eq('text_id', params.textId)
+    .single()
+
+  if (!passage) return {}
+
+  const title = passage.section_name ?? 'Passage'
+  const description = passage.mula_text?.slice(0, 160) ?? ''
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title: `${title} | Tattvasudhā`,
+      description,
+      siteName: 'Tattvasudhā — तत्त्वसुधा',
+    },
+  }
 }
 
 export default async function StudyPage({ params }: Props) {
@@ -13,13 +40,10 @@ export default async function StudyPage({ params }: Props) {
   const supabase = createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
 
-  const { data: profile } = await supabase
-    .from('user_profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single()
+  const { data: profile } = user
+    ? await supabase.from('user_profiles').select('role').eq('id', user.id).single()
+    : { data: null }
 
   const isCurator = profile?.role === 'curator' || profile?.role === 'admin'
 
@@ -43,8 +67,7 @@ export default async function StudyPage({ params }: Props) {
 
   const commentatorOrder = (textCommentators ?? []).map(tc => (tc.commentator as any)?.id)
 
-  // Fetch commentaries with commentator info, then sort by text_commentators.order_index
-  // so tabs always appear in the intended display order regardless of insertion order.
+  // Fetch commentaries sorted by text_commentators.order_index
   const commentariesQuery = supabase
     .from('commentaries')
     .select('*, commentator:commentators(*)')
@@ -81,16 +104,17 @@ export default async function StudyPage({ params }: Props) {
   if (!isCurator) notesQuery.eq('is_visible_to_learners', true)
   const { data: notes } = await notesQuery
 
-  // Fetch user progress
-  const { data: progress } = await supabase
-    .from('user_progress')
-    .select('*')
-    .eq('user_id', user.id)
-    .eq('passage_id', passageId)
-    .single()
+  // Fetch user progress (only if logged in)
+  const { data: progress } = user
+    ? await supabase
+        .from('user_progress')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('passage_id', passageId)
+        .single()
+    : { data: null }
 
   // Prev / next passage by sequence_order
-  // Curators navigate all passages; learners only approved
   const prevQuery = supabase
     .from('passages').select('id')
     .eq('text_id', textId)
@@ -115,33 +139,69 @@ export default async function StudyPage({ params }: Props) {
   const prevPassageId = prevRows?.[0]?.id ?? null
   const nextPassageId = nextRows?.[0]?.id ?? null
 
+  // Fetch all passages for section/passage navigation
+  const allPassagesQuery = supabase
+    .from('passages')
+    .select('id, section_number, section_name, sequence_order')
+    .eq('text_id', textId)
+    .order('sequence_order')
+  if (!isCurator) allPassagesQuery.eq('is_approved', true)
+  const { data: allPassages } = await allPassagesQuery
+
   const commentators = (textCommentators ?? []).map(tc => tc.commentator).filter(Boolean) as any[]
 
   return (
-    <div className="flex h-full overflow-hidden">
-      {/* Left panel — 60% */}
-      <div className="w-3/5 overflow-y-auto border-r border-stone-200 p-6">
-        <MulaPanel passage={passage} isCurator={isCurator} />
-        <CommentaryTabs
-          key={passageId}
-          commentaries={commentaries}
-          isCurator={isCurator}
-        />
-      </div>
+    <div className="flex flex-col h-full overflow-hidden">
+      {/* Guest banner */}
+      {!user && (
+        <div className="shrink-0 flex items-center justify-between gap-4 px-5 py-2.5 bg-amber-50 border-b border-amber-200 text-sm">
+          <span className="text-amber-900">
+            Join Tattvasudhā to ask questions, track your progress, and take parīkṣā.
+          </span>
+          <div className="flex items-center gap-2 shrink-0">
+            <Link
+              href="/register"
+              className="bg-saffron-600 hover:bg-saffron-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
+            >
+              Register free
+            </Link>
+            <Link
+              href="/login"
+              className="text-saffron-700 hover:text-saffron-800 text-xs font-medium px-3 py-1.5 rounded-lg border border-saffron-300 hover:bg-saffron-50 transition-colors"
+            >
+              Login
+            </Link>
+          </div>
+        </div>
+      )}
 
-      {/* Right panel — 40% */}
-      <div className="w-2/5 overflow-hidden flex flex-col">
-        <StudyRightPanel
-          passage={passage}
-          commentaries={commentaries}
-          nyayaConcepts={nyayaConcepts}
-          notes={notes ?? []}
-          progress={progress ?? null}
-          prevPassageId={prevPassageId}
-          nextPassageId={nextPassageId}
-          textId={textId}
-          commentators={commentators}
-        />
+      <div className="flex flex-1 overflow-hidden min-h-0">
+        {/* Left panel — 60% */}
+        <div className="w-3/5 overflow-y-auto border-r border-stone-200 p-6">
+          <MulaPanel passage={passage} isCurator={isCurator} />
+          <CommentaryTabs
+            key={passageId}
+            commentaries={commentaries}
+            isCurator={isCurator}
+          />
+        </div>
+
+        {/* Right panel — 40% */}
+        <div className="w-2/5 overflow-hidden flex flex-col">
+          <StudyRightPanel
+            passage={passage}
+            commentaries={commentaries}
+            nyayaConcepts={nyayaConcepts}
+            notes={notes ?? []}
+            progress={progress ?? null}
+            prevPassageId={prevPassageId}
+            nextPassageId={nextPassageId}
+            textId={textId}
+            commentators={commentators}
+            allPassages={allPassages ?? []}
+            isLoggedIn={!!user}
+          />
+        </div>
       </div>
     </div>
   )
