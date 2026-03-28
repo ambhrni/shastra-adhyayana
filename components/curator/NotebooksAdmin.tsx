@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { Notebook } from '@/types/database'
 
@@ -36,6 +36,7 @@ export default function NotebooksAdmin({ initialNotebooks }: { initialNotebooks:
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
 
   function openAdd() {
     setEditingId(null)
@@ -72,11 +73,34 @@ export default function NotebooksAdmin({ initialNotebooks }: { initialNotebooks:
     setError(null)
   }
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
+  function applyFile(file: File) {
+    if (!file.type.startsWith('image/')) return
     setSelectedFile(file)
     setPreviewUrl(URL.createObjectURL(file))
+  }
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (file) applyFile(file)
+  }
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+    const file = e.dataTransfer.files?.[0]
+    if (file) applyFile(file)
+  }, [])
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(true)
+  }, [])
+
+  const handleDragLeave = useCallback(() => setIsDragging(false), [])
+
+  function handlePaste(e: React.ClipboardEvent) {
+    const file = e.clipboardData.files?.[0]
+    if (file?.type.startsWith('image/')) applyFile(file)
   }
 
   async function handleSave(e: React.FormEvent) {
@@ -195,6 +219,7 @@ export default function NotebooksAdmin({ initialNotebooks }: { initialNotebooks:
       {showForm && (
         <form
           onSubmit={handleSave}
+          onPaste={handlePaste}
           className="bg-stone-50 border border-stone-200 rounded-xl p-6 space-y-4"
         >
           <h3 className="text-base font-semibold text-stone-800">
@@ -247,35 +272,53 @@ export default function NotebooksAdmin({ initialNotebooks }: { initialNotebooks:
             />
           </div>
 
-          {/* Thumbnail upload */}
+          {/* Thumbnail — drop / paste / browse */}
           <div>
             <label className="block text-xs font-medium text-stone-600 mb-1">Thumbnail</label>
-            <div className="flex items-start gap-4">
-              {previewUrl && (
-                <img
-                  src={previewUrl}
-                  alt="Preview"
-                  className="w-24 h-16 object-cover rounded-lg border border-stone-200 shrink-0"
-                />
-              )}
-              <div className="flex-1">
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="text-sm text-saffron-700 hover:text-saffron-800 border border-saffron-300 hover:bg-saffron-50 px-3 py-1.5 rounded-lg transition-colors"
-                >
-                  {previewUrl ? 'Replace image' : 'Upload image'}
-                </button>
-                <p className="text-xs text-stone-400 mt-1">JPG, PNG, or WebP. Shown at 16:9.</p>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp"
-                  onChange={handleFileChange}
-                  className="hidden"
-                />
+            {previewUrl ? (
+              <div
+                className="relative group w-full aspect-video rounded-lg overflow-hidden border border-stone-200 cursor-pointer"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span className="text-white text-sm font-medium">Replace image</span>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                className={`w-full aspect-video rounded-lg border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-colors ${
+                  isDragging
+                    ? 'border-saffron-500 bg-saffron-50'
+                    : 'border-stone-300 bg-stone-50 hover:border-saffron-400 hover:bg-saffron-50/50'
+                }`}
+              >
+                <svg className="w-8 h-8 text-stone-300 mb-2" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round"
+                    d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3 21h18M3.75 3h16.5M12 3v1m0 16v1" />
+                </svg>
+                <p className="text-sm text-stone-500 text-center px-4">
+                  Drop image here, paste{' '}
+                  <kbd className="text-xs bg-stone-100 border border-stone-300 px-1 py-0.5 rounded">
+                    Ctrl+V
+                  </kbd>
+                  , or <span className="text-saffron-600 font-medium">click to browse</span>
+                </p>
+                <p className="text-xs text-stone-400 mt-1">JPG, PNG, or WebP</p>
+              </div>
+            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={handleFileChange}
+              className="hidden"
+            />
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
