@@ -3,114 +3,45 @@ import { ImageResponse } from 'next/og'
 export const runtime = 'edge'
 
 export async function GET() {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.tattvasudha.org'
-
-  let fonts: { name: string; data: ArrayBuffer; style: 'normal' }[] = []
-  try {
-    const fontRes = await fetch(`${baseUrl}/fonts/NotoSansDevanagari-Regular.ttf`)
-    if (fontRes.ok) {
-      const fontData = await fontRes.arrayBuffer()
-      fonts = [{ name: 'NotoSansDevanagari', data: fontData, style: 'normal' }]
-    } else {
-      console.error('Font fetch failed:', fontRes.status, fontRes.statusText)
-    }
-  } catch (e) {
-    console.error('Font load failed:', e)
-  }
-
-  const devanagariFont = fonts.length > 0 ? 'NotoSansDevanagari' : 'serif'
-
   return new ImageResponse(
     (
       <div
         style={{
-          width: 1200,
-          height: 630,
-          background: 'linear-gradient(135deg, #1A0500 0%, #3D0E00 100%)',
+          width: '1200px',
+          height: '630px',
+          background: '#1A0500',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '60px 80px',
+          gap: '20px',
         }}
       >
-        {/* ॥श्रीः॥ */}
-        <div
-          style={{
-            fontFamily: devanagariFont,
-            fontSize: 36,
-            color: '#FFAA00',
-            marginBottom: 44,
-            letterSpacing: 8,
-          }}
-        >
-          ॥ श्रीः ॥
-        </div>
-
-        {/* Tattvasudhā */}
-        <div
-          style={{
-            fontFamily: 'serif',
-            fontSize: 88,
-            fontWeight: 700,
-            color: '#FFFFFF',
-            marginBottom: 12,
-            letterSpacing: -1,
-          }}
-        >
+        <div style={{
+          color: '#FF8C00',
+          fontSize: '52px',
+          fontWeight: 'bold',
+          fontFamily: 'serif',
+        }}>
           Tattvasudhā
         </div>
-
-        {/* तत्त्वसुधा */}
-        <div
-          style={{
-            fontFamily: devanagariFont,
-            fontSize: 52,
-            color: '#FF8C00',
-            marginBottom: 50,
-          }}
-        >
-          तत्त्वसुधा
-        </div>
-
-        {/* Divider */}
-        <div
-          style={{
-            width: 480,
-            height: 1,
-            backgroundColor: '#7A3000',
-            marginBottom: 34,
-            opacity: 0.8,
-          }}
-        />
-
-        {/* Subtitle */}
-        <div
-          style={{
-            fontSize: 22,
-            color: '#F0DFC0',
-            textAlign: 'center',
-            marginBottom: 20,
-            letterSpacing: 0.5,
-            lineHeight: 1.6,
-          }}
-        >
-          A jñānayajña for Mādhva Dvaita Vedānta śāstra study
-        </div>
-
-        {/* URL */}
-        <div
-          style={{
-            fontSize: 18,
-            color: '#FFAA00',
-            letterSpacing: 2.5,
-            marginTop: 4,
-          }}
-        >
+        <div style={{
+          color: '#F0DFC0',
+          fontSize: '26px',
+          fontFamily: 'serif',
+        }}>
           tattvasudha.org
+        </div>
+        <div style={{
+          color: '#F0DFC0',
+          fontSize: '22px',
+          fontFamily: 'serif',
+          marginTop: '10px',
+        }}>
+          A jñānayajña for Mādhva Dvaita Vedānta śāstra study
         </div>
       </div>
     ),
-    { width: 1200, height: 630, fonts }
+    { width: 1200, height: 630 }
   )
 }
