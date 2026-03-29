@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     description: 'A jñānayajña platform for mastering Veda & śāstra through Dvaita Siddhānta.',
     images: [
       {
-        url: '/og-image',
+        url: '/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Tattvasudhā — तत्त्वसुधा',
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Tattvasudhā — तत्त्वसुधा',
     description: 'A jñānayajña platform for Mādhva Dvaita Vedānta śāstra study',
-    images: ['/og-image'],
+    images: ['/og-image.png'],
   },
 }
 
