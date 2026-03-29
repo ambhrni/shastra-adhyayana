@@ -83,6 +83,17 @@ A student preparing for vidvat parīkṣā must know not just what is true but w
   'matlab hai', 'tatha', 'aur', or any other Hindi-register vocabulary have no place in \
   śāstric Sanskrit prose. If you are unsure whether a word is classical Sanskrit or Hindi, \
   do not use it.
+- Sanskrit spelling accuracy: Proper names of ācāryas and texts must be spelled with full \
+  diacritical precision. Critical spellings to always get right: \
+  Rāghavendra Tīrtha → rāghavendra (not raghavendra — the ā is essential); \
+  Jayatīrtha → jayatīrtha; \
+  Śrīnivāsa Tīrtha → śrīnivāsa tīrtha; \
+  Madhvācārya → madhvācārya; \
+  Bhāvadīpikā → bhāvadīpikā; \
+  Vādāvalī → vādāvalī; \
+  Vādāvalīprakāśaḥ → vādāvalīprakāśaḥ. \
+  If you are unsure of the exact Sanskrit spelling of a proper name, write it in IAST \
+  transliteration rather than risk a misspelling in Devanāgarī.
 
 ## CITATION AND SOURCE INTEGRITY
 
