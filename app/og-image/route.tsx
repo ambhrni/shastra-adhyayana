@@ -1,24 +1,25 @@
 import { ImageResponse } from 'next/og'
-import fs from 'fs'
-import path from 'path'
 
-export const runtime = 'nodejs'
-export const dynamic = 'force-dynamic'
-
-// Load at module level — one read per cold start
-const fontBuf = fs.readFileSync(
-  path.join(
-    process.cwd(),
-    'node_modules/@fontsource/noto-sans-devanagari/files/noto-sans-devanagari-devanagari-400-normal.woff'
-  )
-)
-// Correct Buffer → ArrayBuffer conversion (Buffer.buffer is the pool, not the slice)
-const devanagariFont: ArrayBuffer = fontBuf.buffer.slice(
-  fontBuf.byteOffset,
-  fontBuf.byteOffset + fontBuf.byteLength
-) as ArrayBuffer
+export const runtime = 'edge'
 
 export async function GET() {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.tattvasudha.org'
+
+  let fonts: { name: string; data: ArrayBuffer; style: 'normal' }[] = []
+  try {
+    const fontRes = await fetch(`${baseUrl}/fonts/NotoSansDevanagari.woff`)
+    if (fontRes.ok) {
+      const fontData = await fontRes.arrayBuffer()
+      fonts = [{ name: 'NotoDevanagari', data: fontData, style: 'normal' }]
+    } else {
+      console.error('Font fetch failed:', fontRes.status, fontRes.statusText)
+    }
+  } catch (e) {
+    console.error('Font load failed:', e)
+  }
+
+  const devaFamily = fonts.length ? 'NotoDevanagari' : 'serif'
+
   return new ImageResponse(
     (
       <div
@@ -34,81 +35,31 @@ export async function GET() {
           padding: '60px',
         }}
       >
-        {/* ॥ श्रीः ॥ */}
-        <div
-          style={{
-            color: '#FF8C00',
-            fontSize: '36px',
-            fontFamily: 'NotoDevanagari',
-            letterSpacing: '6px',
-          }}
-        >
+        <div style={{ color: '#FF8C00', fontSize: '36px', fontFamily: devaFamily }}>
           ॥ श्रीः ॥
         </div>
-
-        {/* Tattvasudhā */}
-        <div
-          style={{
-            color: '#FFFFFF',
-            fontSize: '80px',
-            fontWeight: 'bold',
-            fontFamily: 'serif',
-            letterSpacing: '-1px',
-          }}
-        >
+        <div style={{
+          color: '#FFFFFF', fontSize: '88px',
+          fontWeight: 'bold', fontFamily: 'serif',
+          letterSpacing: '-2px',
+        }}>
           Tattvasudhā
         </div>
-
-        {/* तत्त्वसुधा */}
-        <div
-          style={{
-            color: '#FF6B00',
-            fontSize: '52px',
-            fontFamily: 'NotoDevanagari',
-          }}
-        >
+        <div style={{ color: '#FF6B00', fontSize: '52px', fontFamily: devaFamily }}>
           तत्त्वसुधा
         </div>
-
-        {/* Divider */}
-        <div
-          style={{
-            width: '400px',
-            height: '1px',
-            backgroundColor: '#7A3000',
-          }}
-        />
-
-        {/* Subtitle */}
-        <div
-          style={{
-            color: '#F0DFC0',
-            fontSize: '22px',
-            fontFamily: 'serif',
-            textAlign: 'center',
-            lineHeight: '1.6',
-          }}
-        >
+        <div style={{ width: '480px', height: '1px', backgroundColor: '#7A3000' }} />
+        <div style={{
+          color: '#F0DFC0', fontSize: '22px',
+          fontFamily: 'serif', textAlign: 'center',
+        }}>
           A jñānayajña — Madhva tattvavāda aligned Vēda Vēdānta śāstra study
         </div>
-
-        {/* URL */}
-        <div
-          style={{
-            color: '#FF8C00',
-            fontSize: '18px',
-            fontFamily: 'serif',
-            letterSpacing: '3px',
-          }}
-        >
+        <div style={{ color: '#FF8C00', fontSize: '18px', fontFamily: 'serif', letterSpacing: '3px' }}>
           tattvasudha.org
         </div>
       </div>
     ),
-    {
-      width: 1200,
-      height: 630,
-      fonts: [{ name: 'NotoDevanagari', data: devanagariFont, style: 'normal' as const }],
-    }
+    { width: 1200, height: 630, fonts }
   )
 }
