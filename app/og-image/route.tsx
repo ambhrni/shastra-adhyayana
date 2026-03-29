@@ -3,18 +3,11 @@ import { ImageResponse } from 'next/og'
 export const runtime = 'edge'
 
 export async function GET() {
-  // Load Noto Sans Devanagari for script rendering
-  let fontData: ArrayBuffer | null = null
-  try {
-    const css = await fetch(
-      'https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400&display=block',
-      { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1)' } }
-    ).then(r => r.text())
-    const match = css.match(/url\((https:\/\/fonts\.gstatic\.com[^)]+)\)/)
-    if (match) fontData = await fetch(match[1]).then(r => r.arrayBuffer())
-  } catch {
-    // Devanāgarī will fall back to tofu — acceptable for resilience
-  }
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.tattvasudha.org'
+
+  const fontData = await fetch(
+    new URL('/fonts/NotoSansDevanagari-Regular.ttf', baseUrl)
+  ).then(res => res.arrayBuffer())
 
   return new ImageResponse(
     (
@@ -33,7 +26,7 @@ export async function GET() {
         {/* ॥श्रीः॥ */}
         <div
           style={{
-            fontFamily: '"Noto Sans Devanagari", sans-serif',
+            fontFamily: 'NotoSansDevanagari',
             fontSize: 36,
             color: '#FFAA00',
             marginBottom: 44,
@@ -60,7 +53,7 @@ export async function GET() {
         {/* तत्त्वसुधा */}
         <div
           style={{
-            fontFamily: '"Noto Sans Devanagari", sans-serif',
+            fontFamily: 'NotoSansDevanagari',
             fontSize: 52,
             color: '#FF8C00',
             marginBottom: 50,
@@ -110,9 +103,13 @@ export async function GET() {
     {
       width: 1200,
       height: 630,
-      fonts: fontData
-        ? [{ name: 'Noto Sans Devanagari', data: fontData, style: 'normal', weight: 400 }]
-        : [],
+      fonts: [
+        {
+          name: 'NotoSansDevanagari',
+          data: fontData,
+          style: 'normal',
+        },
+      ],
     }
   )
 }
