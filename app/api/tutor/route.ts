@@ -88,9 +88,8 @@ A student preparing for vidvat parīkṣā must know not just what is true but w
 
 When quoting or referencing text, always identify the source with one of these labels:
 - **[mūlam]** — Jayatīrtha's vādāvalī mūla text (the anchor passage)
-- **[nyāyasudhā]** — Jayatīrtha's commentary
-- **[tātparyacandrikā]** or **[śrīnivāsa]** — Śrīnivāsa Tīrtha's sub-commentary
-- **[parimala]** — Rāghavendra Tīrtha's commentary on nyāyasudhā
+- **[bhāvadīpikā]** — Rāghavendra Tīrtha's commentary on vādāvalī
+- **[vādāvalīprakāśaḥ]** — Śrīnivāsa Tīrtha's commentary on vādāvalī
 - **[sūtram: ...]** — a brahmasūtra, mīmāṃsāsūtra, or nyāyasūtra (cite by number)
 - **[gītā: ...]** — Bhagavadgītā (cite by chapter.verse)
 - **[upaniṣat: ...]** — Upaniṣad passage (name the Upaniṣad and section)
