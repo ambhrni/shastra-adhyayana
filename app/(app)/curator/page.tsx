@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import PassageList from '@/components/curator/PassageList'
 import FlaggedErrorsList from '@/components/curator/FlaggedErrorsList'
 import NotebooksAdmin from '@/components/curator/NotebooksAdmin'
+import TextThumbnailEdit from '@/components/curator/TextThumbnailEdit'
 
 interface Props {
   searchParams: { tab?: string }
@@ -36,7 +37,7 @@ export default async function CuratorPage({ searchParams }: Props) {
 
   if (activeTab === 'passages') {
     const { data: textsData } = await supabase
-      .from('texts').select('id, title, title_transliterated').order('created_at')
+      .from('texts').select('id, title, title_transliterated, thumbnail_url').order('created_at')
     const { data: passagesData } = await supabase
       .from('passages').select('*, text_id').order('sequence_order')
 
@@ -112,9 +113,17 @@ export default async function CuratorPage({ searchParams }: Props) {
             const textPassages = passagesByText[text.id] ?? []
             return (
               <section key={text.id}>
-                <h2 className="text-lg font-semibold text-stone-800 mb-1">
-                  <span className="font-devanagari">{text.title}</span>
-                </h2>
+                <div className="flex items-start justify-between gap-4 mb-1">
+                  <h2 className="text-lg font-semibold text-stone-800">
+                    <span className="font-devanagari">{text.title}</span>
+                  </h2>
+                  {isAdmin && (
+                    <TextThumbnailEdit
+                      textId={text.id}
+                      currentThumbnailUrl={(text as any).thumbnail_url ?? null}
+                    />
+                  )}
+                </div>
                 <p className="text-sm text-stone-400 mb-4">{text.title_transliterated}</p>
                 <PassageList passages={textPassages as any} textId={text.id} />
               </section>

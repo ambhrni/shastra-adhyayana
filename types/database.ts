@@ -9,6 +9,7 @@ export interface Text {
   title_transliterated: string
   author: string | null
   description: string | null
+  thumbnail_url: string | null
   is_published: boolean
   created_at: string
 }

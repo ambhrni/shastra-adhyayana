@@ -19,42 +19,63 @@ export default function TextCard({ text, progressPercent, firstUnfinishedPassage
     : 'Continue'
 
   return (
-    <div className="bg-white rounded-2xl border border-stone-200 p-6 flex flex-col gap-4 hover:shadow-md transition-shadow">
-      <div>
-        <h2 className="text-xl font-devanagari font-semibold text-stone-900 leading-tight">
-          {text.title}
-        </h2>
-        <p className="text-sm text-stone-500 mt-0.5">{text.title_transliterated}</p>
-        {text.author && (
-          <p className="text-sm text-stone-400 mt-1">by {text.author}</p>
+    <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
+      {/* Thumbnail */}
+      <div className="relative w-full aspect-video overflow-hidden rounded-t-2xl">
+        {text.thumbnail_url ? (
+          <img
+            src={text.thumbnail_url}
+            alt={text.title}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#2D0A00] to-[#8B2500]">
+            <span className="font-devanagari text-white text-2xl font-bold opacity-90 text-center px-6 leading-snug">
+              {text.title}
+            </span>
+          </div>
         )}
       </div>
 
-      {text.description && (
-        <p className="text-sm text-stone-600 leading-relaxed">{text.description}</p>
-      )}
-
-      {progressPercent !== null && (
-        <div className="space-y-1">
-          <div className="flex justify-between text-xs text-stone-500">
-            <span>Progress</span>
-            <span>{progressPercent}%</span>
-          </div>
-          <div className="h-1.5 bg-stone-100 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-saffron-500 rounded-full transition-all"
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
+      {/* Content */}
+      <div className="p-5 flex flex-col gap-3 flex-1">
+        <div>
+          <h2 className="text-base font-semibold text-stone-900 leading-snug">
+            {text.title_transliterated}
+          </h2>
+          {text.author && (
+            <p className="text-sm text-stone-400 mt-0.5">by {text.author}</p>
+          )}
         </div>
-      )}
 
-      <Link
-        href={href}
-        className="mt-auto inline-flex items-center justify-center bg-saffron-600 hover:bg-saffron-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors"
-      >
-        {buttonLabel}
-      </Link>
+        {text.description && (
+          <p className="text-sm text-stone-500 leading-relaxed flex-1">
+            {text.description}
+          </p>
+        )}
+
+        {progressPercent !== null && (
+          <div className="space-y-1">
+            <div className="flex justify-between text-xs text-stone-500">
+              <span>Progress</span>
+              <span>{progressPercent}%</span>
+            </div>
+            <div className="h-1.5 bg-stone-100 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-saffron-500 rounded-full transition-all"
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        <Link
+          href={href}
+          className="mt-auto w-full inline-flex items-center justify-center bg-saffron-600 hover:bg-saffron-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors"
+        >
+          {buttonLabel}
+        </Link>
+      </div>
     </div>
   )
 }
