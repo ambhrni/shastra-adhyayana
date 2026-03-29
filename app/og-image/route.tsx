@@ -1,0 +1,118 @@
+import { ImageResponse } from 'next/og'
+
+export const runtime = 'edge'
+
+export async function GET() {
+  // Load Noto Sans Devanagari for script rendering
+  let fontData: ArrayBuffer | null = null
+  try {
+    const css = await fetch(
+      'https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400&display=block',
+      { headers: { 'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1)' } }
+    ).then(r => r.text())
+    const match = css.match(/url\((https:\/\/fonts\.gstatic\.com[^)]+)\)/)
+    if (match) fontData = await fetch(match[1]).then(r => r.arrayBuffer())
+  } catch {
+    // Devanāgarī will fall back to tofu — acceptable for resilience
+  }
+
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: 1200,
+          height: 630,
+          background: 'linear-gradient(135deg, #1A0500 0%, #3D0E00 100%)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '60px 80px',
+        }}
+      >
+        {/* ॥श्रीः॥ */}
+        <div
+          style={{
+            fontFamily: '"Noto Sans Devanagari", sans-serif',
+            fontSize: 36,
+            color: '#FFAA00',
+            marginBottom: 44,
+            letterSpacing: 8,
+          }}
+        >
+          ॥ श्रीः ॥
+        </div>
+
+        {/* Tattvasudhā */}
+        <div
+          style={{
+            fontFamily: 'serif',
+            fontSize: 88,
+            fontWeight: 700,
+            color: '#FFFFFF',
+            marginBottom: 12,
+            letterSpacing: -1,
+          }}
+        >
+          Tattvasudhā
+        </div>
+
+        {/* तत्त्वसुधा */}
+        <div
+          style={{
+            fontFamily: '"Noto Sans Devanagari", sans-serif',
+            fontSize: 52,
+            color: '#FF8C00',
+            marginBottom: 50,
+          }}
+        >
+          तत्त्वसुधा
+        </div>
+
+        {/* Divider */}
+        <div
+          style={{
+            width: 480,
+            height: 1,
+            backgroundColor: '#7A3000',
+            marginBottom: 34,
+            opacity: 0.8,
+          }}
+        />
+
+        {/* Subtitle */}
+        <div
+          style={{
+            fontSize: 22,
+            color: '#F0DFC0',
+            textAlign: 'center',
+            marginBottom: 20,
+            letterSpacing: 0.5,
+            lineHeight: 1.6,
+          }}
+        >
+          A jñānayajña for Mādhva Dvaita Vedānta śāstra study
+        </div>
+
+        {/* URL */}
+        <div
+          style={{
+            fontSize: 18,
+            color: '#FFAA00',
+            letterSpacing: 2.5,
+            marginTop: 4,
+          }}
+        >
+          tattvasudha.org
+        </div>
+      </div>
+    ),
+    {
+      width: 1200,
+      height: 630,
+      fonts: fontData
+        ? [{ name: 'Noto Sans Devanagari', data: fontData, style: 'normal', weight: 400 }]
+        : [],
+    }
+  )
+}

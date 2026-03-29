@@ -31,6 +31,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: `${title} | Tattvasudhā`,
       description,
       siteName: 'Tattvasudhā — तत्त्वसुधा',
+      images: [
+        {
+          url: '/og-image',
+          width: 1200,
+          height: 630,
+          alt: 'Tattvasudhā — तत्त्वसुधा',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${title} | Tattvasudhā`,
+      description,
+      images: ['/og-image'],
     },
   }
 }

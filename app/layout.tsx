@@ -30,6 +30,20 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Tattvasudhā — तत्त्वसुधा',
     description: 'A jñānayajña platform for mastering Veda & śāstra through Dvaita Siddhānta.',
+    images: [
+      {
+        url: '/og-image',
+        width: 1200,
+        height: 630,
+        alt: 'Tattvasudhā — तत्त्वसुधा',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Tattvasudhā — तत्त्वसुधा',
+    description: 'A jñānayajña platform for Mādhva Dvaita Vedānta śāstra study',
+    images: ['/og-image'],
   },
 }
 
