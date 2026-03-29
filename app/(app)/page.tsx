@@ -107,7 +107,7 @@ export default async function LibraryPage() {
         {/* Left — Texts (60%) */}
         <div className="lg:w-3/5">
           <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wider mb-5">
-            Texts
+            Self-Study Courses
           </h2>
           {textData.length === 0 ? (
             <div className="text-center py-16 text-stone-400">

@@ -69,12 +69,16 @@ export default function TextThumbnailEdit({ textId, currentThumbnailUrl }: Props
         .from('text-thumbnails')
         .getPublicUrl(uploadData.path)
 
-      const { error: updateError } = await supabase
+      const { data: updated, error: updateError } = await supabase
         .from('texts')
         .update({ thumbnail_url: publicUrl })
         .eq('id', textId)
+        .select('id')
+        .single()
 
-      if (updateError) throw new Error(updateError.message)
+      if (updateError || !updated) {
+        throw new Error(updateError?.message ?? 'Update failed — the admin RLS policy on the texts table may be missing.')
+      }
 
       setSelectedFile(null)
       setSaved(true)
