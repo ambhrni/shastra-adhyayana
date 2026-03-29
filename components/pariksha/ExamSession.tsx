@@ -161,6 +161,10 @@ export default function ExamSession({ textId, passageId, onReset }: ExamSessionP
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-5 bg-stone-50">
+        {/* AI Disclaimer */}
+        <div className="text-xs text-stone-400 italic text-center">
+          AI evaluation is indicative. For authoritative assessment, consult a qualified paṇḍit.
+        </div>
         {messages.map((msg, i) => {
           const scores = msg.role === 'assistant' ? parseScores(msg.content) : null
           const displayText = msg.role === 'assistant' ? cleanForDisplay(msg.content) : msg.content

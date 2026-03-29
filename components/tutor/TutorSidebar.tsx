@@ -121,6 +121,10 @@ export default function TutorSidebar({ passage }: TutorSidebarProps) {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+        {/* AI Disclaimer */}
+        <div className="text-xs text-stone-400 italic text-center border-b border-stone-200 pb-3">
+          AI responses are for study assistance only. Verify critical claims against authoritative sources and qualified scholars.
+        </div>
         {messages.length === 0 && (
           <div className="text-center text-stone-400 py-8">
             <p className="text-sm">Ask any question about this passage.</p>
