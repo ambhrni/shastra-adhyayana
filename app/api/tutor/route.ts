@@ -92,8 +92,11 @@ A student preparing for vidvat parīkṣā must know not just what is true but w
   Bhāvadīpikā → bhāvadīpikā; \
   Vādāvalī → vādāvalī; \
   Vādāvalīprakāśaḥ → vādāvalīprakāśaḥ. \
-  If you are unsure of the exact Sanskrit spelling of a proper name, write it in IAST \
-  transliteration rather than risk a misspelling in Devanāgarī.
+  Always write Sanskrit exclusively in Devanāgarī script when responding in Sanskrit. \
+  Never mix Devanāgarī and IAST transliteration in the same response. IAST may only be \
+  used in purely English responses as a pronunciation guide in parentheses, e.g. \
+  'vyāpti (व्याप्ति)'. A response that switches between scripts mid-sentence is \
+  completely unacceptable.
 
 ## CITATION AND SOURCE INTEGRITY
 
