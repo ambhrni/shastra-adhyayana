@@ -18,14 +18,14 @@ export async function GET() {
           padding: '60px',
         }}
       >
+        {/* Top accent line */}
         <div style={{
-          color: '#FF8C00',
-          fontSize: '28px',
-          fontFamily: 'serif',
-          letterSpacing: '8px',
-        }}>
-          ॥ श्रीः ॥
-        </div>
+          width: '80px',
+          height: '2px',
+          backgroundColor: '#FF8C00',
+        }} />
+
+        {/* Main title */}
         <div style={{
           color: '#FFFFFF',
           fontSize: '80px',
@@ -35,11 +35,25 @@ export async function GET() {
         }}>
           Tattvasudhā
         </div>
+
+        {/* URL */}
+        <div style={{
+          color: '#FF8C00',
+          fontSize: '18px',
+          fontFamily: 'serif',
+          letterSpacing: '3px',
+        }}>
+          tattvasudha.org
+        </div>
+
+        {/* Divider */}
         <div style={{
           width: '400px',
           height: '1px',
           backgroundColor: '#7A3000',
         }} />
+
+        {/* Subtitle */}
         <div style={{
           color: '#F0DFC0',
           fontSize: '22px',
@@ -49,15 +63,6 @@ export async function GET() {
         }}>
           A jñānayajña — Madhva tattvavāda aligned
           Veda Vedānta śāstra study
-        </div>
-        <div style={{
-          color: '#FF8C00',
-          fontSize: '18px',
-          fontFamily: 'serif',
-          letterSpacing: '3px',
-          marginTop: '8px',
-        }}>
-          tattvasudha.org
         </div>
       </div>
     ),
