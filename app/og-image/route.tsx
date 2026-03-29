@@ -7,7 +7,7 @@ export async function GET() {
 
   let fonts: { name: string; data: ArrayBuffer; style: 'normal' }[] = []
   try {
-    const fontRes = await fetch(`${baseUrl}/fonts/NotoSansDevanagari.woff`)
+    const fontRes = await fetch(`${baseUrl}/fonts/NotoSansDevanagari.ttf`)
     if (fontRes.ok) {
       const fontData = await fontRes.arrayBuffer()
       fonts = [{ name: 'NotoDevanagari', data: fontData, style: 'normal' }]
