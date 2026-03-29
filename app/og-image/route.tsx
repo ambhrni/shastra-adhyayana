@@ -3,11 +3,22 @@ import { ImageResponse } from 'next/og'
 export const runtime = 'edge'
 
 export async function GET() {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.tattvasudha.org'
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.tattvasudha.org'
 
-  const fontData = await fetch(
-    new URL('/fonts/NotoSansDevanagari-Regular.ttf', baseUrl)
-  ).then(res => res.arrayBuffer())
+  let fonts: { name: string; data: ArrayBuffer; style: 'normal' }[] = []
+  try {
+    const fontRes = await fetch(`${baseUrl}/fonts/NotoSansDevanagari-Regular.ttf`)
+    if (fontRes.ok) {
+      const fontData = await fontRes.arrayBuffer()
+      fonts = [{ name: 'NotoSansDevanagari', data: fontData, style: 'normal' }]
+    } else {
+      console.error('Font fetch failed:', fontRes.status, fontRes.statusText)
+    }
+  } catch (e) {
+    console.error('Font load failed:', e)
+  }
+
+  const devanagariFont = fonts.length > 0 ? 'NotoSansDevanagari' : 'serif'
 
   return new ImageResponse(
     (
@@ -26,7 +37,7 @@ export async function GET() {
         {/* ॥श्रीः॥ */}
         <div
           style={{
-            fontFamily: 'NotoSansDevanagari',
+            fontFamily: devanagariFont,
             fontSize: 36,
             color: '#FFAA00',
             marginBottom: 44,
@@ -53,7 +64,7 @@ export async function GET() {
         {/* तत्त्वसुधा */}
         <div
           style={{
-            fontFamily: 'NotoSansDevanagari',
+            fontFamily: devanagariFont,
             fontSize: 52,
             color: '#FF8C00',
             marginBottom: 50,
@@ -100,16 +111,6 @@ export async function GET() {
         </div>
       </div>
     ),
-    {
-      width: 1200,
-      height: 630,
-      fonts: [
-        {
-          name: 'NotoSansDevanagari',
-          data: fontData,
-          style: 'normal',
-        },
-      ],
-    }
+    { width: 1200, height: 630, fonts }
   )
 }
