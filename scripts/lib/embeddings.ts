@@ -21,7 +21,7 @@ export async function embedText(
   text: string,
   taskType: TaskType = TaskType.RETRIEVAL_DOCUMENT
 ): Promise<number[]> {
-  const model = getClient().getGenerativeModel({ model: 'text-embedding-004' })
+  const model = getClient().getGenerativeModel({ model: 'text-embedding-004' }, { apiVersion: 'v1' })
   const result = await model.embedContent({
     content: { parts: [{ text }], role: 'user' },
     taskType,
