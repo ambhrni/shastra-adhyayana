@@ -4,7 +4,7 @@
  * taskType: RETRIEVAL_DOCUMENT for ingestion, RETRIEVAL_QUERY for search queries
  */
 
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { GoogleGenerativeAI, TaskType } from '@google/generative-ai'
 
 let _genAI: GoogleGenerativeAI | null = null
 
@@ -19,7 +19,7 @@ function getClient(): GoogleGenerativeAI {
 
 export async function embedText(
   text: string,
-  taskType: 'RETRIEVAL_DOCUMENT' | 'RETRIEVAL_QUERY' = 'RETRIEVAL_DOCUMENT'
+  taskType: TaskType = TaskType.RETRIEVAL_DOCUMENT
 ): Promise<number[]> {
   const model = getClient().getGenerativeModel({ model: 'text-embedding-004' })
   const result = await model.embedContent({
@@ -32,7 +32,7 @@ export async function embedText(
 export async function embedBatch(
   texts: string[],
   delayMs = 200,
-  taskType: 'RETRIEVAL_DOCUMENT' | 'RETRIEVAL_QUERY' = 'RETRIEVAL_DOCUMENT'
+  taskType: TaskType = TaskType.RETRIEVAL_DOCUMENT
 ): Promise<number[][]> {
   const embeddings: number[][] = []
   for (const text of texts) {
