@@ -19,14 +19,33 @@ function getClient(): GoogleGenerativeAI {
 
 export async function embedText(
   text: string,
-  taskType: TaskType = TaskType.RETRIEVAL_DOCUMENT
+  taskType: TaskType = TaskType.RETRIEVAL_DOCUMENT,
+  retries: number = 3
 ): Promise<number[]> {
-  const model = getClient().getGenerativeModel({ model: 'models/gemini-embedding-2-preview' }, { apiVersion: 'v1beta' })
-  const result = await model.embedContent({
-    content: { parts: [{ text }], role: 'user' },
-    taskType,
-  })
-  return result.embedding.values
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const model = getClient().getGenerativeModel({
+        model: 'models/gemini-embedding-2-preview'
+      })
+      const result = await model.embedContent({
+        content: { parts: [{ text }], role: 'user' },
+        taskType,
+      })
+      return result.embedding.values
+    } catch (err: any) {
+      const isTransient = err?.message?.includes('503') ||
+                          err?.message?.includes('429') ||
+                          err?.message?.includes('500')
+      if (isTransient && attempt < retries) {
+        const delay = attempt * 2000  // 2s, 4s backoff
+        console.warn(`  ⚠ Attempt ${attempt} failed (${err.message.slice(0, 60)}...) — retrying in ${delay/1000}s`)
+        await new Promise(r => setTimeout(r, delay))
+        continue
+      }
+      throw err
+    }
+  }
+  throw new Error('embedText: all retries exhausted')
 }
 
 export async function embedBatch(
