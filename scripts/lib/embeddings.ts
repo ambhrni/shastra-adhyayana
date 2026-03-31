@@ -1,6 +1,6 @@
 /**
  * embeddings.ts — shared Gemini embedding utility for all RAG scripts.
- * Model: text-embedding-004 (768 dimensions, GA)
+ * Model: gemini-embedding-2-preview (3072 dimensions)
  * taskType: RETRIEVAL_DOCUMENT for ingestion, RETRIEVAL_QUERY for search queries
  */
 
@@ -21,7 +21,7 @@ export async function embedText(
   text: string,
   taskType: TaskType = TaskType.RETRIEVAL_DOCUMENT
 ): Promise<number[]> {
-  const model = getClient().getGenerativeModel({ model: 'text-embedding-004' }, { apiVersion: 'v1' })
+  const model = getClient().getGenerativeModel({ model: 'models/gemini-embedding-2-preview' }, { apiVersion: 'v1beta' })
   const result = await model.embedContent({
     content: { parts: [{ text }], role: 'user' },
     taskType,
