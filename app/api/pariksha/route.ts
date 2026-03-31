@@ -1,13 +1,15 @@
 import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import { embedText, TaskType } from '@/lib/embeddings-server'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 
 function buildExaminerPrompt(
   scope: 'full' | 'passage',
   textTitle: string,
-  passageContext?: { mula: string; transliterated?: string | null; commentaries: string }
+  passageContext?: { mula: string; transliterated?: string | null; commentaries: string },
+  relatedPassages?: { sectionName: string | null; mulaPreview: string }[]
 ): string {
   const scopeDescription = scope === 'passage'
     ? `a specific passage from ${textTitle}`
@@ -17,9 +19,13 @@ function buildExaminerPrompt(
     ? `\n## PASSAGE\n${passageContext.mula}\n${passageContext.transliterated ? `\nTransliteration: ${passageContext.transliterated}` : ''}\n\n## COMMENTARIES\n${passageContext.commentaries}`
     : ''
 
+  const relatedBlock = relatedPassages && relatedPassages.length > 0
+    ? `\n\n## RELATED PASSAGES\nThe following passages from vādāvalī are thematically related and may be relevant for cross-passage questions:\n${relatedPassages.map(p => `• ${p.sectionName ?? 'Passage'}: ${p.mulaPreview}`).join('\n')}`
+    : ''
+
   return `You are a traditional paṇḍit conducting a vidvat parīkṣā (scholarly examination) on ${scopeDescription}.
 Your role is to rigorously test the student's understanding through oral examination, as in a traditional viva.
-${contextBlock}
+${contextBlock}${relatedBlock}
 
 ## EXAMINATION RULES
 1. Ask ONE question at a time. Do NOT ask multiple questions in a single turn.
@@ -71,6 +77,7 @@ export async function POST(req: Request) {
   if (!text) return NextResponse.json({ error: 'Text not found' }, { status: 404 })
 
   let passageContext: { mula: string; transliterated?: string | null; commentaries: string } | undefined
+  let relatedPassages: { sectionName: string | null; mulaPreview: string }[] = []
 
   if (passageId) {
     const [{ data: passage }, { data: commentaries }] = await Promise.all([
@@ -91,13 +98,42 @@ export async function POST(req: Request) {
         transliterated: passage.mula_transliterated,
         commentaries: commentaryBlock || 'No commentaries available.',
       }
+
+      // Fetch related passages via semantic search (graceful — skip on error)
+      try {
+        const embedding = await embedText(passage.mula_text, TaskType.RETRIEVAL_QUERY)
+        const { data: ragResults } = await supabase.rpc('semantic_search', {
+          query_embedding: embedding,
+          match_count: 4,
+          search_passages: true,
+          search_chunks: false,
+          search_nyaya: false,
+          min_ocr_quality: 0.6,
+        })
+        relatedPassages = ((ragResults ?? []) as {
+          source_type: string
+          source_id: string
+          content: string
+          section_label: string
+          similarity: number
+        }[])
+          .filter(r => r.source_type === 'passage' && r.source_id !== passageId && r.similarity > 0.65)
+          .slice(0, 3)
+          .map(r => ({
+            sectionName: r.section_label,
+            mulaPreview: r.content?.slice(0, 150) ?? '',
+          }))
+      } catch {
+        // embeddings not yet populated — proceed without related passages
+      }
     }
   }
 
   const systemPrompt = buildExaminerPrompt(
     passageId ? 'passage' : 'full',
     text.title_transliterated,
-    passageContext
+    passageContext,
+    relatedPassages.length > 0 ? relatedPassages : undefined,
   )
 
   const stream = anthropic.messages.stream({

@@ -18,6 +18,13 @@ interface NavPassage {
   sequence_order: number
 }
 
+interface RelatedPassage {
+  id: string
+  textId: string
+  sectionName: string | null
+  mulaPreview: string
+}
+
 interface StudyRightPanelProps {
   passage: Passage
   commentaries: Commentary[]
@@ -30,15 +37,18 @@ interface StudyRightPanelProps {
   commentators: Commentator[]
   allPassages: NavPassage[]
   isLoggedIn: boolean
+  relatedPassages?: RelatedPassage[]
 }
 
 export default function StudyRightPanel({
   passage, commentaries, nyayaConcepts, notes,
-  progress, prevPassageId, nextPassageId, textId, commentators, allPassages, isLoggedIn
+  progress, prevPassageId, nextPassageId, textId, commentators, allPassages, isLoggedIn,
+  relatedPassages,
 }: StudyRightPanelProps) {
   const router = useRouter()
   const [tutorOpen, setTutorOpen] = useState(false)
   const [flagOpen, setFlagOpen] = useState(false)
+  const [relatedOpen, setRelatedOpen] = useState(true)
   const [currentStatus, setCurrentStatus] = useState(progress?.status ?? 'not_started')
 
   // Derive ordered sections and per-section passage lists from allPassages
@@ -192,6 +202,41 @@ export default function StudyRightPanel({
 
             <NyayaPanel concepts={nyayaConcepts} />
             <PassageNotesPanel notes={notes} />
+
+            {relatedPassages && relatedPassages.length > 0 && (
+              <div>
+                <button
+                  onClick={() => setRelatedOpen(o => !o)}
+                  className="flex items-center justify-between w-full text-xs font-semibold text-stone-500 uppercase tracking-wide mb-2"
+                >
+                  Related Passages
+                  <svg
+                    className={`w-3.5 h-3.5 transition-transform ${relatedOpen ? 'rotate-180' : ''}`}
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                  </svg>
+                </button>
+                {relatedOpen && (
+                  <div className="space-y-1.5">
+                    {relatedPassages.map(rp => (
+                      <Link
+                        key={rp.id}
+                        href={`/study/${rp.textId}/${rp.id}`}
+                        className="block px-3 py-2 rounded-lg bg-stone-50 hover:bg-stone-100 transition-colors"
+                      >
+                        <div className="text-xs font-medium text-saffron-700 mb-0.5">
+                          {rp.sectionName ?? 'Passage'}
+                        </div>
+                        <div className="text-xs text-stone-500 font-mono leading-relaxed line-clamp-2">
+                          {rp.mulaPreview}
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
 

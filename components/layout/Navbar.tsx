@@ -1,9 +1,11 @@
 'use client'
 
 import Link from 'next/link'
+import { useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import type { UserRole } from '@/types/database'
+import SearchModal from '@/components/search/SearchModal'
 
 interface TextNavItem {
   id: string
@@ -27,6 +29,7 @@ const linkClass = (active: boolean) =>
 export default function Navbar({ displayName, role, texts }: NavbarProps) {
   const pathname = usePathname()
   const router = useRouter()
+  const [searchOpen, setSearchOpen] = useState(false)
 
   async function handleSignOut() {
     const supabase = createClient()
@@ -39,6 +42,7 @@ export default function Navbar({ displayName, role, texts }: NavbarProps) {
   const textId = onStudyOrPariksha ? pathParts[2] : null
 
   return (
+    <>
     <nav className="h-14 bg-stone-900 text-white flex items-center px-6 gap-4 shrink-0">
       {/* Brand */}
       <Link href="/" className="font-semibold tracking-tight text-amber-400 shrink-0 mr-2">
@@ -98,6 +102,17 @@ export default function Navbar({ displayName, role, texts }: NavbarProps) {
         </Link>
       </div>
 
+      {/* Search */}
+      <button
+        onClick={() => setSearchOpen(true)}
+        title="Search"
+        className="text-stone-400 hover:text-white transition-colors shrink-0"
+      >
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+        </svg>
+      </button>
+
       {/* User / auth */}
       <div className="flex items-center gap-3 shrink-0">
         {displayName ? (
@@ -125,5 +140,7 @@ export default function Navbar({ displayName, role, texts }: NavbarProps) {
         )}
       </div>
     </nav>
+    {searchOpen && <SearchModal onClose={() => setSearchOpen(false)} />}
+    </>
   )
 }

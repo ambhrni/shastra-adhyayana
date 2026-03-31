@@ -5,6 +5,14 @@ import MulaPanel from '@/components/study/MulaPanel'
 import CommentaryTabs from '@/components/study/CommentaryTabs'
 import StudyRightPanel from '@/components/study/StudyRightPanel'
 import Link from 'next/link'
+import { embedText, TaskType } from '@/lib/embeddings-server'
+
+interface RelatedPassage {
+  id: string
+  textId: string
+  sectionName: string | null
+  mulaPreview: string
+}
 
 interface Props {
   params: { textId: string; passageId: string }
@@ -150,6 +158,44 @@ export default async function StudyPage({ params }: Props) {
 
   const [{ data: prevRows }, { data: nextRows }] = await Promise.all([prevQuery, nextQuery])
 
+  // Fetch related passages via semantic search (graceful — skip if embeddings not populated)
+  let relatedPassages: RelatedPassage[] = []
+  try {
+    const embedding = await embedText(passage.mula_text, TaskType.RETRIEVAL_QUERY)
+    const { data: ragResults } = await supabase.rpc('semantic_search', {
+      query_embedding: embedding,
+      match_count: 4,
+      search_passages: true,
+      search_chunks: false,
+      search_nyaya: false,
+      min_ocr_quality: 0.6,
+    })
+    const candidates = ((ragResults ?? []) as {
+      source_type: string
+      source_id: string
+      content: string
+      section_label: string
+      similarity: number
+    }[]).filter(r => r.source_type === 'passage' && r.source_id !== passageId && r.similarity > 0.65)
+      .slice(0, 3)
+
+    if (candidates.length > 0) {
+      const { data: passageRows } = await supabase
+        .from('passages')
+        .select('id, text_id')
+        .in('id', candidates.map(c => c.source_id))
+      const textIdMap = new Map((passageRows ?? []).map((p: any) => [p.id, p.text_id]))
+      relatedPassages = candidates.map(r => ({
+        id: r.source_id,
+        textId: textIdMap.get(r.source_id) ?? textId,
+        sectionName: r.section_label,
+        mulaPreview: r.content?.slice(0, 80) ?? '',
+      }))
+    }
+  } catch {
+    // embeddings not yet populated — proceed without related passages
+  }
+
   const prevPassageId = prevRows?.[0]?.id ?? null
   const nextPassageId = nextRows?.[0]?.id ?? null
 
@@ -214,6 +260,7 @@ export default async function StudyPage({ params }: Props) {
             commentators={commentators}
             allPassages={allPassages ?? []}
             isLoggedIn={!!user}
+            relatedPassages={relatedPassages}
           />
         </div>
       </div>

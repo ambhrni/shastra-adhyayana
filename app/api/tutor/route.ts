@@ -2,14 +2,90 @@ import Anthropic from '@anthropic-ai/sdk'
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 import type { TutorMessage } from '@/types/database'
+import { embedText, TaskType } from '@/lib/embeddings-server'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
+
+interface RagContext {
+  passages: { sectionLabel: string; content: string }[]
+  chunks: { sectionLabel: string; content: string }[]
+  nyaya: { term: string; definition: string }[]
+}
+
+async function fetchSemanticContext(supabase: any, query: string): Promise<RagContext | null> {
+  try {
+    const embedding = await embedText(query, TaskType.RETRIEVAL_QUERY)
+    const { data, error } = await supabase.rpc('semantic_search', {
+      query_embedding: embedding,
+      match_count: 8,
+      search_passages: true,
+      search_chunks: true,
+      search_nyaya: true,
+      min_ocr_quality: 0.6,
+    })
+    if (error) return null
+    const rows = ((data ?? []) as {
+      source_type: string
+      content: string
+      section_label: string
+      similarity: number
+    }[]).filter(r => r.similarity > 0.65)
+    return {
+      passages: rows
+        .filter(r => r.source_type === 'passage')
+        .map(r => ({ sectionLabel: r.section_label, content: r.content })),
+      chunks: rows
+        .filter(r => r.source_type === 'reference')
+        .map(r => ({ sectionLabel: r.section_label, content: r.content })),
+      nyaya: rows
+        .filter(r => r.source_type === 'nyaya')
+        .map(r => ({ term: r.section_label, definition: r.content })),
+    }
+  } catch {
+    return null
+  }
+}
+
+function buildRagSection(rag: RagContext): string {
+  const hasAny = rag.passages.length > 0 || rag.chunks.length > 0 || rag.nyaya.length > 0
+  if (!hasAny) return ''
+
+  const parts: string[] = [
+    '\n\n---\n\n## SEMANTICALLY RETRIEVED CONTEXT',
+    'The following were retrieved as relevant to this question from the full corpus. ' +
+      'Use them to enrich your answer where genuinely helpful:',
+  ]
+
+  if (rag.passages.length > 0) {
+    parts.push('\n### Related passages from vādāvalī:')
+    for (const p of rag.passages) {
+      parts.push(`• ${p.sectionLabel}: ${p.content.slice(0, 300)}`)
+    }
+  }
+
+  if (rag.chunks.length > 0) {
+    parts.push('\n### From reference texts (Pramāṇapaddhati / Nyāyakośa):')
+    for (const c of rag.chunks) {
+      parts.push(`• ${c.sectionLabel}: ${c.content}`)
+    }
+  }
+
+  if (rag.nyaya.length > 0) {
+    parts.push('\n### Related nyāya concepts:')
+    for (const n of rag.nyaya) {
+      parts.push(`• ${n.term}: ${n.definition}`)
+    }
+  }
+
+  return parts.join('\n')
+}
 
 function buildSystemPrompt(
   mulaText: string,
   mulaTransliterated: string | null,
   commentaries: { commentatorName: string; text: string }[],
-  nyayaConcepts: { term: string; transliterated: string; definition: string; definitionSanskrit?: string }[]
+  nyayaConcepts: { term: string; transliterated: string; definition: string; definitionSanskrit?: string }[],
+  ragContext: RagContext | null
 ): string {
   const commentaryBlock = commentaries.length > 0
     ? commentaries.map(c => `--- ${c.commentatorName} ---\n${c.text}`).join('\n\n')
@@ -21,6 +97,8 @@ function buildSystemPrompt(
         (n.definitionSanskrit ? `\n  Sanskrit: ${n.definitionSanskrit}` : '')
       ).join('\n')
     : 'No nyāya concepts explicitly linked to this passage.'
+
+  const ragSection = ragContext ? buildRagSection(ragContext) : ''
 
   return `You are a deeply learned traditional paṇḍit in Mādhva Dvaita Vedānta, \
 trained in the paramparā of Madhvācārya — Jayatīrtha — Rāghavendra Tīrtha. \
@@ -181,7 +259,7 @@ ground your answer in the mūla and commentaries above. When the student asks qu
 range beyond this passage — about other sections of vādāvalī, about nyāya or Vedānta in \
 general, about Sanskrit grammar, about rival darśanas — answer them fully, bringing the \
 light of the broader tradition to bear, and connect back to this passage wherever the \
-connection is illuminating.`
+connection is illuminating.${ragSection}`
 }
 
 export async function POST(req: Request) {
@@ -195,8 +273,15 @@ export async function POST(req: Request) {
     sessionId?: string
   }
 
-  // Fetch passage context
-  const [{ data: passage }, { data: commentaries }, { data: nyayaLinks }] = await Promise.all([
+  // Fetch passage context and semantic context in parallel
+  const latestUserMessage = [...messages].reverse().find(m => m.role === 'user')?.content ?? ''
+
+  const [
+    { data: passage },
+    { data: commentaries },
+    { data: nyayaLinks },
+    ragContext,
+  ] = await Promise.all([
     supabase.from('passages').select('mula_text, mula_transliterated').eq('id', passageId).single(),
     supabase.from('commentaries')
       .select('commentary_text, commentator:commentators(name)')
@@ -205,6 +290,9 @@ export async function POST(req: Request) {
     supabase.from('passage_nyaya_links')
       .select('nyaya_concept:nyaya_concepts(term_sanskrit, term_transliterated, definition_english, definition_sanskrit)')
       .eq('passage_id', passageId),
+    latestUserMessage
+      ? fetchSemanticContext(supabase, latestUserMessage)
+      : Promise.resolve(null),
   ])
 
   if (!passage) return NextResponse.json({ error: 'Passage not found' }, { status: 404 })
@@ -230,7 +318,8 @@ export async function POST(req: Request) {
     passage.mula_text,
     passage.mula_transliterated,
     commentaryContext,
-    nyayaContext
+    nyayaContext,
+    ragContext,
   )
 
   // Build conversation for Claude
