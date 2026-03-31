@@ -150,13 +150,15 @@ async function main() {
   console.log(`Document ID : ${documentId}`)
 
   const chunks = chunkText(fullText)
+  const endAt  = parseInt(getArg('--end-at') ?? String(chunks.length - 1), 10)
   console.log(`Chunks generated : ${chunks.length}`)
   if (startFrom > 0) console.log(`Resuming from chunk index: ${startFrom}`)
+  if (endAt < chunks.length - 1) console.log(`Stopping at chunk index  : ${endAt}`)
   console.log()
 
   let inserted = 0, errors = 0
 
-  for (let i = startFrom; i < chunks.length; i++) {
+  for (let i = startFrom; i <= Math.min(endAt, chunks.length - 1); i++) {
     const printProgress = (i - startFrom) % 50 === 0
     if (printProgress) {
       const preview = chunks[i].slice(0, 40).replace(/\s+/g, ' ')

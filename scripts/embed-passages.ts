@@ -52,6 +52,7 @@ function getArg(flag: string): string | undefined {
 
 async function main() {
   const startFrom = parseInt(getArg('--start-from') ?? '0', 10)
+  const endAtArg  = getArg('--end-at')
 
   const { data: passages, error } = await supabase
     .from('passages')
@@ -64,13 +65,15 @@ async function main() {
     process.exit(1)
   }
 
+  const endAt = parseInt(endAtArg ?? String(passages.length - 1), 10)
   console.log(`Total approved passages : ${passages.length}`)
   if (startFrom > 0) console.log(`Resuming from index     : ${startFrom}`)
+  if (endAt < passages.length - 1) console.log(`Stopping at index       : ${endAt}`)
   console.log()
 
   let embedded = 0, errors = 0
 
-  for (let i = startFrom; i < passages.length; i++) {
+  for (let i = startFrom; i <= Math.min(endAt, passages.length - 1); i++) {
     const p = passages[i]
 
     const { data: commentaries } = await supabase
