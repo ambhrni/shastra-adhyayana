@@ -24,22 +24,41 @@ export default function ChatMessage({ message }: { message: TutorMessage }) {
         {isUser ? (
           message.content
         ) : (
-          <div className="overflow-x-auto">
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm]}
-              className="prose prose-stone prose-sm max-w-none
-                         prose-headings:font-semibold prose-headings:text-stone-800
-                         prose-strong:text-stone-800
-                         prose-blockquote:border-l-4 prose-blockquote:border-saffron-400 prose-blockquote:text-stone-600
-                         prose-table:w-full prose-table:border-collapse prose-table:text-sm
-                         prose-thead:bg-stone-100
-                         prose-th:border prose-th:border-stone-300 prose-th:px-3 prose-th:py-2 prose-th:text-stone-700 prose-th:font-semibold prose-th:text-left
-                         prose-td:border prose-td:border-stone-300 prose-td:px-3 prose-td:py-2 prose-td:align-top
-                         prose-code:text-stone-700"
-            >
-              {message.content}
-            </ReactMarkdown>
-          </div>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            className="prose prose-stone prose-sm max-w-none
+                       prose-headings:font-semibold prose-headings:text-stone-800
+                       prose-strong:text-stone-800
+                       prose-blockquote:border-l-4 prose-blockquote:border-saffron-400 prose-blockquote:text-stone-600
+                       prose-code:text-stone-700"
+            components={{
+              table: ({node, ...props}) => (
+                <div className="overflow-x-auto my-3">
+                  <table
+                    style={{borderCollapse: 'collapse', width: '100%', fontSize: '0.85em'}}
+                    {...props}
+                  />
+                </div>
+              ),
+              th: ({node, ...props}) => (
+                <th
+                  style={{border: '1px solid #d6d3d1', padding: '6px 10px',
+                          backgroundColor: '#f5f5f4', textAlign: 'left',
+                          fontWeight: '600', color: '#44403c'}}
+                  {...props}
+                />
+              ),
+              td: ({node, ...props}) => (
+                <td
+                  style={{border: '1px solid #d6d3d1', padding: '6px 10px',
+                          verticalAlign: 'top'}}
+                  {...props}
+                />
+              ),
+            }}
+          >
+            {message.content}
+          </ReactMarkdown>
         )}
       </div>
     </div>
