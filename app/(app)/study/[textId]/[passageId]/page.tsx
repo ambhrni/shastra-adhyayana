@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import MulaPanel from '@/components/study/MulaPanel'
 import CommentaryTabs from '@/components/study/CommentaryTabs'
 import StudyRightPanel from '@/components/study/StudyRightPanel'
+import ResizableSplitPane from '@/components/study/ResizableSplitPane'
 import Link from 'next/link'
 import { embedText, TaskType } from '@/lib/embeddings-server'
 
@@ -235,19 +236,18 @@ export default async function StudyPage({ params }: Props) {
         </div>
       )}
 
-      <div className="flex flex-1 overflow-hidden min-h-0">
-        {/* Left panel — 60% */}
-        <div className="w-3/5 overflow-y-auto border-r border-stone-200 p-6">
-          <MulaPanel passage={passage} isCurator={isCurator} />
-          <CommentaryTabs
-            key={passageId}
-            commentaries={commentaries}
-            isCurator={isCurator}
-          />
-        </div>
-
-        {/* Right panel — 40% */}
-        <div className="w-2/5 overflow-hidden flex flex-col">
+      <ResizableSplitPane
+        left={
+          <>
+            <MulaPanel passage={passage} isCurator={isCurator} />
+            <CommentaryTabs
+              key={passageId}
+              commentaries={commentaries}
+              isCurator={isCurator}
+            />
+          </>
+        }
+        right={
           <StudyRightPanel
             passage={passage}
             commentaries={commentaries}
@@ -262,8 +262,8 @@ export default async function StudyPage({ params }: Props) {
             isLoggedIn={!!user}
             relatedPassages={relatedPassages}
           />
-        </div>
-      </div>
+        }
+      />
     </div>
   )
 }
