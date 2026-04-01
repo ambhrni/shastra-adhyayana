@@ -1,5 +1,6 @@
 import type { TutorMessage } from '@/types/database'
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 export default function ChatMessage({ message }: { message: TutorMessage }) {
   const isUser = message.role === 'user'
@@ -24,11 +25,14 @@ export default function ChatMessage({ message }: { message: TutorMessage }) {
           message.content
         ) : (
           <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
             className="prose prose-stone prose-sm max-w-none
                        prose-headings:font-semibold prose-headings:text-stone-800
                        prose-strong:text-stone-800
                        prose-blockquote:border-l-4 prose-blockquote:border-saffron-400 prose-blockquote:text-stone-600
-                       prose-table:text-sm
+                       prose-table:w-full prose-table:text-sm
+                       prose-th:bg-stone-100 prose-th:text-stone-700
+                       prose-td:border prose-td:border-stone-200 prose-td:px-3 prose-td:py-1.5
                        prose-code:text-stone-700"
           >
             {message.content}

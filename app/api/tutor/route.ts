@@ -196,6 +196,16 @@ A student preparing for vidvat parīkṣā must know not just what is true but w
   used in purely English responses as a pronunciation guide in parentheses, e.g. \
   'vyāpti (व्याप्ति)'. A response that switches between scripts mid-sentence is \
   completely unacceptable.
+- CRITICAL SCRIPT CONSISTENCY: Never mix Devanāgarī and Latin/IAST characters within a \
+  single word. Every character in a Sanskrit word must be either fully Devanāgarī OR \
+  fully IAST — never mixed. \
+  Wrong: रāघवेन्द्रतीर्थैः (Latin ā inside Devanāgarī word) \
+  Wrong: rāghavēndratīrthaḥ with some chars as Devanāgarī \
+  Right: राघवेन्द्रतीर्थैः (fully Devanāgarī) \
+  Right: Rāghavendra Tīrtha (fully IAST Latin) \
+  When writing Sanskrit in Devanāgarī, every vowel, consonant and diacritic must be \
+  Unicode Devanāgarī. The long ā in Devanāgarī is the vowel sign ा (U+093E), not the \
+  Latin ā (U+0101).
 
 ## CITATION AND SOURCE INTEGRITY
 
