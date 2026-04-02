@@ -56,7 +56,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <span className="hidden md:block font-devanagari shrink-0 text-stone-400">
             तत्त्वसुधा — A jñānayajña for mokṣasādhana
           </span>
-          <span className="hidden lg:block italic text-[10px] text-stone-400 truncate">
+          <span className="hidden lg:block italic text-xs text-stone-400 truncate">
             AI content is for study assistance only — verify against authoritative sources.
           </span>
           <Link href="/about" className="hover:text-stone-600 transition-colors shrink-0">
