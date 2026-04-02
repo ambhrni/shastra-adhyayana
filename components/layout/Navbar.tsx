@@ -53,6 +53,13 @@ const linkClass = (active: boolean) =>
       : 'text-stone-300 hover:text-white hover:bg-stone-800'
   }`
 
+const mobileLinkClass = (active: boolean) =>
+  `flex items-center px-6 py-3 text-sm transition-colors ${
+    active
+      ? 'bg-stone-700 text-white'
+      : 'text-stone-300 hover:bg-stone-800 hover:text-white'
+  }`
+
 export default function Navbar({ displayName, role, texts }: NavbarProps) {
   const pathname = usePathname()
   const router = useRouter()
@@ -61,6 +68,7 @@ export default function Navbar({ displayName, role, texts }: NavbarProps) {
   const [results, setResults] = useState<SearchResults | null>(null)
   const [loading, setLoading] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -69,6 +77,11 @@ export default function Navbar({ displayName, role, texts }: NavbarProps) {
     await supabase.auth.signOut()
     router.push('/login')
   }
+
+  // Close mobile menu on navigation
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [pathname])
 
   // Debounced search
   useEffect(() => {
@@ -98,12 +111,13 @@ export default function Navbar({ displayName, role, texts }: NavbarProps) {
     return () => clearTimeout(timer)
   }, [query])
 
-  // Close on Escape or click outside
+  // Close search dropdown on Escape or click outside
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setDropdownOpen(false)
         setQuery('')
+        setMenuOpen(false)
       }
     }
     const handleClick = (e: MouseEvent) => {
@@ -135,16 +149,14 @@ export default function Navbar({ displayName, role, texts }: NavbarProps) {
   const isEmpty = results && !hasResults
 
   return (
-    <nav className="h-14 bg-stone-900 text-white flex items-center px-6 gap-4 shrink-0">
+    <nav className="h-14 bg-stone-900 text-white flex items-center px-4 gap-3 shrink-0 relative">
       {/* Brand */}
       <Link href="/" className="font-semibold tracking-tight text-amber-400 shrink-0 mr-2">
         Tattvasudhā
       </Link>
 
-      {/* Nav groups */}
-      <div className="flex items-center gap-1 flex-1 min-w-0">
-
-        {/* Group 1: texts, Parīkṣā, Dashboard */}
+      {/* Desktop nav groups — hidden on mobile */}
+      <div className="hidden md:flex items-center gap-1 flex-1 min-w-0">
         {texts.map(text => {
           const href = text.firstPassageId
             ? `/study/${text.id}/${text.firstPassageId}`
@@ -185,7 +197,6 @@ export default function Navbar({ displayName, role, texts }: NavbarProps) {
           <div className="w-px h-5 bg-stone-600 mx-2 shrink-0" />
         )}
 
-        {/* Group 2: NotebookLMs, About */}
         <Link href="/notebooks" className={linkClass(pathname === '/notebooks')}>
           NotebookLMs
         </Link>
@@ -194,7 +205,7 @@ export default function Navbar({ displayName, role, texts }: NavbarProps) {
         </Link>
       </div>
 
-      {/* Inline Search */}
+      {/* Search — desktop only */}
       <div ref={containerRef} className="relative hidden md:block shrink-0">
         <div className="relative">
           <svg
@@ -219,7 +230,6 @@ export default function Navbar({ displayName, role, texts }: NavbarProps) {
           )}
         </div>
 
-        {/* Dropdown */}
         {dropdownOpen && (
           <div className="absolute top-full mt-1 right-0 w-[480px] bg-stone-900 border border-stone-700 rounded-lg shadow-xl max-h-[400px] overflow-y-auto z-50">
             {isEmpty && (
@@ -279,11 +289,11 @@ export default function Navbar({ displayName, role, texts }: NavbarProps) {
         )}
       </div>
 
-      {/* User / auth */}
-      <div className="flex items-center gap-3 shrink-0">
+      {/* Auth + hamburger — pushed to right, always visible */}
+      <div className="ml-auto flex items-center gap-3 shrink-0">
         {displayName ? (
           <>
-            <span className="text-sm text-stone-400">{displayName}</span>
+            <span className="hidden md:inline text-sm text-stone-400 max-w-[120px] truncate">{displayName}</span>
             <button
               onClick={handleSignOut}
               className="text-sm text-stone-400 hover:text-white transition-colors"
@@ -298,13 +308,87 @@ export default function Navbar({ displayName, role, texts }: NavbarProps) {
             </Link>
             <Link
               href="/register"
-              className="text-sm bg-saffron-600 hover:bg-saffron-700 text-white px-3 py-1.5 rounded-md transition-colors"
+              className="text-sm text-stone-300 hover:text-white transition-colors md:bg-saffron-600 md:hover:bg-saffron-700 md:text-white md:px-3 md:py-1.5 md:rounded-md"
             >
               Register
             </Link>
           </>
         )}
+
+        {/* Hamburger — mobile only */}
+        <button
+          className="md:hidden p-1 text-stone-300 hover:text-white transition-colors"
+          onClick={() => setMenuOpen(v => !v)}
+          aria-label="Toggle menu"
+        >
+          {menuOpen ? (
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          ) : (
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          )}
+        </button>
       </div>
+
+      {/* Mobile dropdown menu */}
+      {menuOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="md:hidden fixed inset-0 top-14 z-40"
+            onClick={() => setMenuOpen(false)}
+          />
+          {/* Menu panel */}
+          <div className="md:hidden absolute top-14 left-0 right-0 bg-stone-900 border-t border-stone-700 shadow-xl z-50 py-2">
+            {texts.map(text => {
+              const href = text.firstPassageId
+                ? `/study/${text.id}/${text.firstPassageId}`
+                : '#'
+              const active =
+                pathname.startsWith(`/study/${text.id}`) ||
+                pathname.startsWith(`/pariksha/${text.id}`)
+              return (
+                <Link key={text.id} href={href} className={mobileLinkClass(active)}>
+                  {text.title_transliterated}
+                </Link>
+              )
+            })}
+
+            {textId && (
+              <Link
+                href={`/pariksha/${textId}`}
+                className={mobileLinkClass(pathname.startsWith(`/pariksha/${textId}`))}
+              >
+                Parīkṣā
+              </Link>
+            )}
+
+            {displayName && (
+              <Link href="/dashboard" className={mobileLinkClass(pathname === '/dashboard')}>
+                Dashboard
+              </Link>
+            )}
+
+            {(role === 'curator' || role === 'admin') && (
+              <Link href="/curator" className={mobileLinkClass(pathname.startsWith('/curator'))}>
+                Curator
+              </Link>
+            )}
+
+            <div className="h-px bg-stone-700 my-2 mx-6" />
+
+            <Link href="/notebooks" className={mobileLinkClass(pathname === '/notebooks')}>
+              NotebookLMs
+            </Link>
+            <Link href="/about" className={mobileLinkClass(pathname === '/about')}>
+              About
+            </Link>
+          </div>
+        </>
+      )}
     </nav>
   )
 }

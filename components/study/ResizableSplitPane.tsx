@@ -18,10 +18,20 @@ export default function ResizableSplitPane({
   maxLeftPercent = 80,
 }: Props) {
   const [leftPercent, setLeftPercent] = useState(defaultLeftPercent)
+  const [isMobile, setIsMobile] = useState(false)
+  const [mobileTab, setMobileTab] = useState<'left' | 'right'>('left')
   const containerRef = useRef<HTMLDivElement>(null)
   const dragging = useRef(false)
 
-  // Hydrate from localStorage after mount
+  // Detect mobile
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
+  // Hydrate split position from localStorage
   useEffect(() => {
     const saved = localStorage.getItem('study-split-position')
     if (saved) {
@@ -84,6 +94,49 @@ export default function ResizableSplitPane({
     }
   }, [])
 
+  // ── Mobile: tab layout ───────────────────────────────────────────────────
+  if (isMobile) {
+    return (
+      <div className="flex flex-col flex-1 overflow-hidden min-h-0">
+        {/* Tab bar — stays at top as content scrolls */}
+        <div className="flex shrink-0 bg-stone-800 border-b border-stone-700">
+          <button
+            onClick={() => setMobileTab('left')}
+            className={`flex-1 py-3 text-sm font-medium transition-colors ${
+              mobileTab === 'left'
+                ? 'text-white border-b-2 border-saffron-500'
+                : 'text-stone-400 hover:text-stone-200'
+            }`}
+          >
+            Text
+          </button>
+          <button
+            onClick={() => setMobileTab('right')}
+            className={`flex-1 py-3 text-sm font-medium transition-colors ${
+              mobileTab === 'right'
+                ? 'text-white border-b-2 border-saffron-500'
+                : 'text-stone-400 hover:text-stone-200'
+            }`}
+          >
+            Tutor &amp; Notes
+          </button>
+        </div>
+
+        {/* Panel content */}
+        {mobileTab === 'left' ? (
+          <div className="flex-1 overflow-y-auto p-4">
+            {left}
+          </div>
+        ) : (
+          <div className="flex-1 flex flex-col overflow-hidden">
+            {right}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  // ── Desktop: resizable split pane ────────────────────────────────────────
   return (
     <div ref={containerRef} className="flex flex-1 overflow-hidden min-h-0">
       {/* Left panel */}
@@ -101,7 +154,6 @@ export default function ResizableSplitPane({
         className="relative w-1 shrink-0 bg-stone-700 hover:bg-saffron-600 active:bg-saffron-600 cursor-col-resize transition-colors duration-150 group select-none z-10"
         title="Drag to resize"
       >
-        {/* Vertical grip — three short bars */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 pointer-events-none">
           <div className="w-0.5 h-4 rounded-full bg-stone-500 group-hover:bg-white transition-colors duration-150" />
           <div className="w-0.5 h-4 rounded-full bg-stone-500 group-hover:bg-white transition-colors duration-150" />
