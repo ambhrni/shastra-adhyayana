@@ -215,20 +215,21 @@ export default async function StudyPage({ params }: Props) {
     <div className="flex flex-col h-full overflow-hidden">
       {/* Guest banner */}
       {!user && (
-        <div className="shrink-0 flex items-center justify-between gap-4 px-5 py-2.5 bg-amber-50 border-b border-amber-200 text-sm">
-          <span className="text-amber-900">
-            Join Tattvasudhā to ask questions, track your progress, and take parīkṣā.
+        <div className="shrink-0 flex items-center justify-between gap-2 px-3 py-1.5 md:px-5 md:py-2.5 bg-amber-50 border-b border-amber-200">
+          <span className="text-xs md:text-sm text-amber-900 truncate">
+            <span className="hidden sm:inline">Join Tattvasudhā to ask questions, track your progress, and take parīkṣā.</span>
+            <span className="sm:hidden">Join Tattvasudhā to study.</span>
           </span>
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1.5 shrink-0">
             <Link
               href="/register"
-              className="bg-saffron-600 hover:bg-saffron-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
+              className="bg-saffron-600 hover:bg-saffron-700 text-white text-xs font-medium px-2 py-1 md:px-3 md:py-1.5 rounded-lg transition-colors"
             >
-              Register free
+              Register
             </Link>
             <Link
               href="/login"
-              className="text-saffron-700 hover:text-saffron-800 text-xs font-medium px-3 py-1.5 rounded-lg border border-saffron-300 hover:bg-saffron-50 transition-colors"
+              className="text-saffron-700 hover:text-saffron-800 text-xs font-medium px-2 py-1 md:px-3 md:py-1.5 rounded-lg border border-saffron-300 hover:bg-saffron-50 transition-colors"
             >
               Login
             </Link>

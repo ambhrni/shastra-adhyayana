@@ -51,13 +51,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         {children}
       </main>
       <footer className="shrink-0 border-t border-stone-200 bg-stone-50 px-6 py-2 text-xs text-stone-400">
-        <div className="flex items-center justify-between">
-          <span>© 2025 Narayanan Venkataraman. Platform and curation rights reserved. Sanskrit source texts are in the public domain.</span>
-          <span className="hidden md:block font-devanagari">तत्त्वसुधा — A jñānayajña for mokṣasādhana</span>
+        <div className="flex items-center justify-between gap-4">
+          <span className="truncate">© 2025 Narayanan Venkataraman. Platform and curation rights reserved.</span>
+          <span className="hidden md:block font-devanagari shrink-0">तत्त्वसुधा — A jñānayajña for mokṣasādhana</span>
           <Link href="/about" className="hover:text-stone-600 transition-colors shrink-0">About</Link>
-        </div>
-        <div className="border-t border-stone-200 mt-2 pt-2 text-center italic">
-          AI-generated content on this platform — including tutor responses, parīkṣā feedback, and nyāya concept definitions — is provided for study assistance only. While every effort is made to ensure accuracy, AI responses may contain errors. Users are encouraged to verify critical philosophical and textual claims against authoritative printed editions and consult qualified scholars. The curator is not responsible for decisions made based solely on AI-generated content.
         </div>
       </footer>
     </div>

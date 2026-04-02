@@ -79,7 +79,7 @@ export default async function LibraryPage() {
   const firstName = (profile as any)?.display_name?.split(' ')[0] ?? null
 
   return (
-    <div className="max-w-6xl mx-auto px-6 pt-10 pb-20">
+    <div className="max-w-6xl mx-auto px-6 pt-10 pb-6">
       {/* Greeting */}
       <div className="mb-10">
         {firstName ? (
