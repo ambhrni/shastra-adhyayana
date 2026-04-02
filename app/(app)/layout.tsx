@@ -50,15 +50,19 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <main className="flex-1 overflow-auto">
         {children}
       </main>
-      <footer className="shrink-0 border-t border-stone-200 bg-stone-50 px-6 py-2 text-xs text-stone-400">
-        <div className="flex items-center justify-between gap-4">
-          <span className="truncate">© 2025 Narayanan Venkataraman. Platform and curation rights reserved.</span>
-          <span className="hidden md:block font-devanagari shrink-0">तत्त्वसुधा — A jñānayajña for mokṣasādhana</span>
-          <Link href="/about" className="hover:text-stone-600 transition-colors shrink-0">About</Link>
+      <footer className="shrink-0 border-t border-stone-200 bg-white">
+        <div className="flex items-center justify-between px-6 py-2 text-xs text-stone-400 gap-4">
+          <span className="shrink-0">© 2025 Narayanan Venkataraman.</span>
+          <span className="hidden md:block font-devanagari shrink-0 text-stone-400">
+            तत्त्वसुधा — A jñānayajña for mokṣasādhana
+          </span>
+          <span className="hidden lg:block italic text-[10px] text-stone-400 truncate">
+            AI content is for study assistance only — verify against authoritative sources.
+          </span>
+          <Link href="/about" className="hover:text-stone-600 transition-colors shrink-0">
+            About
+          </Link>
         </div>
-        <p className="text-center text-[10px] text-stone-400 italic px-4 pb-1">
-          AI-generated content is for study assistance only — verify critical claims against authoritative sources.
-        </p>
       </footer>
     </div>
   )
