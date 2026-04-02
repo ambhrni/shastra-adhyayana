@@ -70,6 +70,12 @@ export default function TextCard({ text, progressPercent, firstUnfinishedPassage
         )}
 
         <Link
+          href={`/texts/${text.id}/intro`}
+          className="w-full inline-flex items-center justify-center border border-saffron-600 text-saffron-700 hover:bg-saffron-50 text-sm font-medium py-2 px-4 rounded-lg transition-colors"
+        >
+          Overview →
+        </Link>
+        <Link
           href={href}
           className="mt-auto w-full inline-flex items-center justify-center bg-saffron-600 hover:bg-saffron-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors"
         >
