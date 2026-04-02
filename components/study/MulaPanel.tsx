@@ -9,6 +9,11 @@ interface MulaPanelProps {
 export default function MulaPanel({ passage, isCurator }: MulaPanelProps) {
   return (
     <div className="mb-8">
+      {passage.section_name && (
+        <p className="text-sm text-stone-400 font-devanagari mb-2 leading-snug">
+          {passage.section_name}
+        </p>
+      )}
       <div className="flex items-center gap-3 mb-4">
         <span className="text-xs font-medium text-stone-400 uppercase tracking-wide">
           {passage.section_number != null ? `§${passage.section_number}` : ''}

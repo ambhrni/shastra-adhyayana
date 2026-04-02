@@ -1,0 +1,16 @@
+7d833fa Add /og-image to PUBLIC_ROUTES so middleware does not redirect it to /login
+7422be9 Fix OG image blank screen: add font load try/catch with serif fallback
+8e3d5f2 Fix OG image Devanāgarī rendering: use local TTF font instead of Google Fonts CSS fetch
+diff --git a/middleware.ts b/middleware.ts
+index 4b86023..aa0c87a 100644
+--- a/middleware.ts
++++ b/middleware.ts
+@@ -2,7 +2,7 @@ import { createServerClient } from '@supabase/ssr'
+ import { NextResponse, type NextRequest } from 'next/server'
+ 
+ // Exact public paths
+-const PUBLIC_ROUTES = new Set(['/', '/login', '/register', '/notebooks', '/about'])
++const PUBLIC_ROUTES = new Set(['/', '/login', '/register', '/notebooks', '/about', '/og-image'])
+ // Public path prefixes — anything under these is public
+ const PUBLIC_PREFIXES = ['/study/']
+ 

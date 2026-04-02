@@ -1,0 +1,74 @@
+Retrieving project…
+Deploying ambhrnis-projects/shastra-adhyayana
+Uploading [--------------------] (0.0B/2.4KB)
+Uploading [====================] (2.4KB/2.4KB)
+Inspect: https://vercel.com/ambhrnis-projects/shastra-adhyayana/E8wNUeMjmfDLNKf5qjytuaNY7K74 [1s]
+Production: https://shastra-adhyayana-4xh1ehzcg-ambhrnis-projects.vercel.app [1s]
+https://shastra-adhyayana-4xh1ehzcg-ambhrnis-projects.vercel.appBuilding...
+Building...
+Building: Running build in Washington, D.C., USA (East) – iad1
+Building: Build machine configuration: 2 cores, 8 GB
+Building: Retrieving list of deployment files...
+Building: Downloading 110 deployment files...
+Building: Restored build cache from previous deployment (4EkDPoGMBnFhhU1jF7QHqTrbQd46)
+Building: Running "vercel build"
+Building: Vercel CLI 50.37.3
+Building: Installing dependencies...
+Building: up to date in 988ms
+Building: 238 packages are looking for funding
+Building: run `npm fund` for details
+Building: Detected Next.js version: 14.2.35
+Building: Running "npm run build"
+Building: > nextapp@0.1.0 build
+Building: > next build
+Building: ▲ Next.js 14.2.35
+Building: Creating an optimized production build ...
+Building: ✓ Compiled successfully
+Building: Skipping validation of types
+Building: Skipping linting
+Building: Collecting page data ...
+Building: Generating static pages (0/18) ...
+Building: Generating static pages (4/18)
+Building: Generating static pages (8/18)
+Building: Generating static pages (13/18)
+Building: ✓ Generating static pages (18/18)
+Building: Finalizing page optimization ...
+Building: Collecting build traces ...
+Building: Route (app)                              Size     First Load JS
+Building: ┌ ƒ /                                    178 B          96.2 kB
+Building: ├ ○ /_not-found                          873 B          88.2 kB
+Building: ├ ƒ /about                               1.01 kB        88.3 kB
+Building: ├ ƒ /api/flags                           0 B                0 B
+Building: ├ ƒ /api/pariksha                        0 B                0 B
+Building: ├ ƒ /api/progress                        0 B                0 B
+Building: ├ ƒ /api/search                          0 B                0 B
+Building: ├ ƒ /api/tutor                           0 B                0 B
+Building: ├ ƒ /curator                             5.66 kB         158 kB
+Building: ├ ƒ /dashboard                           104 kB          208 kB
+Building: ├ ○ /icon.svg                            0 B                0 B
+Building: ├ ○ /login                               1.46 kB         153 kB
+Building: ├ ƒ /notebooks                           178 B          96.2 kB
+Building: ├ ○ /og-preview                          753 B          88.1 kB
+Building: ├ ƒ /pariksha/[textId]                   4.09 kB         147 kB
+Building: ├ ○ /register                            1.51 kB         153 kB
+Building: └ ƒ /study/[textId]/[passageId]          51.5 kB         203 kB
+Building: + First Load JS shared by all            87.3 kB
+Building: ├ chunks/117-902b8f75c68c4cfd.js       31.7 kB
+Building: ├ chunks/fd9d1056-e59ed79977a2f428.js  53.6 kB
+Building: └ other shared chunks (total)          1.95 kB
+Building: ƒ Middleware                             75.2 kB
+Building: ○  (Static)   prerendered as static content
+Building: ƒ  (Dynamic)  server-rendered on demand
+Building: Traced Next.js server files in: 32.26ms
+Building: Created all serverless functions in: 105.843ms
+Building: Collected static files (public/, static/, .next/static): 26.976ms
+Building: Build Completed in /vercel/output [21s]
+Building: Deploying outputs...
+Building: Deployment completed
+[2K[1A[2K[GProduction: https://shastra-adhyayana-4xh1ehzcg-ambhrnis-projects.vercel.app [38s]
+Completing...
+Aliased: https://www.tattvasudha.org [38s]
+
+Common next commands:
+- `vercel inspect shastra-adhyayana-4xh1ehzcg-ambhrnis-projects.vercel.app --logs`
+- `vercel redeploy shastra-adhyayana-4xh1ehzcg-ambhrnis-projects.vercel.app`

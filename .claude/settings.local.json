@@ -1,5 +1,6 @@
 {
   "permissions": {
+    "defaultMode": "bypassPermissions",
     "allow": [
       "Bash(npm --version)",
       "Bash(echo $PATH)",
@@ -17,7 +18,33 @@
       "Bash(git init:*)",
       "Bash(git:*)",
       "Bash(echo \"Exit code: $?\")",
-      "Bash(printf:*)"
+      "Bash(printf:*)",
+      "Bash(echo \"EXIT_CODE:$?\")",
+      "Bash(echo \"STEP1_EXIT:$?\")",
+      "Bash(vercel:*)",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(cmd /c \"dir C:\\\\Projects\\\\vadavali-app\\\\app /b\" 2>&1)",
+      "Bash(find C:/Projects/vadavali-app/app -path *auth* -type f)",
+      "Bash(find C:Projectsvadavali-appapp -path *auth* -type f)",
+      "Bash(powershell -Command \"Get-ChildItem -Path 'C:\\\\Projects\\\\vadavali-app\\\\public' -Force | Select-Object Name\")",
+      "Bash(powershell -Command \"Get-ChildItem -Path 'C:\\\\Projects\\\\vadavali-app\\\\app\\\\\\(auth\\\\\\)' -Recurse -Force | Select-Object FullName\")",
+      "Bash(git add:*)",
+      "Bash(find . -maxdepth 3 -type f -name *.sql)",
+      "Bash(echo \"EXIT CODE: $?\")",
+      "Bash(powershell.exe -Command \"Set-Location 'C:/Projects/vadavali-app'; git log --oneline -5 2>&1 | Out-String\")",
+      "Bash(git -C \"/c/Projects/vadavali-app\" add LICENSE CONTRIBUTING.md \"app/\\(app\\)/about/page.tsx\" \"app/\\(app\\)/layout.tsx\" components/tutor/TutorSidebar.tsx components/pariksha/ExamSession.tsx)",
+      "Read(//tmp/**)",
+      "Bash(git -C \"C:/Projects/vadavali-app\" add LICENSE CONTRIBUTING.md \"app/\\(app\\)/about/page.tsx\" \"app/\\(app\\)/layout.tsx\" \"components/tutor/TutorSidebar.tsx\" \"components/pariksha/ExamSession.tsx\")",
+      "Bash(\"C:/Projects/vadavali-app/vercel-deploy.log\")",
+      "Bash(curl -s -A \"Mozilla/4.0 \\(compatible; MSIE 6.0; Windows NT 5.1; SV1\\)\" \"https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400&display=block\")",
+      "Bash(echo \"exit:$?\")",
+      "Bash(curl -L \"https://fonts.gstatic.com/l/font?kit=TuGoUUFzXI5FBtUq5a8bjKYTZjtRU6Sgv3NaV_SNmI0b8QQCQmHn6B2OHjbL_08AlXQly-E&skey=c202a598b7d2afc7&v=v30\" -o \"C:/Projects/vadavali-app/public/fonts/NotoSansDevanagari-Regular.ttf\")",
+      "Bash(curl -L \"https://github.com/googlefonts/noto-fonts/raw/main/hinted/ttf/NotoSansDevanagari/NotoSansDevanagari-Regular.ttf\" -o \"C:/Projects/vadavali-app/public/fonts/NotoSansDevanagari.ttf\")",
+      "Bash(curl:*)",
+      "Bash(npx ts-node:*)",
+      "Bash(node -e \"require\\(''child_process''\\).execSync\\(''npx ts-node --project tsconfig.scripts.json scripts/list-gemini-models.ts'', {stdio:''inherit''}\\)\")",
+      "Bash(echo \"done $?\")",
+      "Skill(update-config)"
     ]
   }
 }

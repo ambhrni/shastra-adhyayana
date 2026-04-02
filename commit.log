@@ -1,0 +1,4 @@
+[master f05b7fb] Fix embedding model API version: use v1 for text-embedding-004
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+To https://github.com/ambhrni/shastra-adhyayana.git
+   60390af..f05b7fb  master -> master
