@@ -155,6 +155,11 @@ export default function Navbar({ displayName, role, texts }: NavbarProps) {
         Tattvasudhā
       </Link>
 
+      {/* Centered auspicious marker */}
+      <div className="absolute left-1/2 -translate-x-1/2 font-devanagari text-sm text-amber-400 pointer-events-none">
+        ॥ श्रीः ॥
+      </div>
+
       {/* Desktop nav groups — hidden on mobile */}
       <div className="hidden md:flex items-center gap-1 flex-1 min-w-0">
         {texts.map(text => {
