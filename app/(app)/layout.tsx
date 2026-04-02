@@ -56,6 +56,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <span className="hidden md:block font-devanagari shrink-0">तत्त्वसुधा — A jñānayajña for mokṣasādhana</span>
           <Link href="/about" className="hover:text-stone-600 transition-colors shrink-0">About</Link>
         </div>
+        <p className="text-center text-[10px] text-stone-400 italic px-4 pb-1">
+          AI-generated content is for study assistance only — verify critical claims against authoritative sources.
+        </p>
       </footer>
     </div>
   )
