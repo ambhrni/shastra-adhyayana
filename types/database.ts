@@ -179,3 +179,27 @@ export interface StudyStreak {
   longest_streak: number
   last_study_date: string | null
 }
+
+export interface VideoChannel {
+  id: string
+  name: string
+  subtitle: string | null
+  youtube_channel_url: string
+  description: string | null
+  display_order: number
+  is_published: boolean
+  created_at: string
+}
+
+export interface Video {
+  id: string
+  channel_id: string
+  title: string
+  youtube_url: string
+  video_id: string
+  thumbnail_url: string
+  description: string | null
+  display_order: number
+  is_published: boolean
+  created_at: string
+}

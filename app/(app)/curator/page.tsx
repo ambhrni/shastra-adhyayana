@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import PassageList from '@/components/curator/PassageList'
 import FlaggedErrorsList from '@/components/curator/FlaggedErrorsList'
 import NotebooksAdmin from '@/components/curator/NotebooksAdmin'
+import VideosAdmin from '@/components/curator/VideosAdmin'
 import TextThumbnailEdit from '@/components/curator/TextThumbnailEdit'
 
 interface Props {
@@ -25,8 +26,8 @@ export default async function CuratorPage({ searchParams }: Props) {
   const isAdmin = profile.role === 'admin'
   const activeTab = searchParams.tab ?? 'passages'
 
-  // Guard: non-admins can't access notebooks tab
-  if (activeTab === 'notebooks' && !isAdmin) redirect('/curator')
+  // Guard: non-admins can't access admin-only tabs
+  if ((activeTab === 'notebooks' || activeTab === 'videos') && !isAdmin) redirect('/curator')
 
   // ── Fetch data for active tab only ───────────────────────────────────────
 
@@ -34,6 +35,7 @@ export default async function CuratorPage({ searchParams }: Props) {
   let passagesByText: Record<string, any[]> = {}
   let flags: any[] = []
   let notebooks: any[] = []
+  let videoChannels: any[] = []
 
   if (activeTab === 'passages') {
     const { data: textsData } = await supabase
@@ -62,6 +64,17 @@ export default async function CuratorPage({ searchParams }: Props) {
     notebooks = notebooksData ?? []
   }
 
+  if (activeTab === 'videos' && isAdmin) {
+    const { data: channelsData } = await supabase
+      .from('video_channels').select('*').order('display_order')
+    const { data: videosData } = await supabase
+      .from('videos').select('*').order('display_order')
+    videoChannels = (channelsData ?? []).map((ch: any) => ({
+      ...ch,
+      videos: (videosData ?? []).filter((v: any) => v.channel_id === ch.id),
+    }))
+  }
+
   // ── Shared open-flag count for the Flags tab badge ────────────────────────
   const { count: openFlagCount } = await supabase
     .from('flagged_errors')
@@ -73,6 +86,7 @@ export default async function CuratorPage({ searchParams }: Props) {
     { id: 'passages', label: 'Passages', href: '/curator' },
     { id: 'flags', label: 'Flagged Errors', href: '/curator?tab=flags', badge: openFlagCount ?? 0 },
     ...(isAdmin ? [{ id: 'notebooks', label: 'Notebooks', href: '/curator?tab=notebooks', badge: 0 }] : []),
+    ...(isAdmin ? [{ id: 'videos', label: 'Videos', href: '/curator?tab=videos', badge: 0 }] : []),
   ]
 
   return (
@@ -148,6 +162,13 @@ export default async function CuratorPage({ searchParams }: Props) {
       {activeTab === 'notebooks' && isAdmin && (
         <section>
           <NotebooksAdmin initialNotebooks={notebooks} />
+        </section>
+      )}
+
+      {/* ── Videos tab (admin only) ── */}
+      {activeTab === 'videos' && isAdmin && (
+        <section>
+          <VideosAdmin initialChannels={videoChannels} />
         </section>
       )}
     </div>

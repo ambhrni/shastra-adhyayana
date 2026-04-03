@@ -2,7 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 // Exact public paths
-const PUBLIC_ROUTES = new Set(['/', '/login', '/register', '/notebooks', '/about', '/og-preview', '/api/search'])
+const PUBLIC_ROUTES = new Set(['/', '/login', '/register', '/notebooks', '/about', '/og-preview', '/api/search', '/videos'])
 // Public path prefixes — anything under these is public
 const PUBLIC_PREFIXES = ['/study/', '/texts/']
 

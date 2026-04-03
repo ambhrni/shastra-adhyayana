@@ -209,6 +209,9 @@ export default function Navbar({ displayName, role, texts }: NavbarProps) {
         <Link href="/notebooks" className={linkClass(pathname === '/notebooks')}>
           NotebookLMs
         </Link>
+        <Link href="/videos" className={linkClass(pathname === '/videos')}>
+          Videos
+        </Link>
         <Link href="/about" className={linkClass(pathname === '/about')}>
           About
         </Link>
@@ -418,6 +421,9 @@ export default function Navbar({ displayName, role, texts }: NavbarProps) {
 
             <Link href="/notebooks" className={mobileLinkClass(pathname === '/notebooks')}>
               NotebookLMs
+            </Link>
+            <Link href="/videos" className={mobileLinkClass(pathname === '/videos')}>
+              Videos
             </Link>
             <Link href="/about" className={mobileLinkClass(pathname === '/about')}>
               About

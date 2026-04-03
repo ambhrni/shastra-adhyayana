@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import TextCard from '@/components/library/TextCard'
 import NotebookCard from '@/components/notebooks/NotebookCard'
+import Link from 'next/link'
 
 export default async function LibraryPage() {
   const supabase = createClient()
@@ -10,6 +11,7 @@ export default async function LibraryPage() {
     { data: profile },
     { data: texts },
     { data: notebooks },
+    { data: channelsData },
   ] = await Promise.all([
     user
       ? supabase.from('user_profiles').select('display_name').eq('id', user.id).single()
@@ -24,7 +26,26 @@ export default async function LibraryPage() {
       .select('*')
       .eq('is_published', true)
       .order('display_order'),
+    supabase
+      .from('video_channels')
+      .select('id, name, subtitle, youtube_channel_url')
+      .eq('is_published', true)
+      .order('display_order'),
   ])
+
+  // Fetch first 2 published videos per channel
+  const channelPreviews = await Promise.all(
+    (channelsData ?? []).map(async (ch: any) => {
+      const { data: videos } = await supabase
+        .from('videos')
+        .select('id, title, thumbnail_url, youtube_url')
+        .eq('channel_id', ch.id)
+        .eq('is_published', true)
+        .order('display_order')
+        .limit(2)
+      return { ...ch, videos: videos ?? [] }
+    })
+  )
 
   // Per-text: passage counts + progress + first/resume passage id
   const textData = await Promise.all(
@@ -101,11 +122,11 @@ export default async function LibraryPage() {
         )}
       </div>
 
-      {/* Two-column layout */}
+      {/* Three-column layout */}
       <div className="flex flex-col lg:flex-row gap-10">
 
-        {/* Left — Texts (60%) */}
-        <div className="lg:w-3/5">
+        {/* Left — Texts (50%) */}
+        <div className="lg:w-1/2">
           <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wider mb-5">
             Self-Study Courses
           </h2>
@@ -127,8 +148,8 @@ export default async function LibraryPage() {
           )}
         </div>
 
-        {/* Right — NotebookLMs (40%) */}
-        <div className="lg:w-2/5">
+        {/* Middle — NotebookLMs (25%) */}
+        <div className="lg:w-1/4">
           <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wider mb-5">
             NotebookLMs
           </h2>
@@ -141,6 +162,72 @@ export default async function LibraryPage() {
             <div className="space-y-5">
               {(notebooks ?? []).map(nb => (
                 <NotebookCard key={nb.id} notebook={nb} />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Right — Video Resources (25%) */}
+        <div className="lg:w-1/4">
+          <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wider mb-5">
+            Video Resources
+          </h2>
+          {channelPreviews.length === 0 ? (
+            <div className="text-center py-16 text-stone-400">
+              <p className="text-sm">Videos coming soon</p>
+            </div>
+          ) : (
+            <div className="space-y-5">
+              {channelPreviews.map((ch: any) => (
+                <div
+                  key={ch.id}
+                  className="bg-white rounded-2xl border border-stone-200 shadow-sm p-4 space-y-3"
+                >
+                  <div>
+                    <p className="font-semibold text-stone-900 text-sm leading-snug">{ch.name}</p>
+                    {ch.subtitle && (
+                      <p className="text-xs text-stone-500 mt-0.5">{ch.subtitle}</p>
+                    )}
+                  </div>
+
+                  {ch.videos.length > 0 && (
+                    <div className="grid grid-cols-2 gap-1.5">
+                      {ch.videos.map((v: any) => (
+                        <a
+                          key={v.id}
+                          href={v.youtube_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block rounded overflow-hidden border border-stone-100 hover:border-stone-300 transition-colors"
+                          title={v.title}
+                        >
+                          <img
+                            src={v.thumbnail_url}
+                            alt={v.title}
+                            className="w-full aspect-video object-cover"
+                          />
+                        </a>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between pt-0.5">
+                    <Link
+                      href="/videos"
+                      className="text-xs font-medium text-saffron-700 hover:text-saffron-800 transition-colors"
+                    >
+                      View all →
+                    </Link>
+                    <a
+                      href={ch.youtube_channel_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-red-600 hover:text-red-700 transition-colors"
+                    >
+                      YouTube ↗
+                    </a>
+                  </div>
+                </div>
               ))}
             </div>
           )}
