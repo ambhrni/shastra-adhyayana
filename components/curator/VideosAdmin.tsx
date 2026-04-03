@@ -217,16 +217,13 @@ export default function VideosAdmin({ initialChannels }: { initialChannels: Chan
                 <button
                   type="button"
                   onClick={() => toggleChannelPublished(channel.id, channel.is_published)}
-                  className={`relative w-8 h-4.5 rounded-full transition-colors ${
-                    channel.is_published ? 'bg-green-500' : 'bg-stone-300'
+                  className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                    channel.is_published ? 'bg-saffron-600' : 'bg-stone-300'
                   }`}
-                  style={{ width: 32, height: 18 }}
                 >
-                  <span
-                    className={`absolute top-0.5 w-3.5 h-3.5 bg-white rounded-full shadow transition-transform ${
-                      channel.is_published ? 'translate-x-[14px]' : 'translate-x-0.5'
-                    }`}
-                  />
+                  <span className={`pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow transform transition duration-200 ease-in-out ${
+                    channel.is_published ? 'translate-x-4' : 'translate-x-0'
+                  }`} />
                 </button>
               </label>
               <a
@@ -289,16 +286,14 @@ export default function VideosAdmin({ initialChannels }: { initialChannels: Chan
                 <button
                   type="button"
                   onClick={() => toggleVideoPublished(channel.id, video.id, video.is_published)}
-                  className={`relative shrink-0 rounded-full transition-colors`}
-                  style={{ width: 32, height: 18 }}
                   title={video.is_published ? 'Published — click to unpublish' : 'Unpublished — click to publish'}
+                  className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                    video.is_published ? 'bg-saffron-600' : 'bg-stone-300'
+                  }`}
                 >
-                  <span className={`absolute inset-0 rounded-full transition-colors ${video.is_published ? 'bg-green-500' : 'bg-stone-300'}`} />
-                  <span
-                    className={`absolute top-0.5 w-3.5 h-3.5 bg-white rounded-full shadow transition-transform ${
-                      video.is_published ? 'translate-x-[14px]' : 'translate-x-0.5'
-                    }`}
-                  />
+                  <span className={`pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow transform transition duration-200 ease-in-out ${
+                    video.is_published ? 'translate-x-4' : 'translate-x-0'
+                  }`} />
                 </button>
 
                 {/* Delete */}
