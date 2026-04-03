@@ -40,6 +40,7 @@ export default function SearchModal({ onClose }: SearchModalProps) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<SearchResults | null>(null)
   const [loading, setLoading] = useState(false)
+  const [expandedId, setExpandedId] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -57,6 +58,7 @@ export default function SearchModal({ onClose }: SearchModalProps) {
   useEffect(() => {
     if (!query.trim()) {
       setResults(null)
+      setExpandedId(null)
       return
     }
     const timer = setTimeout(async () => {
@@ -69,6 +71,7 @@ export default function SearchModal({ onClose }: SearchModalProps) {
         })
         const data = await res.json()
         setResults(data)
+        setExpandedId(null)
       } catch {
         setResults({ passages: [], chunks: [], nyaya: [] })
       } finally {
@@ -84,9 +87,14 @@ export default function SearchModal({ onClose }: SearchModalProps) {
   const isEmpty = results && !hasResults
 
   const navigate = useCallback((textId: string, passageId: string) => {
+    if (!textId) return
     router.push(`/study/${textId}/${passageId}`)
     onClose()
   }, [router, onClose])
+
+  const toggleExpand = useCallback((id: string) => {
+    setExpandedId(prev => prev === id ? null : id)
+  }, [])
 
   return (
     <div
@@ -140,13 +148,20 @@ export default function SearchModal({ onClose }: SearchModalProps) {
                     <button
                       key={p.id}
                       onClick={() => navigate(p.textId, p.id)}
-                      className="w-full text-left px-3 py-2 rounded-lg hover:bg-stone-50 transition-colors"
+                      disabled={!p.textId}
+                      className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
+                        p.textId
+                          ? 'cursor-pointer hover:bg-stone-100'
+                          : 'cursor-not-allowed opacity-50'
+                      }`}
                     >
-                      <div className="text-xs font-medium text-saffron-700 mb-0.5">
+                      <div className="text-xs font-medium text-amber-700 mb-0.5">
                         {p.sectionName ?? 'Passage'}
                       </div>
-                      <div className="text-xs text-stone-500 line-clamp-2 font-mono leading-relaxed">
-                        {p.mulaPreview}
+                      <div className="text-xs text-stone-500 font-mono leading-relaxed">
+                        {p.mulaPreview.length > 120
+                          ? p.mulaPreview.slice(0, 120) + '…'
+                          : p.mulaPreview}
                       </div>
                     </button>
                   ))}
@@ -158,12 +173,32 @@ export default function SearchModal({ onClose }: SearchModalProps) {
               <div className="px-4 py-3">
                 <p className="text-xs font-semibold text-stone-400 uppercase tracking-wide mb-2">Reference Texts</p>
                 <div className="space-y-1">
-                  {results!.chunks.map(c => (
-                    <div key={c.id} className="px-3 py-2">
-                      <div className="text-xs font-medium text-stone-600 mb-0.5">{c.sectionLabel}</div>
-                      <div className="text-xs text-stone-500 line-clamp-3 leading-relaxed">{c.content}</div>
-                    </div>
-                  ))}
+                  {results!.chunks.map(c => {
+                    const isExpanded = expandedId === c.id
+                    const preview = c.content.length > 200
+                      ? c.content.slice(0, 200) + '…'
+                      : c.content
+                    return (
+                      <div
+                        key={c.id}
+                        onClick={() => toggleExpand(c.id)}
+                        className="px-3 py-2 cursor-pointer hover:bg-stone-100 rounded-lg transition-colors"
+                      >
+                        <div className="flex items-center justify-between mb-0.5">
+                          <span className="text-xs font-medium text-stone-600">{c.sectionLabel}</span>
+                          <svg
+                            className={`w-3 h-3 text-stone-400 shrink-0 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </div>
+                        <div className="text-xs text-stone-500 leading-relaxed">
+                          {isExpanded ? c.content : preview}
+                        </div>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             )}
@@ -172,12 +207,36 @@ export default function SearchModal({ onClose }: SearchModalProps) {
               <div className="px-4 py-3">
                 <p className="text-xs font-semibold text-stone-400 uppercase tracking-wide mb-2">Nyāya Concepts</p>
                 <div className="space-y-1">
-                  {results!.nyaya.map(n => (
-                    <div key={n.id} className="px-3 py-2">
-                      <div className="text-xs font-medium text-stone-700 mb-0.5">{n.termSanskrit}</div>
-                      <div className="text-xs text-stone-500 line-clamp-2 leading-relaxed">{n.definition}</div>
-                    </div>
-                  ))}
+                  {results!.nyaya.map(n => {
+                    const isExpanded = expandedId === n.id
+                    const preview = n.definition.length > 150
+                      ? n.definition.slice(0, 150) + '…'
+                      : n.definition
+                    return (
+                      <div
+                        key={n.id}
+                        onClick={() => toggleExpand(n.id)}
+                        className="px-3 py-2 cursor-pointer hover:bg-stone-100 rounded-lg transition-colors"
+                      >
+                        <div className="flex items-center justify-between mb-0.5">
+                          <span className="text-xs font-medium text-stone-700">{n.termSanskrit}</span>
+                          <svg
+                            className={`w-3 h-3 text-stone-400 shrink-0 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </div>
+                        <div
+                          className={`text-xs text-stone-500 leading-relaxed overflow-hidden transition-all duration-200 ${
+                            isExpanded ? 'max-h-[500px]' : 'max-h-[3rem]'
+                          }`}
+                        >
+                          {isExpanded ? n.definition : preview}
+                        </div>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             )}

@@ -36,7 +36,9 @@ export async function POST(req: Request) {
     const chunkRows = rows.filter(r => r.source_type === 'reference')
     const nyayaRows = rows.filter(r => r.source_type === 'nyaya')
 
-    // Look up text_id for passage results so the UI can build navigation URLs
+    // Build a source_id → text_id map for passages.
+    // The semantic_search RPC may return source_id = passages.id directly,
+    // or source_id = passage_embeddings.id. We try both paths.
     let passageResults: {
       id: string
       textId: string
@@ -46,16 +48,45 @@ export async function POST(req: Request) {
     }[] = []
 
     if (passageRows.length > 0) {
-      const { data: passages } = await supabase
+      const sourceIds = passageRows.map(p => p.source_id)
+      const textIdMap = new Map<string, string>()
+
+      // Path 1: source_id is the passage UUID itself
+      const { data: directPassages } = await supabase
         .from('passages')
         .select('id, text_id')
-        .in('id', passageRows.map(p => p.source_id))
-      const textIdMap = new Map((passages ?? []).map((p: any) => [p.id, p.text_id]))
+        .in('id', sourceIds)
+      for (const p of directPassages ?? []) {
+        textIdMap.set(p.id, (p as any).text_id)
+      }
+
+      // Path 2: source_id is a passage_embeddings row ID — look up passage_id first
+      const unresolved = sourceIds.filter(id => !textIdMap.has(id))
+      if (unresolved.length > 0) {
+        const { data: embedRows } = await supabase
+          .from('passage_embeddings')
+          .select('id, passage_id')
+          .in('id', unresolved)
+        if (embedRows && embedRows.length > 0) {
+          const passageIds = (embedRows as any[]).map(e => e.passage_id)
+          const { data: indirectPassages } = await supabase
+            .from('passages')
+            .select('id, text_id')
+            .in('id', passageIds)
+          const pidToTextId = new Map(
+            (indirectPassages ?? []).map((p: any) => [p.id, p.text_id])
+          )
+          for (const e of embedRows as any[]) {
+            textIdMap.set(e.id, pidToTextId.get(e.passage_id) ?? '')
+          }
+        }
+      }
+
       passageResults = passageRows.map(p => ({
         id: p.source_id,
         textId: textIdMap.get(p.source_id) ?? '',
         sectionName: p.section_label,
-        mulaPreview: p.content?.slice(0, 200) ?? '',
+        mulaPreview: p.content?.slice(0, 120) ?? '',
         similarity: p.similarity,
       }))
     }
@@ -76,7 +107,6 @@ export async function POST(req: Request) {
       })),
     })
   } catch {
-    // Gracefully handle missing embeddings or API errors
     return NextResponse.json({ passages: [], chunks: [], nyaya: [] })
   }
 }
