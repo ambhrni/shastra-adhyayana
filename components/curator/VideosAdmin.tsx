@@ -42,6 +42,9 @@ export default function VideosAdmin({ initialChannels }: { initialChannels: Chan
   const [deleteConfirm, setDeleteConfirm] = useState<{ videoId: string; title: string } | null>(null)
   const [draggedVideoId, setDraggedVideoId] = useState<string | null>(null)
   const [dragOverVideoId, setDragOverVideoId] = useState<string | null>(null)
+  // 'all' means syncing all channels; a channel UUID means syncing that one
+  const [syncingId, setSyncingId] = useState<string | null>(null)
+  const [syncMessages, setSyncMessages] = useState<Record<string, string>>({})
 
   // ── Channel published toggle ──────────────────────────────────────────────
 
@@ -179,12 +182,90 @@ export default function VideosAdmin({ initialChannels }: { initialChannels: Chan
     )
   }
 
+  // ── YouTube sync ──────────────────────────────────────────────────────────
+
+  async function handleSync(channelId?: string) {
+    const key = channelId ?? 'all'
+    setSyncingId(key)
+    setSyncMessages(prev => ({ ...prev, [key]: '' }))
+    setError(null)
+
+    try {
+      const res = await fetch('/api/admin/sync-youtube', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(channelId ? { channelId } : {}),
+      })
+      const data = await res.json()
+
+      if (!res.ok || !data.success) {
+        setSyncMessages(prev => ({ ...prev, [key]: `Error: ${data.error ?? 'Sync failed'}` }))
+        return
+      }
+
+      // Build summary message
+      const results = data.results as { channelId: string; channelName: string; added: number; updated: number; error?: string }[]
+      const parts = results.map(r =>
+        r.error
+          ? `${r.channelName}: ${r.error}`
+          : `${r.channelName}: ${r.added} added, ${r.updated} updated`
+      )
+      setSyncMessages(prev => ({ ...prev, [key]: `✓ ${parts.join(' · ')}` }))
+
+      // Refresh video lists for synced channels
+      const idsToRefresh = channelId ? [channelId] : channels.map(ch => ch.id)
+      for (const cid of idsToRefresh) {
+        const { data: updatedVideos } = await supabase
+          .from('videos')
+          .select('*')
+          .eq('channel_id', cid)
+          .order('display_order')
+        if (updatedVideos) {
+          setChannels(prev => prev.map(ch =>
+            ch.id === cid ? { ...ch, videos: updatedVideos as Video[] } : ch
+          ))
+        }
+      }
+    } catch (err) {
+      setSyncMessages(prev => ({ ...prev, [key]: `Error: ${err instanceof Error ? err.message : 'Unknown error'}` }))
+    } finally {
+      setSyncingId(null)
+    }
+  }
+
   const inputClass =
     'w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm text-stone-800 ' +
     'placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-saffron-400 transition'
 
   return (
     <div className="space-y-6">
+      {/* Sync all */}
+      <div className="flex items-center gap-4">
+        <button
+          type="button"
+          onClick={() => handleSync()}
+          disabled={syncingId !== null}
+          className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+        >
+          {syncingId === 'all' ? (
+            <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+          ) : (
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+            </svg>
+          )}
+          {syncingId === 'all' ? 'Syncing…' : 'Sync all channels'}
+        </button>
+        {syncMessages['all'] && (
+          <p className={`text-sm ${syncMessages['all'].startsWith('✓') ? 'text-green-700' : 'text-red-600'}`}>
+            {syncMessages['all']}
+          </p>
+        )}
+      </div>
+
       {success && (
         <div className="bg-green-50 border border-green-200 text-green-800 text-sm px-4 py-2.5 rounded-lg">
           {success}
@@ -211,7 +292,34 @@ export default function VideosAdmin({ initialChannels }: { initialChannels: Chan
                 {channel.videos.length} video{channel.videos.length !== 1 ? 's' : ''}
               </p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Per-channel sync */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleSync(channel.id)}
+                  disabled={syncingId !== null}
+                  className="inline-flex items-center gap-1.5 text-xs text-red-600 hover:text-red-700 disabled:opacity-40 border border-red-200 hover:border-red-300 bg-red-50 hover:bg-red-100 px-2.5 py-1 rounded-md transition-colors"
+                >
+                  {syncingId === channel.id ? (
+                    <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                  ) : (
+                    <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                    </svg>
+                  )}
+                  {syncingId === channel.id ? 'Syncing…' : 'Sync from YouTube'}
+                </button>
+                {syncMessages[channel.id] && (
+                  <span className={`text-xs ${syncMessages[channel.id]!.startsWith('✓') ? 'text-green-700' : 'text-red-600'}`}>
+                    {syncMessages[channel.id]}
+                  </span>
+                )}
+              </div>
+
               <label className="flex items-center gap-1.5 cursor-pointer select-none">
                 <span className="text-xs text-stone-500">Published</span>
                 <button
