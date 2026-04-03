@@ -69,6 +69,7 @@ export default function Navbar({ displayName, role, texts }: NavbarProps) {
   const [loading, setLoading] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [expandedId, setExpandedId] = useState<string | null>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -82,6 +83,9 @@ export default function Navbar({ displayName, role, texts }: NavbarProps) {
   useEffect(() => {
     setMenuOpen(false)
   }, [pathname])
+
+  // Reset expanded item when query changes
+  useEffect(() => { setExpandedId(null) }, [query])
 
   // Debounced search
   useEffect(() => {
@@ -248,8 +252,13 @@ export default function Navbar({ displayName, role, texts }: NavbarProps) {
                   {results.passages.map(p => (
                     <button
                       key={p.id}
-                      onClick={() => navigate(p.textId, p.id)}
-                      className="w-full text-left px-2.5 py-2 rounded-md hover:bg-stone-800 transition-colors"
+                      onClick={() => p.textId ? navigate(p.textId, p.id) : undefined}
+                      disabled={!p.textId}
+                      className={`w-full text-left px-2.5 py-2 rounded-md transition-colors ${
+                        p.textId
+                          ? 'hover:bg-stone-800 cursor-pointer'
+                          : 'opacity-40 cursor-not-allowed'
+                      }`}
                     >
                       <div className="text-xs font-medium text-saffron-500 mb-0.5">
                         {p.sectionName ?? 'Passage'}
@@ -268,9 +277,20 @@ export default function Navbar({ displayName, role, texts }: NavbarProps) {
                 <p className="text-xs font-semibold text-stone-500 uppercase tracking-wide mb-1.5">Nyāya Concepts</p>
                 <div className="space-y-0.5">
                   {results.nyaya.map(n => (
-                    <div key={n.id} className="px-2.5 py-2">
-                      <div className="text-xs font-medium text-stone-300 mb-0.5">{n.termSanskrit}</div>
-                      <div className="text-xs text-stone-500 line-clamp-2 leading-relaxed">{n.definition}</div>
+                    <div
+                      key={n.id}
+                      className="px-2.5 py-2 cursor-pointer hover:bg-stone-800 rounded-md transition-colors"
+                      onClick={() => setExpandedId(expandedId === n.id ? null : n.id)}
+                    >
+                      <div className="text-xs font-medium text-stone-300 mb-0.5 flex items-center justify-between">
+                        <span>{n.termSanskrit}</span>
+                        <span className="text-stone-500 text-[10px]">{expandedId === n.id ? '▲' : '▼'}</span>
+                      </div>
+                      <div className={`text-xs text-stone-400 leading-relaxed ${
+                        expandedId === n.id ? '' : 'line-clamp-2'
+                      }`}>
+                        {n.definition}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -282,9 +302,20 @@ export default function Navbar({ displayName, role, texts }: NavbarProps) {
                 <p className="text-xs font-semibold text-stone-500 uppercase tracking-wide mb-1.5">Reference Texts</p>
                 <div className="space-y-0.5">
                   {results.chunks.map(c => (
-                    <div key={c.id} className="px-2.5 py-2">
-                      <div className="text-xs font-medium text-stone-400 mb-0.5">{c.sectionLabel}</div>
-                      <div className="text-xs text-stone-500 line-clamp-2 leading-relaxed">{c.content}</div>
+                    <div
+                      key={c.id}
+                      className="px-2.5 py-2 cursor-pointer hover:bg-stone-800 rounded-md transition-colors"
+                      onClick={() => setExpandedId(expandedId === c.id ? null : c.id)}
+                    >
+                      <div className="text-xs font-medium text-stone-400 mb-0.5 flex items-center justify-between">
+                        <span>{c.sectionLabel}</span>
+                        <span className="text-stone-500 text-[10px]">{expandedId === c.id ? '▲' : '▼'}</span>
+                      </div>
+                      <div className={`text-xs text-stone-500 leading-relaxed ${
+                        expandedId === c.id ? '' : 'line-clamp-2'
+                      }`}>
+                        {c.content}
+                      </div>
                     </div>
                   ))}
                 </div>
