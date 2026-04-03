@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import TextCard from '@/components/library/TextCard'
 import NotebookCard from '@/components/notebooks/NotebookCard'
+import VideoCarousel from '@/components/videos/VideoCarousel'
 import Link from 'next/link'
 
 export default async function LibraryPage() {
@@ -99,7 +100,7 @@ export default async function LibraryPage() {
   const firstName = (profile as any)?.display_name?.split(' ')[0] ?? null
 
   return (
-    <div className="max-w-6xl mx-auto px-6 pt-10 pb-6">
+    <div className="max-w-screen-2xl mx-auto px-8 pt-10 pb-6">
       {/* Greeting */}
       <div className="mb-10">
         {firstName ? (
@@ -124,8 +125,8 @@ export default async function LibraryPage() {
       {/* Three-column layout */}
       <div className="flex flex-col lg:flex-row gap-10">
 
-        {/* Left — Texts (33%) */}
-        <div className="lg:w-1/3">
+        {/* Left — Texts (45%) */}
+        <div className="lg:w-[45%]">
           <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wider mb-5">
             Self-Study Courses
           </h2>
@@ -147,8 +148,8 @@ export default async function LibraryPage() {
           )}
         </div>
 
-        {/* Middle — NotebookLMs (33%) */}
-        <div className="lg:w-1/3">
+        {/* Middle — NotebookLMs (27.5%) */}
+        <div className="lg:w-[27.5%]">
           <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wider mb-5">
             NotebookLMs
           </h2>
@@ -166,8 +167,8 @@ export default async function LibraryPage() {
           )}
         </div>
 
-        {/* Right — Video Resources (33%) */}
-        <div className="lg:w-1/3">
+        {/* Right — Video Resources (27.5%) */}
+        <div className="lg:w-[27.5%]">
           <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wider mb-5">
             Video Resources
           </h2>
@@ -179,28 +180,21 @@ export default async function LibraryPage() {
             <div className="grid grid-cols-2 gap-3">
               {channelPreviews.map((ch: any) => (
                 <div key={ch.id}>
-                  <p className="font-semibold text-sm text-stone-800">{ch.name}</p>
+                  <Link
+                    href={`/videos#channel-${ch.id}`}
+                    className="text-sm font-semibold text-stone-800 hover:text-saffron-600 hover:underline transition-colors block mb-0.5"
+                  >
+                    {ch.name}
+                  </Link>
                   {ch.subtitle && (
                     <p className="text-xs text-stone-500 mb-2">{ch.subtitle}</p>
                   )}
-                  <div className="flex flex-col gap-2">
-                    {ch.videos.map((v: any) => (
-                      <a
-                        key={v.id}
-                        href={v.youtube_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <img
-                          src={v.thumbnail_url}
-                          alt={v.title}
-                          className="w-full aspect-video object-cover rounded-md hover:opacity-90 transition-opacity"
-                        />
-                      </a>
-                    ))}
-                  </div>
+                  <VideoCarousel videos={ch.videos} compact={true} />
                   <div className="flex gap-3 mt-2">
-                    <Link href="/videos" className="text-xs text-saffron-600 hover:underline">
+                    <Link
+                      href={`/videos#channel-${ch.id}`}
+                      className="text-xs text-saffron-600 hover:underline"
+                    >
                       View all →
                     </Link>
                     <a
