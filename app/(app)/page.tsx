@@ -33,7 +33,7 @@ export default async function LibraryPage() {
       .order('display_order'),
   ])
 
-  // Fetch first 2 published videos per channel
+  // Fetch all published videos per channel
   const channelPreviews = await Promise.all(
     (channelsData ?? []).map(async (ch: any) => {
       const { data: videos } = await supabase
@@ -42,7 +42,6 @@ export default async function LibraryPage() {
         .eq('channel_id', ch.id)
         .eq('is_published', true)
         .order('display_order')
-        .limit(2)
       return { ...ch, videos: videos ?? [] }
     })
   )
@@ -125,8 +124,8 @@ export default async function LibraryPage() {
       {/* Three-column layout */}
       <div className="flex flex-col lg:flex-row gap-10">
 
-        {/* Left — Texts (50%) */}
-        <div className="lg:w-1/2">
+        {/* Left — Texts (33%) */}
+        <div className="lg:w-1/3">
           <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wider mb-5">
             Self-Study Courses
           </h2>
@@ -148,8 +147,8 @@ export default async function LibraryPage() {
           )}
         </div>
 
-        {/* Middle — NotebookLMs (25%) */}
-        <div className="lg:w-1/4">
+        {/* Middle — NotebookLMs (33%) */}
+        <div className="lg:w-1/3">
           <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wider mb-5">
             NotebookLMs
           </h2>
@@ -167,8 +166,8 @@ export default async function LibraryPage() {
           )}
         </div>
 
-        {/* Right — Video Resources (25%) */}
-        <div className="lg:w-1/4">
+        {/* Right — Video Resources (33%) */}
+        <div className="lg:w-1/3">
           <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wider mb-5">
             Video Resources
           </h2>
@@ -177,52 +176,38 @@ export default async function LibraryPage() {
               <p className="text-sm">Videos coming soon</p>
             </div>
           ) : (
-            <div className="space-y-5">
+            <div className="grid grid-cols-2 gap-3">
               {channelPreviews.map((ch: any) => (
-                <div
-                  key={ch.id}
-                  className="bg-white rounded-2xl border border-stone-200 shadow-sm p-4 space-y-3"
-                >
-                  <div>
-                    <p className="font-semibold text-stone-900 text-sm leading-snug">{ch.name}</p>
-                    {ch.subtitle && (
-                      <p className="text-xs text-stone-500 mt-0.5">{ch.subtitle}</p>
-                    )}
-                  </div>
-
-                  {ch.videos.length > 0 && (
-                    <div className="grid grid-cols-2 gap-1.5">
-                      {ch.videos.map((v: any) => (
-                        <a
-                          key={v.id}
-                          href={v.youtube_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block rounded overflow-hidden border border-stone-100 hover:border-stone-300 transition-colors"
-                          title={v.title}
-                        >
-                          <img
-                            src={v.thumbnail_url}
-                            alt={v.title}
-                            className="w-full aspect-video object-cover"
-                          />
-                        </a>
-                      ))}
-                    </div>
+                <div key={ch.id}>
+                  <p className="font-semibold text-sm text-stone-800">{ch.name}</p>
+                  {ch.subtitle && (
+                    <p className="text-xs text-stone-500 mb-2">{ch.subtitle}</p>
                   )}
-
-                  <div className="flex items-center justify-between pt-0.5">
-                    <Link
-                      href="/videos"
-                      className="text-xs font-medium text-saffron-700 hover:text-saffron-800 transition-colors"
-                    >
+                  <div className="flex flex-col gap-2">
+                    {ch.videos.map((v: any) => (
+                      <a
+                        key={v.id}
+                        href={v.youtube_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <img
+                          src={v.thumbnail_url}
+                          alt={v.title}
+                          className="w-full aspect-video object-cover rounded-md hover:opacity-90 transition-opacity"
+                        />
+                      </a>
+                    ))}
+                  </div>
+                  <div className="flex gap-3 mt-2">
+                    <Link href="/videos" className="text-xs text-saffron-600 hover:underline">
                       View all →
                     </Link>
                     <a
                       href={ch.youtube_channel_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs text-red-600 hover:text-red-700 transition-colors"
+                      className="text-xs text-stone-400 hover:text-stone-600"
                     >
                       YouTube ↗
                     </a>
