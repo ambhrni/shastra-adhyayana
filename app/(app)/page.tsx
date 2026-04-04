@@ -258,7 +258,7 @@ export default async function LibraryPage() {
 
         {/* Column 1 — Self-Study Courses */}
         <div className="lg:w-1/4 flex flex-col">
-          <ColumnHeader title="Self-Study Courses" />
+          <ColumnHeader title="Shāstram : Self-Study Courses" />
           {textData.length === 0 ? (
             <div className="text-center py-16 text-stone-400">
               <p>No texts published yet.</p>
