@@ -17,7 +17,7 @@ function ColumnHeader({
   channelId?: string
 }) {
   return (
-    <div className="sticky top-0 bg-stone-50 pt-2 pb-1 z-10">
+    <div className="sticky top-0 bg-stone-50 pt-2 pb-2 z-10">
       {channelId ? (
         <Link
           href={`/videos#channel-${channelId}`}
@@ -66,7 +66,7 @@ function VideoColumn({ channel }: { channel: Channel | null }) {
   return (
     <div>
       <div
-        className="max-h-[600px] overflow-y-scroll pr-1"
+        className="max-h-[700px] overflow-y-auto pr-1"
         style={{ scrollbarWidth: 'thin', scrollbarColor: '#d6d3d1 #f5f5f4' }}
       >
         {channel.videos.length === 0 ? (
@@ -171,7 +171,6 @@ export default async function LibraryPage() {
         .eq('channel_id', ch.id)
         .eq('is_published', true)
         .order('display_order')
-        .limit(10)
       return { ...ch, videos: videos ?? [] }
     })
   )
@@ -265,14 +264,18 @@ export default async function LibraryPage() {
               <p>No texts published yet.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-5">
+            <div
+              className="max-h-[700px] overflow-y-auto pr-1 flex flex-col gap-5"
+              style={{ scrollbarWidth: 'thin', scrollbarColor: '#d6d3d1 #f5f5f4' }}
+            >
               {textData.map(({ text, progressPercent, firstUnfinishedPassageId }) => (
-                <TextCard
-                  key={text.id}
-                  text={text as any}
-                  progressPercent={progressPercent}
-                  firstUnfinishedPassageId={firstUnfinishedPassageId}
-                />
+                <div key={text.id} className="min-h-[280px] flex flex-col">
+                  <TextCard
+                    text={text as any}
+                    progressPercent={progressPercent}
+                    firstUnfinishedPassageId={firstUnfinishedPassageId}
+                  />
+                </div>
               ))}
             </div>
           )}
@@ -290,7 +293,10 @@ export default async function LibraryPage() {
               <p className="text-sm mt-1">Notebooks coming soon</p>
             </div>
           ) : (
-            <div className="space-y-5">
+            <div
+              className="max-h-[700px] overflow-y-auto pr-1 flex flex-col gap-5"
+              style={{ scrollbarWidth: 'thin', scrollbarColor: '#d6d3d1 #f5f5f4' }}
+            >
               {(notebooks ?? []).map(nb => (
                 <NotebookCard key={nb.id} notebook={nb} />
               ))}
