@@ -1,7 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import type { Metadata } from 'next'
 import type { VideoChannel, Video } from '@/types/database'
-import VideoCarousel from '@/components/videos/VideoCarousel'
 
 export const metadata: Metadata = {
   title: 'Video Resources — Tattvasudhā',
@@ -9,6 +8,10 @@ export const metadata: Metadata = {
 
 interface ChannelWithVideos extends VideoChannel {
   videos: Video[]
+}
+
+function isNew(createdAt: string): boolean {
+  return Date.now() - new Date(createdAt).getTime() < 30 * 24 * 60 * 60 * 1000
 }
 
 export default async function VideosPage() {
@@ -33,7 +36,7 @@ export default async function VideosPage() {
   )
 
   return (
-    <div className="max-w-5xl mx-auto px-6 pt-10 pb-16">
+    <div className="max-w-screen-2xl mx-auto px-6 pt-10 pb-16">
       <div className="mb-10">
         <h1 className="text-2xl font-semibold text-stone-900">Video Resources</h1>
         <p className="text-stone-500 mt-1 text-sm">
@@ -76,7 +79,41 @@ export default async function VideosPage() {
                     Videos coming soon
                   </div>
                 ) : (
-                  <VideoCarousel videos={channel.videos} compact={false} />
+                  <div
+                    className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 max-h-[500px] overflow-y-auto pr-1"
+                    style={{ scrollbarWidth: 'thin', scrollbarColor: '#d6d3d1 #f5f5f4' }}
+                  >
+                    {channel.videos.map(video => (
+                      <a
+                        key={video.id}
+                        href={video.youtube_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group"
+                      >
+                        <div className="relative aspect-video rounded-lg overflow-hidden bg-stone-100">
+                          <img
+                            src={video.thumbnail_url}
+                            alt={video.title}
+                            className="w-full h-full object-cover group-hover:opacity-85 transition-opacity"
+                          />
+                          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/30">
+                            <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M8 5v14l11-7z" />
+                            </svg>
+                          </div>
+                          {isNew(video.created_at) && (
+                            <span className="absolute top-1 left-1 bg-amber-500 text-white text-[9px] font-semibold px-1.5 py-0.5 rounded">
+                              NEW
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-stone-700 mt-1.5 line-clamp-2 leading-snug group-hover:text-saffron-600 transition-colors">
+                          {video.title}
+                        </p>
+                      </a>
+                    ))}
+                  </div>
                 )}
               </section>
 
