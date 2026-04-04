@@ -310,6 +310,12 @@ function IntroPageClient({ textId, firstPassageId }: IntroPageClientProps) {
         >
           {isSanskrit ? '← ग्रन्थालयं प्रतिगम्यताम्' : '← Return to Library'}
         </Link>
+        <Link
+          href={`/texts/${textId}/map`}
+          className="inline-flex items-center justify-center border border-saffron-600 text-saffron-700 hover:bg-saffron-50 font-medium px-6 py-3 rounded-lg transition-colors"
+        >
+          {isSanskrit ? 'युक्तिनकाशः →' : 'Argument Map →'}
+        </Link>
       </div>
     </div>
   )

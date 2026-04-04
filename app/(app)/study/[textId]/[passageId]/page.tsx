@@ -240,7 +240,7 @@ export default async function StudyPage({ params }: Props) {
       <ResizableSplitPane
         left={
           <>
-            <MulaPanel passage={passage} isCurator={isCurator} />
+            <MulaPanel passage={passage} isCurator={isCurator} textId={textId} />
             <CommentaryTabs
               key={passageId}
               commentaries={commentaries}

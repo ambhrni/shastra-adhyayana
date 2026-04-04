@@ -203,3 +203,44 @@ export interface Video {
   is_published: boolean
   created_at: string
 }
+
+// ── Argument Map ─────────────────────────────────────────────────────────────
+
+export type ArgumentStream = 'mula' | 'bhavadipika' | 'vadavaliprakasha'
+export type ArgumentNodeType =
+  | 'purva_paksha'
+  | 'khandana'
+  | 'siddhanta'
+  | 'upasamhara'
+  | 'shanka'
+  | 'samadhanam'
+export type RefutationType = 'lakshanam' | 'pramanam' | 'anumanam' | 'siddhanta'
+
+export interface ArgumentNode {
+  id: string
+  passage_id: string
+  stream: ArgumentStream
+  node_type: ArgumentNodeType
+  content_english: string
+  content_sanskrit: string | null
+  logical_flaw: string | null
+  refutation_type: RefutationType | null
+  parent_node_id: string | null
+  display_order: number
+  is_approved: boolean
+  ai_generated: boolean
+  ai_model: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface ArgumentMapVersion {
+  id: string
+  passage_id: string
+  stream: ArgumentStream
+  version_number: number
+  ai_model: string | null
+  nodes_json: ArgumentNode[]
+  is_current: boolean
+  created_at: string
+}

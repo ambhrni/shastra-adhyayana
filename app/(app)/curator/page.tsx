@@ -6,6 +6,7 @@ import FlaggedErrorsList from '@/components/curator/FlaggedErrorsList'
 import NotebooksAdmin from '@/components/curator/NotebooksAdmin'
 import VideosAdmin from '@/components/curator/VideosAdmin'
 import TextThumbnailEdit from '@/components/curator/TextThumbnailEdit'
+import ArgumentMapAdmin from '@/components/curator/ArgumentMapAdmin'
 
 interface Props {
   searchParams: { tab?: string }
@@ -36,6 +37,7 @@ export default async function CuratorPage({ searchParams }: Props) {
   let flags: any[] = []
   let notebooks: any[] = []
   let videoChannels: any[] = []
+  let argumentMapPassages: any[] = []
 
   if (activeTab === 'passages') {
     const { data: textsData } = await supabase
@@ -64,6 +66,14 @@ export default async function CuratorPage({ searchParams }: Props) {
     notebooks = notebooksData ?? []
   }
 
+  if (activeTab === 'argument-maps') {
+    const { data: passagesData } = await supabase
+      .from('passages')
+      .select('id, text_id, section_number, section_name, sequence_order')
+      .order('sequence_order')
+    argumentMapPassages = passagesData ?? []
+  }
+
   if (activeTab === 'videos' && isAdmin) {
     const { data: channelsData } = await supabase
       .from('video_channels').select('*').order('display_order')
@@ -87,6 +97,7 @@ export default async function CuratorPage({ searchParams }: Props) {
     { id: 'flags', label: 'Flagged Errors', href: '/curator?tab=flags', badge: openFlagCount ?? 0 },
     ...(isAdmin ? [{ id: 'notebooks', label: 'Notebooks', href: '/curator?tab=notebooks', badge: 0 }] : []),
     ...(isAdmin ? [{ id: 'videos', label: 'Videos', href: '/curator?tab=videos', badge: 0 }] : []),
+    { id: 'argument-maps', label: 'Argument Maps', href: '/curator?tab=argument-maps', badge: 0 },
   ]
 
   return (
@@ -169,6 +180,13 @@ export default async function CuratorPage({ searchParams }: Props) {
       {activeTab === 'videos' && isAdmin && (
         <section>
           <VideosAdmin initialChannels={videoChannels} />
+        </section>
+      )}
+
+      {/* ── Argument Maps tab ── */}
+      {activeTab === 'argument-maps' && (
+        <section>
+          <ArgumentMapAdmin passages={argumentMapPassages} />
         </section>
       )}
     </div>
