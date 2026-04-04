@@ -294,7 +294,7 @@ export default async function LibraryPage() {
             </div>
           ) : (
             <div
-              className="max-h-[700px] overflow-y-auto pr-1 flex flex-col gap-5"
+              className="space-y-5 max-h-[700px] overflow-y-auto pr-1"
               style={{ scrollbarWidth: 'thin', scrollbarColor: '#d6d3d1 #f5f5f4' }}
             >
               {(notebooks ?? []).map(nb => (
