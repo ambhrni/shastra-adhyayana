@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import type { ArgumentStream } from '@/lib/argument-map-generator'
 
@@ -44,8 +45,25 @@ interface EditState {
   value: string
 }
 
+interface NodeEditDraft {
+  stream: ArgumentStream
+  node_type: string
+  content_english: string
+  content_sanskrit: string
+  logical_flaw: string
+  refutation_type: string
+}
+
+type ArgumentType = 'lakshanam' | 'pramanam' | 'anumanam' | 'siddhanta' | 'opening_closing'
+
+interface SectionArgType {
+  section_number: number
+  argument_type: ArgumentType
+}
+
 interface Props {
   passages: PassageOption[]
+  textId: string
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -55,6 +73,14 @@ const STREAM_LABELS: Record<ArgumentStream, string> = {
   bhavadipika: 'भावदीपिका',
   vadavaliprakasha: 'वादावलीप्रकाशः',
 }
+
+const ARGUMENT_TYPE_OPTIONS: { value: ArgumentType; label: string; color: string }[] = [
+  { value: 'opening_closing', label: 'Opening / Closing',      color: 'bg-stone-400' },
+  { value: 'lakshanam',       label: 'Lakṣaṇam refutation',    color: 'bg-orange-400' },
+  { value: 'pramanam',        label: 'Pramāṇam refutation',    color: 'bg-blue-400' },
+  { value: 'anumanam',        label: 'Anumānam refutation',    color: 'bg-red-400' },
+  { value: 'siddhanta',       label: 'Siddhānta establishment', color: 'bg-green-400' },
+]
 
 const NODE_TYPE_BADGE: Record<string, string> = {
   purva_paksha: 'bg-red-100 text-red-700 border border-red-200',
@@ -67,7 +93,7 @@ const NODE_TYPE_BADGE: Record<string, string> = {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export default function ArgumentMapAdmin({ passages }: Props) {
+export default function ArgumentMapAdmin({ passages, textId }: Props) {
   const [selectedPassageId, setSelectedPassageId] = useState<string>(passages[0]?.id ?? '')
   const [selectedStream, setSelectedStream] = useState<ArgumentStream>('mula')
   const [nodes, setNodes] = useState<ArgumentNodeRow[]>([])
@@ -77,6 +103,17 @@ export default function ArgumentMapAdmin({ passages }: Props) {
   const [error, setError] = useState<string | null>(null)
   const [editState, setEditState] = useState<EditState | null>(null)
   const [saving, setSaving] = useState(false)
+  const [sectionArgTypes, setSectionArgTypes] = useState<Record<number, ArgumentType>>({})
+  const [activePanel, setActivePanel] = useState<'nodes' | 'colors'>('nodes')
+  const [savedSection, setSavedSection] = useState<{ sectionNumber: number; ok: boolean } | null>(null)
+  const [editingNode, setEditingNode] = useState<ArgumentNodeRow | null>(null)
+  const [editDraft, setEditDraft] = useState<NodeEditDraft>({
+    stream: 'mula', node_type: 'purva_paksha',
+    content_english: '', content_sanskrit: '', logical_flaw: '', refutation_type: '',
+  })
+  const [editSaving, setEditSaving] = useState(false)
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
+  const router = useRouter()
 
   // Group passages by section for the dropdown
   const sectionMap = new Map<number, PassageOption[]>()
@@ -86,6 +123,38 @@ export default function ArgumentMapAdmin({ passages }: Props) {
     sectionMap.get(sec)!.push(p)
   }
   const sections = Array.from(sectionMap.entries()).sort(([a], [b]) => a - b)
+
+  // Load section argument types on mount
+  useEffect(() => {
+    async function loadSectionColors() {
+      const supabase = createClient()
+      const { data } = await supabase
+        .from('section_argument_types')
+        .select('section_number, argument_type')
+        .eq('text_id', textId)
+      if (data) {
+        const map: Record<number, ArgumentType> = {}
+        for (const row of data as SectionArgType[]) {
+          map[row.section_number] = row.argument_type
+        }
+        setSectionArgTypes(map)
+      }
+    }
+    loadSectionColors()
+  }, [textId])
+
+  async function handleSectionColorChange(sectionNumber: number, argType: ArgumentType) {
+    setSectionArgTypes(prev => ({ ...prev, [sectionNumber]: argType }))
+    const supabase = createClient()
+    const { error } = await supabase
+      .from('section_argument_types')
+      .update({ argument_type: argType })
+      .eq('text_id', textId)
+      .eq('section_number', sectionNumber)
+    setSavedSection({ sectionNumber, ok: !error })
+    setTimeout(() => setSavedSection(null), 2000)
+    if (!error) router.refresh()
+  }
 
   // Fetch when selection changes
   useEffect(() => {
@@ -151,11 +220,12 @@ export default function ArgumentMapAdmin({ passages }: Props) {
       const res = await fetch('/api/admin/generate-argument-map', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ passageId: selectedPassageId, stream: selectedStream }),
+        body: JSON.stringify({ passageId: selectedPassageId }),
       })
       const json = await res.json()
       if (!res.ok) throw new Error(json.error ?? 'Generation failed')
-      setNodes(json.nodes ?? [])
+      // Filter to the currently selected stream for display
+      setNodes((json.nodes ?? []).filter((n: any) => n.stream === selectedStream))
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -184,6 +254,7 @@ export default function ArgumentMapAdmin({ passages }: Props) {
     const supabase = createClient()
     await supabase.from('argument_nodes').delete().eq('id', nodeId)
     setNodes(prev => prev.filter(n => n.id !== nodeId))
+    setDeleteConfirmId(null)
   }
 
   async function saveEdit() {
@@ -203,6 +274,42 @@ export default function ArgumentMapAdmin({ passages }: Props) {
     setSaving(false)
   }
 
+  function openEditModal(node: ArgumentNodeRow) {
+    setEditDraft({
+      stream:           node.stream,
+      node_type:        node.node_type,
+      content_english:  node.content_english,
+      content_sanskrit: node.content_sanskrit ?? '',
+      logical_flaw:     node.logical_flaw ?? '',
+      refutation_type:  node.refutation_type ?? '',
+    })
+    setEditingNode(node)
+  }
+
+  async function handleSaveEdit() {
+    if (!editingNode || editSaving) return
+    setEditSaving(true)
+    const supabase = createClient()
+    const { data } = await supabase
+      .from('argument_nodes')
+      .update({
+        stream:           editDraft.stream,
+        node_type:        editDraft.node_type,
+        content_english:  editDraft.content_english,
+        content_sanskrit: editDraft.content_sanskrit || null,
+        logical_flaw:     editDraft.logical_flaw     || null,
+        refutation_type:  editDraft.refutation_type  || null,
+      })
+      .eq('id', editingNode.id)
+      .select('*')
+      .single()
+    setEditSaving(false)
+    if (data) {
+      setNodes(prev => prev.map(n => n.id === editingNode.id ? (data as ArgumentNodeRow) : n))
+      setEditingNode(null)
+    }
+  }
+
   // ── Derived ──────────────────────────────────────────────────────────────────
 
   const approvedCount = nodes.filter(n => n.is_approved).length
@@ -216,6 +323,70 @@ export default function ArgumentMapAdmin({ passages }: Props) {
 
   return (
     <div className="space-y-4">
+
+      {/* Panel toggle */}
+      <div className="flex gap-1 border-b border-stone-200 pb-0">
+        <button
+          onClick={() => setActivePanel('nodes')}
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors -mb-px ${
+            activePanel === 'nodes'
+              ? 'border-saffron-600 text-saffron-700'
+              : 'border-transparent text-stone-500 hover:text-stone-800 hover:border-stone-300'
+          }`}
+        >
+          Argument Nodes
+        </button>
+        <button
+          onClick={() => setActivePanel('colors')}
+          className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors -mb-px ${
+            activePanel === 'colors'
+              ? 'border-saffron-600 text-saffron-700'
+              : 'border-transparent text-stone-500 hover:text-stone-800 hover:border-stone-300'
+          }`}
+        >
+          Section Colors
+        </button>
+      </div>
+
+      {/* ── Section Colors panel ── */}
+      {activePanel === 'colors' && (
+        <div>
+          <p className="text-xs text-stone-400 mb-4">
+            Set the argument type for each section. Colors update on the public Argument Map immediately.
+          </p>
+          <div className="space-y-2 max-h-[600px] overflow-y-auto pr-1" style={{ scrollbarWidth: 'thin', scrollbarColor: '#d6d3d1 #f5f5f4' }}>
+            {sections.map(([secNum, secPassages]) => {
+              const sectionName = secPassages[0]?.section_name ?? ''
+              const current = sectionArgTypes[secNum] ?? 'anumanam'
+              const currentOption = ARGUMENT_TYPE_OPTIONS.find(o => o.value === current)
+              return (
+                <div key={secNum} className="flex items-center gap-3 px-3 py-2 rounded-lg border border-stone-200 bg-white hover:bg-stone-50 transition-colors">
+                  <span className="text-xs font-bold text-stone-600 w-6 shrink-0">§{secNum}</span>
+                  <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${currentOption?.color ?? 'bg-stone-300'}`} />
+                  <span className="text-xs font-devanagari text-stone-700 flex-1 truncate">{sectionName}</span>
+                  <select
+                    value={current}
+                    onChange={e => handleSectionColorChange(secNum, e.target.value as ArgumentType)}
+                    className="text-xs border border-stone-200 rounded-lg px-2 py-1 bg-white focus:outline-none focus:ring-1 focus:ring-saffron-400 shrink-0"
+                  >
+                    {ARGUMENT_TYPE_OPTIONS.map(opt => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
+                  {savedSection?.sectionNumber === secNum && (
+                    <span className={`text-xs font-medium shrink-0 ${savedSection.ok ? 'text-green-600' : 'text-red-500'}`}>
+                      {savedSection.ok ? '✓ Saved' : '✗ Failed'}
+                    </span>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ── Argument Nodes panel ── */}
+      {activePanel === 'nodes' && (<>
 
       {/* Top bar: passage selector + stream selector */}
       <div className="flex flex-wrap items-center gap-3">
@@ -379,7 +550,7 @@ export default function ArgumentMapAdmin({ passages }: Props) {
                         )}
                       </div>
 
-                      {/* Approve / Delete controls */}
+                      {/* Approve / Edit / Delete controls */}
                       <div className="flex items-center gap-1.5 shrink-0">
                         <button
                           onClick={() => handleToggleApprove(node)}
@@ -392,11 +563,35 @@ export default function ArgumentMapAdmin({ passages }: Props) {
                           {node.is_approved ? '✓ Approved' : 'Approve'}
                         </button>
                         <button
-                          onClick={() => handleDelete(node.id)}
-                          className="text-xs px-2 py-0.5 rounded-lg bg-red-50 text-red-400 hover:bg-red-100 transition-colors"
+                          onClick={() => openEditModal(node)}
+                          className="text-xs px-2 py-0.5 rounded-lg bg-saffron-50 text-saffron-700 hover:bg-saffron-100 border border-saffron-200 transition-colors"
                         >
-                          ×
+                          Edit
                         </button>
+                        {deleteConfirmId === node.id ? (
+                          <span className="flex items-center gap-1">
+                            <span className="text-xs text-red-600">Delete?</span>
+                            <button
+                              onClick={() => handleDelete(node.id)}
+                              className="text-xs px-1.5 py-0.5 rounded bg-red-100 text-red-700 hover:bg-red-200 transition-colors"
+                            >
+                              Yes
+                            </button>
+                            <button
+                              onClick={() => setDeleteConfirmId(null)}
+                              className="text-xs px-1.5 py-0.5 rounded bg-stone-100 text-stone-500 hover:bg-stone-200 transition-colors"
+                            >
+                              No
+                            </button>
+                          </span>
+                        ) : (
+                          <button
+                            onClick={() => setDeleteConfirmId(node.id)}
+                            className="text-xs px-2 py-0.5 rounded-lg bg-red-50 text-red-400 hover:bg-red-100 transition-colors"
+                          >
+                            Delete
+                          </button>
+                        )}
                       </div>
                     </div>
 
@@ -495,6 +690,118 @@ export default function ArgumentMapAdmin({ passages }: Props) {
           )}
         </div>
       </div>
+      </>)}
+
+      {/* ── Edit node modal ── */}
+      {editingNode && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold text-stone-900">Edit Argument Node</h2>
+              <button onClick={() => setEditingNode(null)} className="text-stone-400 hover:text-stone-600">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="flex gap-2">
+              <div className="flex-1">
+                <label className="block text-xs font-medium text-stone-600 mb-1">Stream</label>
+                <select
+                  value={editDraft.stream}
+                  onChange={e => setEditDraft(d => ({ ...d, stream: e.target.value as ArgumentStream }))}
+                  className="w-full text-sm border border-stone-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-1 focus:ring-saffron-400"
+                >
+                  <option value="mula">मूलम् — Mūla</option>
+                  <option value="bhavadipika">भावदीपिका — Bhāvadīpikā</option>
+                  <option value="vadavaliprakasha">वादावलीप्रकाशः — Vādāvalīprakāśa</option>
+                </select>
+              </div>
+              <div className="flex-1">
+                <label className="block text-xs font-medium text-stone-600 mb-1">Node type</label>
+                <select
+                  value={editDraft.node_type}
+                  onChange={e => setEditDraft(d => ({ ...d, node_type: e.target.value }))}
+                  className="w-full text-sm border border-stone-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-1 focus:ring-saffron-400"
+                >
+                  <option value="purva_paksha">Pūrva Pakṣa</option>
+                  <option value="shanka">Śaṅkā</option>
+                  <option value="khandana">Khaṇḍana</option>
+                  <option value="samadhanam">Samādhānam</option>
+                  <option value="siddhanta">Siddhānta</option>
+                  <option value="upasamhara">Upasaṃhāra</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-stone-600 mb-1">Sanskrit</label>
+              <textarea
+                value={editDraft.content_sanskrit}
+                onChange={e => setEditDraft(d => ({ ...d, content_sanskrit: e.target.value }))}
+                rows={3}
+                placeholder="Sanskrit content…"
+                className="w-full text-sm font-devanagari border border-stone-200 rounded-lg p-2 focus:outline-none focus:ring-1 focus:ring-saffron-400 resize-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-stone-600 mb-1">English</label>
+              <textarea
+                value={editDraft.content_english}
+                onChange={e => setEditDraft(d => ({ ...d, content_english: e.target.value }))}
+                rows={3}
+                placeholder="English content…"
+                className="w-full text-sm border border-stone-200 rounded-lg p-2 focus:outline-none focus:ring-1 focus:ring-saffron-400 resize-none"
+              />
+            </div>
+
+            <div className="flex gap-2">
+              <div className="flex-1">
+                <label className="block text-xs font-medium text-stone-600 mb-1">Logical flaw</label>
+                <input
+                  type="text"
+                  value={editDraft.logical_flaw}
+                  onChange={e => setEditDraft(d => ({ ...d, logical_flaw: e.target.value }))}
+                  placeholder="optional"
+                  className="w-full text-sm border border-stone-200 rounded-lg px-2 py-1.5 focus:outline-none focus:ring-1 focus:ring-saffron-400"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block text-xs font-medium text-stone-600 mb-1">Refutation type</label>
+                <select
+                  value={editDraft.refutation_type}
+                  onChange={e => setEditDraft(d => ({ ...d, refutation_type: e.target.value }))}
+                  className="w-full text-sm border border-stone-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-1 focus:ring-saffron-400"
+                >
+                  <option value="">None</option>
+                  <option value="lakshanam">lakshanam</option>
+                  <option value="pramanam">pramanam</option>
+                  <option value="anumanam">anumanam</option>
+                  <option value="siddhanta">siddhanta</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex gap-2 pt-1">
+              <button
+                onClick={handleSaveEdit}
+                disabled={editSaving}
+                className="flex-1 bg-saffron-600 hover:bg-saffron-700 disabled:opacity-50 text-white text-sm font-medium py-2 rounded-lg transition-colors"
+              >
+                {editSaving ? 'Saving…' : 'Save changes'}
+              </button>
+              <button
+                onClick={() => setEditingNode(null)}
+                className="px-4 py-2 text-sm text-stone-600 hover:text-stone-800 border border-stone-300 rounded-lg"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

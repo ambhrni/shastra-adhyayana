@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import Anthropic from '@anthropic-ai/sdk'
-import { generateArgumentMap, ARGUMENT_STREAMS } from '@/lib/argument-map-generator'
-import type { ArgumentStream } from '@/lib/argument-map-generator'
+import { generateArgumentMap } from '@/lib/argument-map-generator'
 
 export async function POST(req: Request) {
   const supabase = createClient()
@@ -25,45 +24,33 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'ANTHROPIC_API_KEY not configured' }, { status: 500 })
   }
 
-  let body: { passageId?: string; stream?: string; model?: string } = {}
+  let body: { passageId?: string; model?: string } = {}
   try {
     body = await req.json()
   } catch {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
   }
 
-  const { passageId, stream, model = 'claude-sonnet-4-6' } = body
+  const { passageId, model = 'claude-sonnet-4-6' } = body
 
   if (!passageId) {
     return NextResponse.json({ error: 'passageId is required' }, { status: 400 })
-  }
-  if (!stream || !ARGUMENT_STREAMS.includes(stream as ArgumentStream)) {
-    return NextResponse.json(
-      { error: `stream must be one of: ${ARGUMENT_STREAMS.join(', ')}` },
-      { status: 400 }
-    )
   }
 
   const anthropic = new Anthropic({ apiKey })
 
   try {
-    const result = await generateArgumentMap(
-      supabase,
-      anthropic,
-      passageId,
-      stream as ArgumentStream,
-      model,
-    )
+    const result = await generateArgumentMap(supabase, anthropic, passageId, model)
     return NextResponse.json({
       success: true,
       nodes: result.nodes,
-      versionNumber: result.versionNumber,
-      nodeCount: result.nodeCount,
+      streamCounts: result.streamCounts,
+      totalCount: result.totalCount,
     })
   } catch (err: any) {
     return NextResponse.json(
       { error: err.message ?? 'Generation failed' },
-      { status: 500 }
+      { status: 500 },
     )
   }
 }

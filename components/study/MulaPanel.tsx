@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import type { Passage } from '@/types/database'
 import InlineEditor from './InlineEditor'
 
@@ -22,14 +21,6 @@ export default function MulaPanel({ passage, isCurator, textId }: MulaPanelProps
           {passage.subsection_number != null ? `.${passage.subsection_number}` : ''}
         </span>
         <span className="text-xs text-stone-300">Mūla</span>
-        {textId && (
-          <Link
-            href={`/texts/${textId}/map`}
-            className="ml-auto text-xs text-stone-400 hover:text-saffron-600 transition-colors"
-          >
-            Map ↗
-          </Link>
-        )}
       </div>
 
       {isCurator ? (

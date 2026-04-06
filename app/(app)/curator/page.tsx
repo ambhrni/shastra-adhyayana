@@ -186,7 +186,7 @@ export default async function CuratorPage({ searchParams }: Props) {
       {/* ── Argument Maps tab ── */}
       {activeTab === 'argument-maps' && (
         <section>
-          <ArgumentMapAdmin passages={argumentMapPassages} />
+          <ArgumentMapAdmin passages={argumentMapPassages} textId={argumentMapPassages[0]?.text_id ?? ''} />
         </section>
       )}
     </div>

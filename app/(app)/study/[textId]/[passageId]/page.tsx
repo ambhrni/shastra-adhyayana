@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import MulaPanel from '@/components/study/MulaPanel'
 import CommentaryTabs from '@/components/study/CommentaryTabs'
 import StudyRightPanel from '@/components/study/StudyRightPanel'
+import PassageSelector from '@/components/study/PassageSelector'
 import ResizableSplitPane from '@/components/study/ResizableSplitPane'
 import Link from 'next/link'
 import { embedText, TaskType } from '@/lib/embeddings-server'
@@ -240,6 +241,14 @@ export default async function StudyPage({ params }: Props) {
       <ResizableSplitPane
         left={
           <>
+            <PassageSelector
+              allPassages={allPassages ?? []}
+              passageId={passageId}
+              sectionNumber={passage.section_number ?? null}
+              textId={textId}
+              isLoggedIn={!!user}
+              commentators={commentators}
+            />
             <MulaPanel passage={passage} isCurator={isCurator} textId={textId} />
             <CommentaryTabs
               key={passageId}
@@ -258,9 +267,8 @@ export default async function StudyPage({ params }: Props) {
             prevPassageId={prevPassageId}
             nextPassageId={nextPassageId}
             textId={textId}
-            commentators={commentators}
-            allPassages={allPassages ?? []}
             isLoggedIn={!!user}
+            isCurator={isCurator}
             relatedPassages={relatedPassages}
           />
         }
