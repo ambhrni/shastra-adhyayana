@@ -31,7 +31,7 @@ function ColumnHeader({
         </h2>
       )}
       {subtitle && (
-        <p className="text-xs text-stone-400 mt-0.5">{subtitle}</p>
+        <p className="text-xs text-stone-500 italic mt-1">{subtitle}</p>
       )}
       <div className="w-8 h-0.5 bg-saffron-500 rounded-full mt-1 mb-4" />
     </div>
@@ -258,7 +258,10 @@ export default async function LibraryPage() {
 
         {/* Column 1 — Self-Study Courses */}
         <div className="lg:w-1/4 flex flex-col">
-          <ColumnHeader title="Shāstram : Self-Study Courses" />
+          <ColumnHeader
+            title="Shāstram : Self-Study Courses"
+            subtitle="Learn with mūla & commentary texts, full argument map, AI chat/tutor, info/concepts & search embedded reference texts"
+          />
           {textData.length === 0 ? (
             <div className="text-center py-16 text-stone-400">
               <p>No texts published yet.</p>
@@ -286,7 +289,10 @@ export default async function LibraryPage() {
 
         {/* Column 2 — NotebookLMs */}
         <div className="lg:w-1/4 flex flex-col">
-          <ColumnHeader title="NotebookLMs" />
+          <ColumnHeader
+            title="NotebookLMs"
+            subtitle="Curated sources, learning & teaching aids with all NotebookLM features"
+          />
           {(notebooks ?? []).length === 0 ? (
             <div className="text-center py-16 text-stone-400">
               <p className="font-devanagari">ज्ञानकोशः प्रस्तूयते</p>

@@ -277,11 +277,13 @@ export async function POST(req: Request) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { passageId, messages, sessionId } = await req.json() as {
+  const { passageId, messages, sessionId, model } = await req.json() as {
     passageId: string
     messages: TutorMessage[]
     sessionId?: string
+    model?: string
   }
+  const resolvedModel = model === 'claude-opus-4-6' ? 'claude-opus-4-6' : 'claude-sonnet-4-6'
 
   // Fetch passage context and semantic context in parallel
   const latestUserMessage = [...messages].reverse().find(m => m.role === 'user')?.content ?? ''
@@ -340,7 +342,7 @@ export async function POST(req: Request) {
 
   // Stream response
   const stream = anthropic.messages.stream({
-    model: 'claude-sonnet-4-6',
+    model: resolvedModel,
     max_tokens: 4096,
     system: systemPrompt,
     messages: claudeMessages,

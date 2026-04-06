@@ -10,11 +10,14 @@ interface TutorSidebarProps {
   commentaries: Commentary[]
 }
 
+type TutorModel = 'claude-sonnet-4-6' | 'claude-opus-4-6'
+
 export default function TutorSidebar({ passage }: TutorSidebarProps) {
   const [messages, setMessages] = useState<TutorMessage[]>([])
   const [input, setInput] = useState('')
   const [streaming, setStreaming] = useState(false)
   const [sessionId, setSessionId] = useState<string | undefined>()
+  const [model, setModel] = useState<TutorModel>('claude-sonnet-4-6')
   const bottomRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -53,6 +56,7 @@ export default function TutorSidebar({ passage }: TutorSidebarProps) {
           passageId: passage.id,
           messages: newMessages,
           sessionId,
+          model,
         }),
       })
 
@@ -103,26 +107,53 @@ export default function TutorSidebar({ passage }: TutorSidebarProps) {
 
   return (
     <div className="flex flex-col flex-1 overflow-hidden bg-stone-50">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-2 border-b border-stone-200 bg-white">
-        <div>
+      {/* Header — single combined row */}
+      <div className="flex items-center justify-between px-4 py-2 border-b border-stone-200 bg-white gap-3">
+        <div className="flex items-center gap-2 min-w-0">
           <span className="text-sm font-semibold text-stone-800">Tutor</span>
-          <span className="ml-2 text-xs text-stone-400">Vedāntācārya</span>
+          <span className="text-xs text-stone-400">Vedāntācārya</span>
         </div>
-        {messages.length > 0 && (
-          <button
-            onClick={startNewSession}
-            className="text-xs text-stone-400 hover:text-stone-600"
+        <div className="flex items-center gap-2 shrink-0">
+          {messages.length > 0 && (
+            <button
+              onClick={startNewSession}
+              className="text-xs text-stone-400 hover:text-stone-600"
+            >
+              New session
+            </button>
+          )}
+          <div
+            className="flex rounded-md overflow-hidden border border-stone-200"
+            title="Sonnet: faster · Opus: more rigorous"
           >
-            New session
-          </button>
-        )}
+            <button
+              onClick={() => setModel('claude-sonnet-4-6')}
+              className={`flex items-center gap-1 px-2 py-1 text-xs transition-colors ${
+                model === 'claude-sonnet-4-6'
+                  ? 'bg-orange-500 text-white'
+                  : 'bg-stone-100 text-stone-500 hover:bg-stone-200'
+              }`}
+            >
+              <span>⚡</span> Sonnet
+            </button>
+            <button
+              onClick={() => setModel('claude-opus-4-6')}
+              className={`flex items-center gap-1 px-2 py-1 text-xs transition-colors border-l border-stone-200 ${
+                model === 'claude-opus-4-6'
+                  ? 'bg-orange-500 text-white'
+                  : 'bg-stone-100 text-stone-500 hover:bg-stone-200'
+              }`}
+            >
+              <span>🔬</span> Opus
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+      <div className="flex-1 overflow-y-auto px-4 pt-2 pb-4 space-y-4">
         {/* AI Disclaimer */}
-        <div className="text-xs text-stone-400 italic text-center border-b border-stone-200 pb-3">
+        <div className="text-xs text-stone-400 italic text-center border-b border-stone-200 pb-2">
           AI responses are for study assistance only. Verify critical claims against authoritative sources and qualified scholars.
         </div>
         {messages.length === 0 && (
