@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { Noto_Sans_Devanagari } from 'next/font/google'
+import { Analytics } from '@vercel/analytics/react'
 import './globals.css'
 
 const inter = Inter({
@@ -50,7 +51,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="sa" className={`${inter.variable} ${devanagari.variable}`}>
-      <body className="font-sans">{children}</body>
+      <body className="font-sans">{children}<Analytics /></body>
     </html>
   )
 }
