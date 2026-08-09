@@ -40,7 +40,7 @@ loadEnv()
 // ---------------------------------------------------------------------------
 // Config
 // ---------------------------------------------------------------------------
-const TEXT_ID = 'c0219559-a8a9-4ebb-be5b-eca29b921457'
+const DEFAULT_TEXT_ID = 'c0219559-a8a9-4ebb-be5b-eca29b921457'
 const BATCH_SIZE = 5
 const BATCH_DELAY_MS = 2000
 const TERM_DEF_DELAY_MS = 300
@@ -108,12 +108,12 @@ async function ensureSourceNoteColumn() {
 // ---------------------------------------------------------------------------
 // Step 1 — Fetch passages
 // ---------------------------------------------------------------------------
-async function fetchPassages(): Promise<Passage[]> {
-  console.log(`\nFetching passages for text_id ${TEXT_ID}…`)
+async function fetchPassages(textId: string): Promise<Passage[]> {
+  console.log(`\nFetching passages for text_id ${textId}…`)
   const { data, error } = await supabase
     .from('passages')
     .select('id, mula_text, section_name, sequence_order')
-    .eq('text_id', TEXT_ID)
+    .eq('text_id', textId)
     .order('sequence_order', { ascending: true })
 
   if (error) { console.error('Failed to fetch passages:', error.message); process.exit(1) }
@@ -313,12 +313,15 @@ function chunk<T>(arr: T[], size: number): T[][] {
 async function main() {
   console.log('=== generate-nyaya-concepts ===\n')
 
+  const textId    = getArg('--text-id') ?? DEFAULT_TEXT_ID
   const startFrom = parseInt(getArg('--start-from') ?? '1')
+
+  console.log(`Text ID   : ${textId}`)
   if (startFrom > 1) console.log(`Skipping passages with sequence_order < ${startFrom}`)
 
   await ensureSourceNoteColumn()
 
-  const allPassages = await fetchPassages()
+  const allPassages = await fetchPassages(textId)
   const passages = allPassages.filter(p => p.sequence_order >= startFrom)
   if (startFrom > 1) console.log(`Processing ${passages.length} of ${allPassages.length} passages (starting from seq ${startFrom}).`)
   const conceptMap = await loadExistingConcepts()

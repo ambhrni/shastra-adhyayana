@@ -108,7 +108,7 @@ const INTRO_CONTENT: Record<'en' | 'sa', IntroContent> = {
       },
       {
         heading: 'मध्वतत्त्ववादसिद्धान्तः कः?',
-        body: 'वेदान्तः उपनिषत्सु ब्रह्मसूत्रेषु भगवद्गीतायाञ्च — एतेषु प्रस्थानत्रये — स्थितस्य दर्शनस्य परम्परा। एतेषां ग्रन्थानां विविधाः व्याख्याः विविधैः आचार्यैः प्रतिपादिताः।\n\nमध्वाचार्यः (१२३८–१३१७ ख्रीष्टाब्दे) तत्त्ववादसिद्धान्तस्य प्रवर्तकः। तस्य मूलसिद्धान्तः — भेदः सत्यः, नित्यः, अनपह्नवनीयश्च। पञ्चविधाः भेदाः प्रतिपाद्यन्ते — ईश्वरजीवयोः, ईश्वरजडयोः, जीवजडयोः, जीवजीवयोः, जडजडयोश्च।\n\nशङ्कराचार्यप्रणीतेन अद्वैतवेदान्तेन सह अस्य सिद्धान्तस्य मूलभूतं वैपरीत्यम् अस्ति। अद्वैतमते जगतः प्रपञ्चः मायामात्रः, केवलं निर्विशेषं ब्रह्मैव परमार्थसत्। तत्त्ववादे तु जगत् परमार्थसत्यम्, भेदश्च नित्यः।',
+        body: 'वेदान्तः उपनिषत्सु ब्रह्मसूत्रेषु भगवद्गीतायाञ्च — एतेषु प्रस्थानत्रये — स्थितस्य दर्शनस्य परम्परा। एतेषां ग्रन्थानां विविधाः व्याख्याः विविधैः आचार्यैः प्रतिपादिताः।\n\nमध्वाचार्यः (१२३८–१३१७ CE) तत्त्ववादसिद्धान्तस्य प्रवर्तकः। तस्य मूलसिद्धान्तः — भेदः सत्यः, नित्यः, अनपह्नवनीयश्च। पञ्चविधाः भेदाः प्रतिपाद्यन्ते — ईश्वरजीवयोः, ईश्वरजडयोः, जीवजडयोः, जीवजीवयोः, जडजडयोश्च।\n\nशङ्कराचार्यप्रणीतेन अद्वैतवेदान्तेन सह अस्य सिद्धान्तस्य मूलभूतं वैपरीत्यम् अस्ति। अद्वैतमते जगतः प्रपञ्चः मायामात्रः, केवलं निर्विशेषं ब्रह्मैव परमार्थसत्। तत्त्ववादे तु जगत् परमार्थसत्यम्, भेदश्च नित्यः।',
       },
       {
         heading: 'वादावली का?',
@@ -116,7 +116,7 @@ const INTRO_CONTENT: Record<'en' | 'sa', IntroContent> = {
       },
       {
         heading: 'द्वे टीके',
-        body: 'अस्मिन् अध्ययनमञ्चे वादावली द्वाभ्यां प्रामाणिकटीकाभ्यां सह पठ्यते —\n\n**भावदीपिका** — राघवेन्द्रतीर्थविरचिता। राघवेन्द्रतीर्थाः (१५९५–१६७१ ख्रीष्टाब्दे) तत्त्ववादपरम्परायाः महान् विद्वद्भक्तः। तेषां टीका प्रत्येकं वादं प्रमाणपूर्वकं दार्शनिकगाम्भीर्येण प्रकाशयति।\n\n**वादावलीप्रकाशः** — श्रीनिवासतीर्थविरचितः। अयं विद्वत्टीकाग्रन्थः दुर्बोधस्थलेषु विस्तारं करोति, नव्यन्यायशैल्या जयतीर्थस्य युक्तिक्रमं सुस्पष्टं करोति।',
+        body: 'अस्मिन् अध्ययनमञ्चे वादावली द्वाभ्यां प्रामाणिकटीकाभ्यां सह पठ्यते —\n\n**भावदीपिका** — राघवेन्द्रतीर्थविरचिता। राघवेन्द्रतीर्थाः (१५९५–१६७१ CE) तत्त्ववादपरम्परायाः महान् विद्वद्भक्तः। तेषां टीका प्रत्येकं वादं प्रमाणपूर्वकं दार्शनिकगाम्भीर्येण प्रकाशयति।\n\n**वादावलीप्रकाशः** — श्रीनिवासतीर्थविरचितः। अयं विद्वत्टीकाग्रन्थः दुर्बोधस्थलेषु विस्तारं करोति, नव्यन्यायशैल्या जयतीर्थस्य युक्तिक्रमं सुस्पष्टं करोति।',
       },
       {
         heading: 'विभागशः सारः',
@@ -173,10 +173,72 @@ const INTRO_CONTENT: Record<'en' | 'sa', IntroContent> = {
   },
 }
 
-// ─── Text-specific config ────────────────────────────────────────────────────
+// ─── Bhēdōjjīvanam intro content ────────────────────────────────────────────
+// TODO: Curator to provide accurate intro text — current placeholder only.
+// Do NOT populate with AI-generated content. Await curator input.
 
-const TEXT_CONFIG: Record<string, { firstPassageId?: string }> = {
-  'c0219559-a8a9-4ebb-be5b-eca29b921457': {},
+const BHEDOJJIVANAM_INTRO_CONTENT: Record<'en' | 'sa', IntroContent> = {
+  en: {
+    title: 'Bhēdōjjīvanam — An Introduction',
+    subtitle: 'For the sincere seeker approaching Madhva Tattvavāda Siddhānta',
+    sections: [
+      {
+        heading: 'Why Study the Bhēdōjjīvanam?',
+        body: 'The Bhēdōjjīvanam holds a distinctive place in the corpus of Vyāsatīrtha (c. 1460–1539 CE), one of the three great ācāryas — the munitraya — of Tattvavāda, alongside Madhva and Jayatīrtha himself. Where his major doxographical works — the Nyāyāmṛta, Tātparyacandrikā, and Tarkatāṇḍava, together called the Vyāsa-traya — engage the entire landscape of rival systems at encyclopedic length, the Bhēdōjjīvanam is deliberately compact: composed, by tradition, as the last and shortest of his polemical writings, intended to train the beginning student before taking up the fuller works.\n\nThat brevity is exactly what makes it valuable to study. The text distills the central battleground between Tattvavāda and Māyāvāda — whether bheda, difference, is real, or an illusory appearance to be dissolved in an undifferentiated Brahman — into a single, tightly argued treatise a student can hold in view as a whole. Every technique of navya-nyāya that appears at length across Vyāsatīrtha\'s larger corpus — isolating a hetu\'s precise scope, testing a lakṣaṇa against every possible reading, pressing an opponent\'s own admissions into a dilemma — appears here too, in miniature, and is easier to trace for it.\n\nFor the student already working through the Vādāvalī, the Bhēdōjjīvanam offers a natural second encounter with the same terrain from a different dialectical hand: Jayatīrtha\'s sustained refutation of anirvacanīyatva reads differently from Vyāsatīrtha\'s own, later, more compressed treatment of the reality of bheda — and comparing the two is itself a valuable exercise in how Tattvavāda\'s argumentative tradition developed and consolidated across generations.',
+      },
+      {
+        heading: 'What is Madhva Tattvavāda Siddhānta?',
+        body: 'Vedānta is the philosophical tradition that interprets the three foundational texts of Indian philosophy — the Upaniṣads, the Brahmasūtras, and the Bhagavadgītā. Different schools interpret these texts differently.\n\nMadhvācārya (1238–1317 CE) founded the Tattvavāda school — the philosophy of reality as it truly is. His central insight is that difference (bheda) is real, irreducible, and eternal. There are five fundamental differences: between the Lord (Viṣṇu/Brahman) and individual souls (jīvas), between the Lord and matter (jaḍa), between soul and matter, between different souls, and between different material objects.\n\nThis stands in sharp contrast to Advaita Vedānta, associated with Śaṅkarācārya, which holds that the multiplicity of the world is ultimately illusory (māyā) and that only Brahman — undifferentiated pure consciousness — truly exists. The Bhēdōjjīvanam, like the Vādāvalī elsewhere on this platform, is a rigorous refutation of Advaita\'s key positions from within the Tattvavāda framework — composed a century and a half later, by one of Tattvavāda\'s own foundational ācāryas.',
+      },
+      {
+        heading: 'What is Bhēdōjjīvanam?',
+        body: 'Bhēdōjjīvanam — literally \'the revivification of difference\' — is a concise Sanskrit polemical treatise by Vyāsatīrtha (Yatirāja before his renunciation; c. 1460–1539 CE), one of Tattvavāda\'s three foundational ācāryas alongside Madhva and Jayatīrtha. Raised under the guardianship of Brahmaṇya Tīrtha and trained for twelve years in Dvaita philosophy under Śrīpādarāja at Mulbagal, Vyāsatīrtha succeeded his teacher to the pontifical seat and went on to serve as rājaguru to the Vijayanagara court — first to Sāḷuva Narasiṃha, and later, most notably, to Kṛṣṇadēvarāya. Among his disciples were the haridāsa poet-saints Purandara Dāsa and Kanaka Dāsa.\n\nVyāsatīrtha\'s reputation rests chiefly on the Vyāsa-traya — the Nyāyāmṛta, Tātparyacandrikā, and Tarkatāṇḍava — vast doxographical works that catalogue and refute the positions of Advaita, Viśiṣṭādvaita, Mīmāṃsā, Nyāya, and Buddhist schools with an exhaustiveness that provoked Madhusūdana Sarasvatī\'s celebrated Advaita Siddhi in direct response to the Nyāyāmṛta — one of the most consequential exchanges in the history of Vedāntic debate. Before these, he had also written ṭīkās on Jayatīrtha\'s shorter khaṇḍana tracts (the Upādhikhaṇḍana, Māyāvādakhaṇḍana, and Prapañcamithyātvānumānakhaṇḍana) and the Tattvavivekatīkā.\n\nThe Bhēdōjjīvanam comes last in this sequence — by tradition, the shortest of his polemical compositions, written as an accessible synthesis rather than an exhaustive survey. Its title states its purpose directly: bheda — the pañcabheda of Viṣṇu from jīva, Viṣṇu from jaḍa, jīva from jaḍa, jīva from jīva, and jaḍa from jaḍa that Madhva holds to be the very structure of reality — is here given ujjīvana, a revival, against the Māyāvādin\'s contention that all such difference is finally mithyā, an appearance to be sublated. In compressed form, the text carries forward the same defense of bheda\'s reality that occupies the second half of the Vādāvalī, now argued through Vyāsatīrtha\'s own mature dialectical voice.',
+      },
+      {
+        heading: 'The Kāśikā Commentary',
+        body: 'The Bhēdōjjīvanam is studied here alongside the Kāśikā, a commentary by Kāśītirumalācārya. Independent biographical documentation of the commentator is scarce, and this platform does not claim certainty about his dates or lineage where the sources do not support it. What can be said with confidence comes from direct engagement with the commentary itself: the Kāśikā proceeds as close explanatory prose on Vyāsatīrtha\'s terse mūla, unpacking each compressed argument into its full pūrvapakṣa-siddhānta structure, glossing technical nyāya terminology as it arises, and supplying the intermediate steps a student needs to follow the logic of a khaṇḍana that the root text itself often states in a single dense sentence. In this respect it serves the same essential function for the Bhēdōjjīvanam that Rāghavendra Tīrtha\'s Bhāvadīpikā and Śrīnivāsa Tīrtha\'s Vādāvalīprakāśaḥ serve for the Vādāvalī elsewhere on this platform — a guide that makes the root text\'s compressed reasoning legible step by step.',
+      },
+      {
+        heading: 'How to Use This Platform',
+        body: 'All 125 sections are available with the original Sanskrit mūla text alongside Kāśītirumalācārya\'s Kāśikā commentary. You may read passage by passage with togglable commentary, ask the AI Tutor questions in English or Sanskrit at any depth, practise in Parīkṣā mode, and track your progress across sessions.',
+      },
+    ],
+    sectionOverview: [],
+  },
+  sa: {
+    title: 'भेदोज्जीवनस्य परिचयः',
+    subtitle: 'तत्त्ववादसिद्धान्तजिज्ञासूनां कृते',
+    sections: [
+      {
+        heading: 'भेदोज्जीवनम् अधीयीत किमर्थम्?',
+        body: 'भेदोज्जीवनं तत्त्ववादपरम्परायां मुनित्रयान्तर्गतस्य — मध्वाचार्यजयतीर्थाचार्ययोः सह — व्यासतीर्थानां (१४६०-१५३९ CE) कृतिषु विशिष्टं स्थानं भजते। तेषां प्रमुखानि सिद्धान्तग्रन्थानि — न्यायामृतं तात्पर्यचन्द्रिका तर्कताण्डवं च, यानि व्यासत्रयमिति प्रसिद्धानि — समग्रं प्रतिपक्षजगत् विस्तरेण व्याप्नुवन्ति। भेदोज्जीवनं तु सङ्क्षेपेणैव रचितम् — परम्परानुसारेण तेषां वादग्रन्थेषु अन्तिमं संक्षिप्ततमं च, नवशिष्याणां प्रशिक्षणार्थं विहितम्, यत् महाग्रन्थेभ्यः पूर्वमेव अध्येतव्यम्।\n\nएतादृशी संक्षिप्तता एव अस्य ग्रन्थस्य अध्ययने मूल्यं जनयति। तत्त्ववादमायावादयोः मुख्यं युद्धक्षेत्रम् — भेदः सत्यः किं वा निर्विशेषब्रह्मणि विलीयमानो भ्रमः — एकस्मिन् सुसंहते ग्रन्थे संगृह्य प्रस्तूयते, यं छात्रः समग्रतया दृष्ट्वा अवधारयितुं शक्नोति। व्यासतीर्थानां बृहत्कृतिषु विस्तरेण दृश्यमानाः नव्यन्यायप्रक्रियाः सर्वाः — हेतोः सम्यग् व्याप्तिनिर्धारणम्, लक्षणस्य प्रतिविकल्पं परीक्षणम्, प्रतिवादिनः स्वीकृतांशानामेव विकल्पजालेन बन्धनम् — अत्रापि संक्षेपेण दृश्यन्ते, अत एव सुगमतया अनुसर्तुं शक्याः।\n\nयः छात्रः वादावलीम् अधीत्य आगतः, तस्य कृते भेदोज्जीवनं तमेव भूमिं भिन्नेन तार्किकहस्तेन पुनरवलोकयितुं अवसरं ददाति। जयतीर्थानां अनिर्वचनीयत्वखण्डनं यथा विस्तरेण प्रवर्तते, तथा व्यासतीर्थानां भेदसत्यत्वप्रतिपादनं परवर्तिकाले संक्षिप्ततरं भवति — उभयोः तुलना तत्त्ववादपरम्परायाः आचार्यद्वयेन कथं युक्तिजालं दृढीभूतं संहतं च जातम् इत्यत्र सम्यग् अन्तर्दृष्टिं ददाति।',
+      },
+      {
+        heading: 'मध्वतत्त्ववादसिद्धान्तः कः?',
+        body: 'वेदान्तः उपनिषत्सु ब्रह्मसूत्रेषु भगवद्गीतायाञ्च — एतेषु प्रस्थानत्रये — स्थितस्य दर्शनस्य परम्परा। एतेषां ग्रन्थानां विविधाः व्याख्याः विविधैः आचार्यैः प्रतिपादिताः।\n\nमध्वाचार्यः (१२३८–१३१७ CE) तत्त्ववादसिद्धान्तस्य प्रवर्तकः। तस्य मूलसिद्धान्तः — भेदः सत्यः, नित्यः, अनपह्नवनीयश्च। पञ्चविधाः भेदाः प्रतिपाद्यन्ते — ईश्वरजीवयोः, ईश्वरजडयोः, जीवजडयोः, जीवजीवयोः, जडजडयोश्च।\n\nशङ्कराचार्यप्रणीतेन अद्वैतवेदान्तेन सह अस्य सिद्धान्तस्य मूलभूतं वैपरीत्यम् अस्ति। अद्वैतमते जगतः प्रपञ्चः मायामात्रः, केवलं निर्विशेषं ब्रह्मैव परमार्थसत्। तत्त्ववादे तु जगत् परमार्थसत्यम्, भेदश्च नित्यः।',
+      },
+      {
+        heading: 'भेदोज्जीवनं किम्?',
+        body: 'भेदोज्जीवनम् इति नाम्ना — भेदस्य पुनरुज्जीवनम् इत्यर्थेन — व्यासतीर्थैः (संन्यासात् पूर्वं यतिराजनाम्ना ज्ञातैः; १४६०-१५३९ CE) विरचितः संक्षिप्तः संस्कृतवादग्रन्थः। मध्वाचार्यजयतीर्थाचार्ययोः सह तत्त्ववादस्य मुनित्रयान्तर्गताः व्यासतीर्थाः, ब्रह्मण्यतीर्थैः पालिताः, मूलबागिले श्रीपादराजैः द्वादशवर्षाणि तत्त्ववादशास्त्रे शिक्षिताः, गुरोः पदं प्राप्य विजयनगरसाम्राज्ये राजगुरुत्वेन — प्रथमं साळुवनरसिंहस्य, पश्चात् प्रख्यातरूपेण कृष्णदेवरायस्य — सेवां चक्रुः। पुरन्दरदासाः कनकदासाश्च तेषां प्रमुखशिष्येषु गण्यन्ते।\n\nव्यासतीर्थानां कीर्तिः मुख्यतया व्यासत्रये प्रतिष्ठिता — न्यायामृतं तात्पर्यचन्द्रिका तर्कताण्डवं च — यत्र अद्वैतविशिष्टाद्वैतमीमांसान्यायबौद्धादिदर्शनानां समग्रं खण्डनं विस्तरेण प्रतिपाद्यते। न्यायामृतस्य प्रत्युत्तरत्वेन मधुसूदनसरस्वतीभिः अद्वैतसिद्धिः विरचिता — इदं वेदान्तवादपरम्परायां सर्वाधिकप्रसिद्धं संवादद्वयम्। एतत्पूर्वं जयतीर्थानां लघुखण्डनग्रन्थेषु — उपाधिखण्डने मायावादखण्डने प्रपञ्चमिथ्यात्वानुमानखण्डने च — टीकाः, तथा तत्त्वविवेकटीका अपि तैः विरचिताः।\n\nभेदोज्जीवनं तु एतत्क्रमे अन्तिमं स्थानं भजते — परम्परया तेषां वादग्रन्थेषु संक्षिप्ततमम्, समग्रसर्वेक्षणरूपेण नहि, अपि तु सुगमसंहृतिरूपेण विरचितम्। नामैव अस्य प्रयोजनं सूचयति — भेदः, पञ्चविधः (विष्णुजीवयोः विष्णुजडयोः जीवजडयोः जीवजीवयोः जडजडयोश्च भेदः), यं मध्वाचार्याः जगतः स्वरूपभूतमेव मन्यन्ते, अत्र उज्जीवनं पुनर्जीवनं लभते — मायावादिना तु सर्वः भेदः अन्ततो मिथ्या बाध्यश्च इत्यभ्युपगम्यते। संक्षिप्तरूपेण एष ग्रन्थः तमेव भेदसत्यत्वसमर्थनं वहति, यत् वादावल्याः द्वितीयार्धे प्रधानं वर्तते, इदानीं तु व्यासतीर्थानां स्वकीयेन परिपक्वेन तार्किकस्वरेण प्रतिपाद्यमानम्।',
+      },
+      {
+        heading: 'काशिकाटीका',
+        body: 'भेदोज्जीवनम् अत्र काशिकया सह अध्ययनार्थम् उपलभ्यते — काशीतिरुमलाचार्यविरचितया टीकया। टीकाकारस्य स्वतन्त्रं जीवनचरितं दुर्लभम्, अतः तेषां कालनिर्णये गुरुपरम्परायां वा निश्चयेन किमपि अत्र न प्रतिज्ञायते यत्र प्रमाणानि न सन्ति। किन्तु टीकायाः स्वरूपमेव सुनिश्चयेन वक्तुं शक्यते — काशिका व्यासतीर्थानां संक्षिप्तं मूलं विवृण्वती प्रत्येकं संहृतं युक्तिं पूर्वपक्षसिद्धान्तरूपेण सम्पूर्णतया विस्तारयति, नैयायिकपारिभाषिकशब्दान् यथावसरं व्याचष्टे, मूलग्रन्थे एकस्मिन् सुसंहते वाक्ये उक्तस्य खण्डनस्य मध्यमसोपानानि छात्रार्थं पूरयति। एतेन कार्येण काशिका भेदोज्जीवनस्य कृते तमेव सेवां करोति, यां राघवेन्द्रतीर्थानां भावदीपिका श्रीनिवासतीर्थानां वादावलीप्रकाशश्च वादावल्याः कृते अत्रैव मञ्चे कुरुतः — मूलग्रन्थस्य संहृतां युक्तिं सोपानशः सुबोधां कुर्वती मार्गदर्शिका।',
+      },
+      {
+        heading: 'अस्मिन् मञ्चे कथम् अधीयीत?',
+        body: 'पञ्चविंशत्यधिकशतं (१२५) प्रकरणानि मूलपाठेन सह काशीतिरुमलाचार्यविरचितया काशिकाटीकया सह अत्र उपलभ्यन्ते। अध्येता प्रकरणशः पठितुम्, एआई-गुरोः प्रश्नान् प्रष्टुम्, परीक्षामञ्चे अभ्यासं कर्तुम्, स्वप्रगतिञ्च अनुगन्तुं शक्नोति।',
+      },
+    ],
+    sectionOverview: [],
+  },
+}
+
+// ─── Per-text intro content lookup ───────────────────────────────────────────
+
+const ALL_INTRO_CONTENT: Record<string, Record<'en' | 'sa', IntroContent>> = {
+  'c0219559-a8a9-4ebb-be5b-eca29b921457': INTRO_CONTENT,
+  '86257ca9-12ab-4a5e-83ff-4e4b2938b071': BHEDOJJIVANAM_INTRO_CONTENT,
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -238,7 +300,8 @@ interface IntroPageClientProps {
 
 function IntroPageClient({ textId, firstPassageId }: IntroPageClientProps) {
   const [activeTab, setActiveTab] = useState<'en' | 'sa'>('en')
-  const content = INTRO_CONTENT[activeTab]
+  const textIntro = ALL_INTRO_CONTENT[textId] ?? INTRO_CONTENT
+  const content = textIntro[activeTab]
   const isSanskrit = activeTab === 'sa'
 
   const studyHref = firstPassageId
@@ -288,7 +351,9 @@ function IntroPageClient({ textId, firstPassageId }: IntroPageClientProps) {
           {section.isSectionOverview ? (
             <>
               {renderBody(section.body)}
-              <SectionOverview entries={content.sectionOverview} isSanskrit={isSanskrit} />
+              {content.sectionOverview.length > 0 && (
+                <SectionOverview entries={content.sectionOverview} isSanskrit={isSanskrit} />
+              )}
             </>
           ) : (
             renderBody(section.body)

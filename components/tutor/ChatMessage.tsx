@@ -24,13 +24,15 @@ export default function ChatMessage({ message }: { message: TutorMessage }) {
         {isUser ? (
           message.content
         ) : (
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
+          <div
             className="prose prose-stone prose-sm max-w-none
                        prose-headings:font-semibold prose-headings:text-stone-800
                        prose-strong:text-stone-800
                        prose-blockquote:border-l-4 prose-blockquote:border-saffron-400 prose-blockquote:text-stone-600
                        prose-code:text-stone-700"
+          >
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
             components={{
               table: ({node, ...props}) => (
                 <div className="overflow-x-auto my-3">
@@ -59,6 +61,7 @@ export default function ChatMessage({ message }: { message: TutorMessage }) {
           >
             {message.content}
           </ReactMarkdown>
+          </div>
         )}
       </div>
     </div>

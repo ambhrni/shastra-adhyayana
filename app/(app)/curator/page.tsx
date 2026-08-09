@@ -134,10 +134,34 @@ export default async function CuratorPage({ searchParams }: Props) {
       {/* ── Passages tab ── */}
       {activeTab === 'passages' && (
         <div className="space-y-10">
+          {texts.length > 1 && (
+            <div className="sticky top-0 z-10 -mx-6 px-6 py-2.5 bg-stone-50/95 backdrop-blur border-b border-stone-200 flex items-center gap-2 flex-wrap">
+              <span className="text-xs font-medium text-stone-400 uppercase tracking-wide mr-1">Jump to:</span>
+              {texts.map(text => {
+                const count = (passagesByText[text.id] ?? []).length
+                const pending = (passagesByText[text.id] ?? []).filter((p: any) => !p.is_approved).length
+                return (
+                  <a
+                    key={text.id}
+                    href={`#text-${text.id}`}
+                    className="inline-flex items-center gap-1.5 text-sm font-devanagari px-3 py-1 rounded-lg border border-stone-200 bg-white hover:border-saffron-400 hover:text-saffron-700 transition-colors"
+                  >
+                    {text.title}
+                    <span className="text-xs text-stone-400">({count})</span>
+                    {pending > 0 && (
+                      <span className="bg-amber-100 text-amber-800 text-[10px] font-medium px-1.5 py-0.5 rounded-full">
+                        {pending} pending
+                      </span>
+                    )}
+                  </a>
+                )
+              })}
+            </div>
+          )}
           {texts.map(text => {
             const textPassages = passagesByText[text.id] ?? []
             return (
-              <section key={text.id}>
+              <section key={text.id} id={`text-${text.id}`} className="scroll-mt-16">
                 <div className="flex items-start justify-between gap-4 mb-1">
                   <h2 className="text-lg font-semibold text-stone-800">
                     <span className="font-devanagari">{text.title}</span>

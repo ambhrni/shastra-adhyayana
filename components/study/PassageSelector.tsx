@@ -18,12 +18,13 @@ interface Props {
   passageId: string
   sectionNumber: number | null
   textId: string
+  textTitle: string
   isLoggedIn: boolean
   commentators: Commentator[]
 }
 
 export default function PassageSelector({
-  allPassages, passageId, sectionNumber, textId, isLoggedIn, commentators,
+  allPassages, passageId, sectionNumber, textId, textTitle, isLoggedIn, commentators,
 }: Props) {
   const router = useRouter()
   const [flagOpen, setFlagOpen] = useState(false)
@@ -47,7 +48,7 @@ export default function PassageSelector({
       {/* Course title + full map link */}
       <div className="shrink-0 flex items-center justify-between px-4 pt-3 pb-2 border-b border-stone-100 bg-white">
         <span className="text-xs font-semibold text-stone-400 uppercase tracking-widest">
-          Vādāvalī
+          {textTitle}
         </span>
         <Link
           href={`/texts/${textId}/map`}

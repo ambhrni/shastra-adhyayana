@@ -70,12 +70,26 @@ const COLOR_CLASSES: Record<ColorKey, {
   stone:  { pill: 'bg-stone-100 border-stone-300 text-stone-700',    pillSelected: 'ring-2 ring-stone-500 bg-stone-200',  pillHover: 'hover:bg-stone-200',  dot: 'bg-stone-400',  label: 'Opening / Closing' },
 }
 
-// ── Movements ─────────────────────────────────────────────────────────────────
+// ── Movements — per-text named groupings ──────────────────────────────────────
+// Only vādāvalī has named movements. All other texts get a single "All Sections" group.
 
-const MOVEMENTS = [
-  { label: 'Jagatsatya', subtitle: '§1–25', range: [1, 25] as [number, number] },
-  { label: 'Bhedasatya', subtitle: '§26–40', range: [26, 40] as [number, number] },
-]
+const TEXT_MOVEMENTS: Record<string, Array<{ label: string; subtitle: string; range: [number, number] }>> = {
+  'c0219559-a8a9-4ebb-be5b-eca29b921457': [
+    { label: 'Jagatsatya', subtitle: '§1–25', range: [1, 25] },
+    { label: 'Bhedasatya', subtitle: '§26–40', range: [26, 40] },
+  ],
+}
+
+function computeMovements(
+  textId: string,
+  sections: SectionData[],
+): Array<{ label: string; subtitle: string; range: [number, number] }> {
+  if (TEXT_MOVEMENTS[textId]) return TEXT_MOVEMENTS[textId]
+  if (sections.length === 0) return []
+  const nums = sections.map(s => s.sectionNumber)
+  const min = Math.min(...nums), max = Math.max(...nums)
+  return [{ label: 'All Sections', subtitle: `§${min}–${max}`, range: [min, max] as [number, number] }]
+}
 
 // ── Connection type styles ────────────────────────────────────────────────────
 
@@ -108,6 +122,8 @@ export default function ArgumentMapView({
   const [tooltip, setTooltip] = useState<{ link: SectionLink; x: number; y: number } | null>(null)
   const [seqOpen, setSeqOpen] = useState(false)
 
+  const movements = computeMovements(textId, sections)
+
   const approvedPassageIds = new Set(approvedNodes.map(n => n.passage_id))
   const sectionsMap = new Map(sections.map(s => [s.sectionNumber, s]))
   const selectedSection = selectedSectionNumber != null
@@ -119,7 +135,7 @@ export default function ArgumentMapView({
   function SectionPills({ compact }: { compact: boolean }) {
     return (
       <div className="space-y-4">
-        {MOVEMENTS.map(movement => {
+        {movements.map(movement => {
           const movementSections = sections.filter(
             s => s.sectionNumber >= movement.range[0] && s.sectionNumber <= movement.range[1]
           )
@@ -545,7 +561,7 @@ export default function ArgumentMapView({
           </svg>
           <div className="flex-1 min-w-0">
             <h2 className="text-base font-semibold text-stone-800 leading-none">Sequence View</h2>
-            <p className="text-xs text-stone-500 mt-0.5">40 sections in argumentative order</p>
+            <p className="text-xs text-stone-500 mt-0.5">{sections.length} sections in argumentative order</p>
           </div>
           <span className="text-sm text-stone-400 shrink-0 select-none">
             {seqOpen ? 'Hide ▲' : 'Show ▼'}
@@ -584,7 +600,7 @@ export default function ArgumentMapView({
           </div>
         </div>
 
-        <CrossLinkDAG />
+        {CrossLinkDAG()}
       </div>
     </div>
   )

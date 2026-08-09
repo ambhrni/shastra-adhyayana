@@ -5,7 +5,7 @@ import ArgumentMapView from '@/components/map/ArgumentMapView'
 import type { ArgumentStream } from '@/lib/argument-map-generator'
 
 export const metadata: Metadata = {
-  title: 'Argument Map — Vādāvalī | Tattvasudhā',
+  title: 'Argument Map | Tattvasudhā',
 }
 
 interface Props {
@@ -104,12 +104,14 @@ export default async function ArgumentMapPage({ params, searchParams }: Props) {
           href={backHref}
           className="mt-1 text-sm text-stone-400 hover:text-saffron-600 transition-colors shrink-0"
         >
-          ← Vādāvalī
+          ← {textData?.title_transliterated ?? 'Text'}
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-stone-800 leading-tight">Argument Map — Vādāvalī</h1>
+          <h1 className="text-2xl font-bold text-stone-800 leading-tight">
+            Argument Map — {textData?.title_transliterated ?? ''}
+          </h1>
           <p className="text-sm text-stone-500 mt-0.5">
-            The logical architecture of Jayatīrtha's refutation of Advaita Vedānta
+            {textData?.title ?? ''}
           </p>
         </div>
       </div>

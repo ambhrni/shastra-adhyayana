@@ -18,6 +18,7 @@ const devanagari = Noto_Sans_Devanagari({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://tattvasudha.org'),
   title: {
     default: 'Tattvasudhā — तत्त्वसुधा',
     template: '%s | Tattvasudhā',

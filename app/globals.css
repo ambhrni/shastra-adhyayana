@@ -15,4 +15,30 @@
   .font-devanagari {
     font-family: var(--font-devanagari), 'Noto Sans Devanagari', sans-serif;
   }
+
+  .passage-footnote-ref {
+    color: theme('colors.saffron.600');
+    font-size: 0.65em;
+    font-weight: 600;
+    margin-left: 1px;
+  }
+
+  .passage-footnotes {
+    margin-top: 1.25rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid theme('colors.stone.200');
+  }
+  .passage-footnote-entry {
+    font-size: 0.8rem;
+    line-height: 1.6;
+    color: theme('colors.stone.500');
+    margin-bottom: 0.4rem;
+  }
+  .passage-footnote-entry:last-child {
+    margin-bottom: 0;
+  }
+  .passage-footnote-entry .passage-footnote-ref {
+    color: theme('colors.stone.400');
+    margin-right: 2px;
+  }
 }

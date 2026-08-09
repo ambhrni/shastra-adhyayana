@@ -14,7 +14,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       .from('texts')
       .select('id, title_transliterated')
       .eq('is_published', true)
-      .order('created_at'),
+      .order('display_order', { ascending: true, nullsFirst: false }),
   ])
 
   const { data: profile } = user

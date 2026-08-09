@@ -1,0 +1,69 @@
+[
+  {
+    "type": "GLOBAL_RULE",
+    "rule": "default_duplicate_mula_when_empty",
+    "note": "Any unit with no mula of its own duplicates the nearest preceding unit's mula in full (45 units affected as of this run). This is a default, not per-case confirmed -- curator is reviewing each via the badge in bhedojjivanam_review_tool.html and may override specific ones (action='no_duplicate' or 'duplicate' from a different unit)."
+  },
+  {
+    "type": "move_to_previous_upashirshika",
+    "anchor": "इति पूर्वपक्षग्रन्थः",
+    "note": "closing marker for pUrvapakSha; belongs with unit 31 (the upashirshika it closes), not unit 32"
+  },
+  {
+    "type": "duplicate_mula_from_previous_upashirshika",
+    "target_heading": "व्यक्त्यभेदस्य आत्मत्वजातिबाधकत्वाभावसमर्थनम्",
+    "note": "unit 66's kAshikA still substantively discusses unit 65's mUla; prepend unit 65's mUla to unit 66's"
+  },
+  {
+    "type": "move_to_next_upashirshika",
+    "anchor": "एतेन निषेधवाक्यत्वादद्वैतवाक्यं प्रबलमिति प्रत्युक्तम्",
+    "note": "confirmed by curator: belongs to unit 77, not unit 76 (typo 86/87 -> 76/77)"
+  },
+  {
+    "type": "GLOBAL_RULE",
+    "rule": "split_multi_mula_units_option_A",
+    "note": "Any unit bundling multiple own mUla+kAshikA pairs is split into sub-units N.1, N.2, ... at each mUla boundary (option A: parent number stays stable). 33 original units split into 177 total entries. Confirmed by curator 2026-07-29."
+  },
+  {
+    "type": "duplicate_mula_from_previous_upashirshika_v2",
+    "source": "21",
+    "target": "22.1",
+    "note": "curator flag: unit 22's kAshikA continues discussing unit 21's mUla"
+  },
+  {
+    "type": "duplicate_mula_from_previous_upashirshika_v2",
+    "source": "37.2",
+    "target": "38",
+    "note": "curator flag: unit 38's kAshikA continues discussing unit 37's (2nd/last) mUla"
+  },
+  {
+    "type": "duplicate_mula_from_previous_upashirshika_v2",
+    "source": "42.2",
+    "target": "43.1",
+    "note": "curator flag: unit 43's kAshikA continues discussing unit 42's (2nd/last) mUla"
+  },
+  {
+    "type": "duplicate_mula_from_previous_upashirshika_v2",
+    "source": "49",
+    "target": "50",
+    "note": "curator flag: unit 50's kAshikA continues discussing unit 49's mUla"
+  },
+  {
+    "type": "NOTE",
+    "note": "Pattern-1 general search: no reliable mechanical signal found for detecting other instances beyond curator-flagged ones (checked heading-name keywords द्वय/उभय/द्वित as a weak heuristic -- candidates: units 56, 68, 93, 94, 105 -- NOT auto-applied, need curator's own philological read via the review tool)."
+  },
+  {
+    "type": "ROOT_FIX",
+    "fix": "strip_universal_page_boundary_rule",
+    "note": "Every page in transcription.md ends with a standalone '---' line before the next page marker (135/136 pages), a pure formatting convention, not content. It was previously only stripped on pages WITH footnotes (as a side effect of footnote-block detection); pages with no footnotes kept it embedded in whatever mUla/kAshikA block was open when the page ended. Now stripped universally in stage-1 parsing."
+  },
+  {
+    "type": "GLOBAL_RULE",
+    "rule": "merge_page_split_mula_continuations",
+    "note": "Some units contain multiple own-mUla blocks that are NOT separate theses but a single continuous quote re-tagged with a fresh --mU.-- marker at each page break (curator-confirmed, not mechanically detectable -- some end mid-word with '...', others end in a complete-looking daNDa yet still continue). Merged pairs applied this round: unit 22 (blocks 2+3), unit 30 (blocks 1+2 and 8+9), unit 43 (blocks 3+4), unit 65 (blocks 1+2), unit 75 (blocks 1+2 and 3+4). Pipeline order updated: merge happens BEFORE splitting and BEFORE default-duplication, so downstream mUla+kAshikA pairing stays correct."
+  },
+  {
+    "type": "NOTE",
+    "note": "Regression caught+fixed this round: the original unit 31/32 fix depended on finding a literal '---' divider between two bundled phrases -- but that divider WAS the same page-boundary rule the root-fix now strips, so it briefly broke. Fixed by cutting precisely at the anchor phrase's own bold-span boundary instead of depending on a divider. Also fixed: move_to_next_upashirshika (unit 76->77) needed a direction-aware cut (before the anchor, not after), since that anchor sits inside one continuous bold span rather than its own separately-bolded phrase."
+  }
+]

@@ -1,5 +1,8 @@
+'use client'
+
 import type { Passage } from '@/types/database'
 import InlineEditor from './InlineEditor'
+import { renderPassageText } from '@/lib/render-passage-text'
 
 interface MulaPanelProps {
   passage: Passage
@@ -30,10 +33,11 @@ export default function MulaPanel({ passage, isCurator, textId }: MulaPanelProps
           recordId={passage.id}
           initialValue={passage.mula_text}
           isDevanagari
-          displayClassName="text-[22px] font-semibold leading-relaxed"
+          displayClassName="text-[22px] font-semibold leading-relaxed whitespace-pre-line"
+          renderDisplay={renderPassageText}
         />
       ) : (
-        <p className="text-[22px] font-semibold text-stone-900 leading-relaxed font-devanagari">{passage.mula_text}</p>
+        <div className="text-[22px] font-semibold text-stone-900 leading-relaxed font-devanagari whitespace-pre-line">{renderPassageText(passage.mula_text)}</div>
       )}
 
       {passage.mula_transliterated && (

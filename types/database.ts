@@ -206,7 +206,7 @@ export interface Video {
 
 // ── Argument Map ─────────────────────────────────────────────────────────────
 
-export type ArgumentStream = 'mula' | 'bhavadipika' | 'vadavaliprakasha'
+export type ArgumentStream = 'mula' | 'bhavadipika' | 'vadavaliprakasha' | 'kashika'
 export type ArgumentNodeType =
   | 'purva_paksha'
   | 'khandana'

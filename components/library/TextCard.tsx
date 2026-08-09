@@ -20,20 +20,19 @@ export default function TextCard({ text, progressPercent, firstUnfinishedPassage
 
   return (
     <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
-      {/* Thumbnail */}
-      <div className="relative w-full aspect-video overflow-hidden rounded-t-2xl">
-        {text.thumbnail_url ? (
+      {/* Thumbnail — gradient always shown as base; image overlays it if URL loads */}
+      <div className="relative w-full h-36 flex-shrink-0 overflow-hidden rounded-t-2xl">
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#2D0A00] to-[#8B2500]">
+          <span className="font-devanagari text-white text-2xl font-bold opacity-90 text-center px-6 leading-snug">
+            {text.title}
+          </span>
+        </div>
+        {text.thumbnail_url && (
           <img
             src={text.thumbnail_url}
             alt={text.title}
-            className="w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover"
           />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#2D0A00] to-[#8B2500]">
-            <span className="font-devanagari text-white text-2xl font-bold opacity-90 text-center px-6 leading-snug">
-              {text.title}
-            </span>
-          </div>
         )}
       </div>
 
@@ -49,7 +48,7 @@ export default function TextCard({ text, progressPercent, firstUnfinishedPassage
         </div>
 
         {text.description && (
-          <p className="text-sm text-stone-500 leading-relaxed flex-1">
+          <p className="text-sm text-stone-500 leading-relaxed">
             {text.description}
           </p>
         )}

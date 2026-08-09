@@ -61,10 +61,15 @@ loadEnv()
 
 // ── Config ────────────────────────────────────────────────────────────────────
 
-const TEXT_ID   = 'c0219559-a8a9-4ebb-be5b-eca29b921457'
-const MODEL     = 'claude-opus-4-6'
+const DEFAULT_TEXT_ID = 'c0219559-a8a9-4ebb-be5b-eca29b921457'
+const DEFAULT_MODEL = 'claude-opus-4-8'  // curator-confirmed 2026-08-06, see CLAUDE.md
+// 16000 was sized for vadavali's 40 sections. bhedojjivanam has 125 -- roughly 3x
+// the section-link output -- and was silently truncating mid-JSON-array before ever
+// reaching a closing ']', which made cleanJson()'s fallback return the raw unsliced
+// text (backticks intact), producing a confusing parse error that looked like a
+// fence-stripping bug but was actually an insufficient token budget.
 const MAX_CHARS  = 500    // mūla text truncation per section
-const MAX_TOKENS = 16000
+const MAX_TOKENS = 48000
 
 const SUPABASE_URL     = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -85,6 +90,11 @@ const anthropic = new Anthropic({ apiKey: ANTHROPIC_KEY })
 
 function hasFlag(name: string): boolean {
   return process.argv.includes(name)
+}
+
+function getArg(name: string): string | undefined {
+  const idx = process.argv.indexOf(name)
+  return idx !== -1 ? process.argv[idx + 1] : undefined
 }
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -109,8 +119,11 @@ interface SectionLink {
 async function main() {
   console.log('=== generate-section-links ===\n')
 
-  const force = hasFlag('--force')
-  console.log(`Model  : ${MODEL}`)
+  const textId = getArg('--text-id') ?? DEFAULT_TEXT_ID
+  const model   = getArg('--model') ?? DEFAULT_MODEL
+  const force   = hasFlag('--force')
+  console.log(`Text ID: ${textId}`)
+  console.log(`Model  : ${model}`)
   console.log(`Force  : ${force ? 'yes — existing links will be deleted before insert' : 'no — will upsert (ON CONFLICT UPDATE)'}`)
 
   // ── Step 1: Fetch all passages and build per-section mūla summaries ───────
@@ -119,8 +132,7 @@ async function main() {
   const { data: passages, error: passageErr } = await supabase
     .from('passages')
     .select('section_number, section_name, sequence_order, mula_text')
-    .eq('text_id', TEXT_ID)
-    .eq('is_approved', true)
+    .eq('text_id', textId)
     .not('section_number', 'is', null)
     .order('section_number')
     .order('sequence_order')
@@ -202,12 +214,31 @@ async function main() {
   // ── Step 3: Call Claude ───────────────────────────────────────────────────
 
   console.log('\nCalling Claude…')
-  const response = await anthropic.messages.create({
-    model:      MODEL,
+  // Same two fixes already needed for the argument-maps script: Sonnet 5
+  // defaults to adaptive thinking (opposite of Opus 4.x) which eats the
+  // max_tokens budget before writing the answer, and the SDK refuses
+  // non-streaming calls it estimates could run past 10 minutes -- a real risk
+  // now that MAX_TOKENS is 48000, not 16000. Applying both proactively rather
+  // than waiting to hit them again.
+  const isSonnet5 = model.includes('sonnet-5')
+  const requestParams: Anthropic.MessageCreateParams = {
+    model,
     max_tokens: MAX_TOKENS,
     system:     systemPrompt,
     messages:   [{ role: 'user', content: userPrompt }],
-  })
+  }
+  if (isSonnet5) {
+    ;(requestParams as any).thinking = { type: 'disabled' }
+  }
+  const stream = anthropic.messages.stream(requestParams)
+  const response = await stream.finalMessage()
+
+  if (response.stop_reason === 'max_tokens') {
+    console.warn(
+      `  ⚠ stop_reason=max_tokens -- response was truncated before completing. ` +
+      `The JSON array below is very likely incomplete. Consider raising MAX_TOKENS further.`
+    )
+  }
 
   const rawText = response.content
     .filter(b => b.type === 'text')
@@ -224,7 +255,13 @@ async function main() {
   function cleanJson(raw: string): string {
     const first = raw.indexOf('[')
     const last  = raw.lastIndexOf(']')
-    if (first === -1 || last === -1) return raw
+    if (first === -1 || last === -1) {
+      console.error(
+        '  Note: no closing \']\' found in the response -- this usually means the ' +
+        'response was truncated (see stop_reason above) rather than a formatting issue.'
+      )
+      return raw
+    }
     return raw.slice(first, last + 1).trim()
   }
 
@@ -263,7 +300,7 @@ async function main() {
     const { error: delErr } = await supabase
       .from('section_links')
       .delete()
-      .eq('text_id', TEXT_ID)
+      .eq('text_id', textId)
     if (delErr) {
       console.error('ERROR: Failed to delete existing links:', delErr.message)
       process.exit(1)
@@ -286,7 +323,7 @@ async function main() {
   console.log('\nUpserting section_links…')
 
   const rows = uniqueLinks.map(l => ({
-    text_id:            TEXT_ID,
+    text_id:            textId,
     from_section:       l.from_section,
     to_section:         l.to_section,
     connection_type:    l.connection_type,
@@ -294,7 +331,7 @@ async function main() {
     rationale_sanskrit: l.rationale_sanskrit ?? null,
     is_spine:           l.is_spine,
     ai_generated:       true,
-    ai_model:           MODEL,
+    ai_model:           model,
     is_approved:        false,
   }))
 
@@ -331,7 +368,7 @@ async function main() {
   console.log(`Upserted OK    : ${insertedCount}`)
   if (errorCount > 0) console.log(`Errors         : ${errorCount}`)
   if (invalid    > 0) console.log(`Invalid/skipped: ${invalid}`)
-  console.log(`Model          : ${MODEL}  (${response.usage.input_tokens} in / ${response.usage.output_tokens} out tokens)`)
+  console.log(`Model          : ${model}  (${response.usage.input_tokens} in / ${response.usage.output_tokens} out tokens)`)
   console.log('\nDone.')
 }
 

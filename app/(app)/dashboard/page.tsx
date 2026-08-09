@@ -15,7 +15,7 @@ export default async function DashboardPage() {
     { data: streak },
     { data: parikshaSessions },
   ] = await Promise.all([
-    supabase.from('texts').select('*').eq('is_published', true).order('created_at'),
+    supabase.from('texts').select('*').eq('is_published', true).order('display_order', { ascending: true, nullsFirst: false }),
     supabase.from('user_progress').select('passage_id, text_id, status').eq('user_id', user.id),
     supabase.from('study_streaks').select('*').eq('user_id', user.id).single(),
     supabase.from('pariksha_sessions')

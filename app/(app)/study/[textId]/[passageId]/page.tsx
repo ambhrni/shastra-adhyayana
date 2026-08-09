@@ -82,6 +82,15 @@ export default async function StudyPage({ params }: Props) {
   if (!passage) notFound()
   if (!isCurator && !passage.is_approved) notFound()
 
+  // Fetch the text's own title -- used in PassageSelector's header, which
+  // previously had "Vādāvalī" hardcoded regardless of which text was open
+  const { data: textRow } = await supabase
+    .from('texts')
+    .select('title_transliterated')
+    .eq('id', textId)
+    .single()
+  const textTitle = textRow?.title_transliterated ?? 'Tattvasudhā'
+
   // Fetch commentators in display order (Rāghavendra first, Śrīnivāsa second)
   const { data: textCommentators } = await supabase
     .from('text_commentators')
@@ -246,6 +255,7 @@ export default async function StudyPage({ params }: Props) {
               passageId={passageId}
               sectionNumber={passage.section_number ?? null}
               textId={textId}
+              textTitle={textTitle}
               isLoggedIn={!!user}
               commentators={commentators}
             />

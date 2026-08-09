@@ -149,7 +149,7 @@ export default async function LibraryPage() {
       .from('texts')
       .select('id, title, title_transliterated, author, description, thumbnail_url, is_published, created_at')
       .eq('is_published', true)
-      .order('created_at'),
+      .order('display_order', { ascending: true, nullsFirst: false }),
     supabase
       .from('notebooks')
       .select('*')
@@ -231,9 +231,9 @@ export default async function LibraryPage() {
   const firstName = (profile as any)?.display_name?.split(' ')[0] ?? null
 
   return (
-    <div className="max-w-screen-2xl mx-auto px-8 pt-10 pb-6">
+    <div className="max-w-screen-2xl mx-auto px-8 pt-10 pb-6 h-full flex flex-col">
       {/* Greeting */}
-      <div className="mb-10">
+      <div className="mb-6 shrink-0">
         {firstName ? (
           <>
             <h1 className="text-2xl font-semibold text-stone-900">
@@ -253,10 +253,21 @@ export default async function LibraryPage() {
         )}
       </div>
 
-      {/* Four-column layout */}
-      <div className="flex flex-col lg:flex-row gap-0 items-stretch">
+      {/* Four-column layout — flex-1 so columns fill remaining viewport height on
+          desktop (lg:), where each column scrolls independently. On mobile, this
+          must NOT be height-constrained/overflow-hidden -- the four sections stack
+          (flex-col is the default below lg:), and forcing them into one bounded,
+          clipped box was hiding content (including these buttons) once there was
+          enough total content to exceed a single viewport height -- which only
+          started happening once a 2nd course card existed. Mobile now relies on
+          the page's own natural scroll (via <main> in the root layout) instead. */}
+      <div className="flex-1 flex flex-col lg:flex-row gap-0 items-stretch lg:overflow-hidden">
 
-        {/* Column 1 — Self-Study Courses */}
+        {/* Column 1 — Self-Study Courses. Uses the SAME self-contained
+            max-h + overflow-y-auto pattern as columns 2-4 (proven working,
+            doesn't depend on the ancestor flex/height chain at all) --
+            switched from a flex-1-based approach that turned out to not
+            actually enable page-level scroll on mobile as intended. */}
         <div className="lg:w-1/4 flex flex-col">
           <ColumnHeader
             title="Shāstram : Self-Study Courses"
@@ -268,17 +279,16 @@ export default async function LibraryPage() {
             </div>
           ) : (
             <div
-              className="max-h-[700px] overflow-y-auto pr-1 flex flex-col gap-5"
+              className="space-y-5 max-h-[700px] overflow-y-auto pr-1"
               style={{ scrollbarWidth: 'thin', scrollbarColor: '#d6d3d1 #f5f5f4' }}
             >
               {textData.map(({ text, progressPercent, firstUnfinishedPassageId }) => (
-                <div key={text.id} className="min-h-[280px] flex flex-col">
-                  <TextCard
-                    text={text as any}
-                    progressPercent={progressPercent}
-                    firstUnfinishedPassageId={firstUnfinishedPassageId}
-                  />
-                </div>
+                <TextCard
+                  key={text.id}
+                  text={text as any}
+                  progressPercent={progressPercent}
+                  firstUnfinishedPassageId={firstUnfinishedPassageId}
+                />
               ))}
             </div>
           )}

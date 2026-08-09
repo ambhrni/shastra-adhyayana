@@ -35,9 +35,9 @@ export default function InlineEditor({
   if (!editing) {
     return (
       <div className="group relative">
-        <span className={[isDevanagari ? 'font-devanagari' : '', displayClassName ?? ''].join(' ').trim()}>
+        <div className={[isDevanagari ? 'font-devanagari' : '', displayClassName ?? ''].join(' ').trim()}>
           {renderDisplay ? renderDisplay(value) : value}
-        </span>
+        </div>
         <button
           onClick={() => setEditing(true)}
           title="Edit (curator)"

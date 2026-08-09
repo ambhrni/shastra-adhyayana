@@ -1,6 +1,5 @@
 {
   "permissions": {
-    "defaultMode": "bypassPermissions",
     "allow": [
       "Bash(npm --version)",
       "Bash(echo $PATH)",
@@ -44,7 +43,13 @@
       "Bash(npx ts-node:*)",
       "Bash(node -e \"require\\(''child_process''\\).execSync\\(''npx ts-node --project tsconfig.scripts.json scripts/list-gemini-models.ts'', {stdio:''inherit''}\\)\")",
       "Bash(echo \"done $?\")",
-      "Skill(update-config)"
-    ]
+      "Skill(update-config)",
+      "Bash(claude --version)",
+      "Bash(claude auth:*)",
+      "Bash(npm run:*)",
+      "Bash(netstat -ano)",
+      "Bash(findstr :3000)"
+    ],
+    "defaultMode": "bypassPermissions"
   }
 }

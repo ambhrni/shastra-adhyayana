@@ -6,6 +6,90 @@ import { embedText, TaskType } from '@/lib/embeddings-server'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! })
 
+// ─── Text-specific prompt config ─────────────────────────────────────────────
+
+interface CommentatorIdentity {
+  name: string
+  nameDevanagari: string
+  work: string
+  workDevanagari: string
+  note: string
+}
+
+interface TextPromptConfig {
+  textName: string
+  textAuthor: string
+  commentatorIdentities: CommentatorIdentity[]
+  citationLabels: { label: string; description: string }[]
+  scopeLine: string          // single line for the "You bring to bear" bullet
+  depthCommentatorLine: string // for the DEPTH STANDARD section
+  depthSourceB: string       // "(b) ..." source ground line
+}
+
+const VADAVALI_UUID = 'c0219559-a8a9-4ebb-be5b-eca29b921457'
+const BHEDOJJIVANAM_UUID = '86257ca9-12ab-4a5e-83ff-4e4b2938b071'
+
+const TEXT_PROMPT_CONFIGS: Record<string, TextPromptConfig> = {
+  [VADAVALI_UUID]: {
+    textName: 'vādāvalī',
+    textAuthor: 'Jayatīrtha',
+    commentatorIdentities: [
+      {
+        name: 'Rāghavendra Tīrtha',
+        nameDevanagari: 'राघवेन्द्रतीर्थः',
+        work: 'bhāvadīpikā',
+        workDevanagari: 'भावदीपिका',
+        note: 'Also known as: Rāghavendra Svāmi, Śrī Rāghavendra Tīrtha\nNEVER call him: Rāmānanda Tīrtha, Rāmānuja Tīrtha, or any other name',
+      },
+      {
+        name: 'Śrīnivāsa Tīrtha',
+        nameDevanagari: 'श्रीनिवासतीर्थः',
+        work: 'vādāvalīprakāśaḥ',
+        workDevanagari: 'वादावलीप्रकाशः',
+        note: 'NEVER call him by any other name',
+      },
+    ],
+    citationLabels: [
+      { label: '[mūlam]', description: "Jayatīrtha's vādāvalī mūla text (the anchor passage)" },
+      { label: '[bhāvadīpikā]', description: "Rāghavendra Tīrtha's commentary on vādāvalī" },
+      { label: '[vādāvalīprakāśaḥ]', description: "Śrīnivāsa Tīrtha's commentary on vādāvalī" },
+    ],
+    scopeLine: 'The full vādāvalī text and the commentaries of Jayatīrtha (nyāyasudhā) and Rāghavendra Tīrtha',
+    depthCommentatorLine:
+      "Where Rāghavendra Tīrtha and Śrīnivāsa Tīrtha diverge in their sub-commentary interpretations, note the distinction.",
+    depthSourceB: "Rāghavendra Tīrtha's or Śrīnivāsa Tīrtha's commentary on this passage",
+  },
+  [BHEDOJJIVANAM_UUID]: {
+    textName: 'bhēdōjjīvanam',
+    textAuthor: 'Vyāsarāja Tīrtha',
+    commentatorIdentities: [
+      {
+        name: 'Kāśītirumalācārya',
+        nameDevanagari: 'काशितिरुमलाचार्यः',
+        work: 'kāśikā',
+        workDevanagari: 'काशिका',
+        note: 'NEVER call him by any other name. Do not substitute any other ācārya name.',
+      },
+    ],
+    citationLabels: [
+      { label: '[mūlam]', description: "Vyāsarāja Tīrtha's bhēdōjjīvanam mūla text (the anchor passage)" },
+      { label: '[kāśikā]', description: "Kāśītirumalācārya's commentary on bhēdōjjīvanam" },
+    ],
+    scopeLine: 'The full bhēdōjjīvanam text and the commentary of Kāśītirumalācārya (kāśikā)',
+    depthCommentatorLine:
+      'Where Kāśītirumalācārya elaborates or clarifies the mūla in the kāśikā, note the connection explicitly.',
+    depthSourceB: "Kāśītirumalācārya's kāśikā commentary on this passage",
+  },
+}
+
+const FALLBACK_CONFIG = TEXT_PROMPT_CONFIGS[VADAVALI_UUID]
+
+function getTextConfig(textId: string): TextPromptConfig {
+  return TEXT_PROMPT_CONFIGS[textId] ?? FALLBACK_CONFIG
+}
+
+// ─── RAG ─────────────────────────────────────────────────────────────────────
+
 interface RagContext {
   passages: { sectionLabel: string; content: string }[]
   chunks: { sectionLabel: string; content: string }[]
@@ -46,7 +130,7 @@ async function fetchSemanticContext(supabase: any, query: string): Promise<RagCo
   }
 }
 
-function buildRagSection(rag: RagContext): string {
+function buildRagSection(rag: RagContext, textName: string): string {
   const hasAny = rag.passages.length > 0 || rag.chunks.length > 0 || rag.nyaya.length > 0
   if (!hasAny) return ''
 
@@ -57,7 +141,7 @@ function buildRagSection(rag: RagContext): string {
   ]
 
   if (rag.passages.length > 0) {
-    parts.push('\n### Related passages from vādāvalī:')
+    parts.push(`\n### Related passages from ${textName}:`)
     for (const p of rag.passages) {
       parts.push(`• ${p.sectionLabel}: ${p.content.slice(0, 300)}`)
     }
@@ -80,12 +164,65 @@ function buildRagSection(rag: RagContext): string {
   return parts.join('\n')
 }
 
+// ─── System prompt ────────────────────────────────────────────────────────────
+
+function buildCommentatorIdentityBlock(cfg: TextPromptConfig): string {
+  const lines: string[] = [
+    `## CRITICAL: COMMENTATOR IDENTITY — NEVER CONFUSE THESE`,
+    '',
+    `The commentaries on ${cfg.textName} loaded in your context are authored by \
+EXACTLY ${cfg.commentatorIdentities.length === 1 ? 'this one ācārya and no other' : 'these ācāryas and no others'}:`,
+    '',
+  ]
+
+  cfg.commentatorIdentities.forEach((c, i) => {
+    lines.push(
+      `${i + 1}. ${c.name} (${c.nameDevanagari}) — author of ${c.workDevanagari}`,
+      `   ${c.note}`,
+      '',
+    )
+  })
+
+  const workLabels = cfg.commentatorIdentities
+    .map(c => `[${c.workDevanagari}]`)
+    .join(' or ')
+
+  lines.push(
+    `When attributing a commentary quote or interpretation, use ONLY the exact names listed above. \
+If you are uncertain which commentator said something, check the ${workLabels} labels in the context \
+provided above. Never invent or substitute a commentator name.`,
+  )
+
+  if (cfg.commentatorIdentities.length > 1) {
+    lines.push(
+      '',
+      `Rāmānanda Tīrtha is a DIFFERENT ācārya from a different tradition and \
+has NO connection to ${cfg.textName} or its commentaries. Never use that name \
+in this context under any circumstances.`,
+    )
+  }
+
+  return lines.join('\n')
+}
+
+function buildCitationLabelsBlock(cfg: TextPromptConfig): string {
+  const labels = [
+    ...cfg.citationLabels.map(l => `- **${l.label}** — ${l.description}`),
+    '- **[sūtram: ...]** — a brahmasūtra, mīmāṃsāsūtra, or nyāyasūtra (cite by number)',
+    '- **[gītā: ...]** — Bhagavadgītā (cite by chapter.verse)',
+    '- **[upaniṣat: ...]** — Upaniṣad passage (name the Upaniṣad and section)',
+    '- **[śāstram: ...]** — other named śāstra source',
+  ]
+  return labels.join('\n')
+}
+
 function buildSystemPrompt(
   mulaText: string,
   mulaTransliterated: string | null,
   commentaries: { commentatorName: string; text: string }[],
   nyayaConcepts: { term: string; transliterated: string; definition: string; definitionSanskrit?: string }[],
-  ragContext: RagContext | null
+  ragContext: RagContext | null,
+  textConfig: TextPromptConfig,
 ): string {
   const commentaryBlock = commentaries.length > 0
     ? commentaries.map(c => `--- ${c.commentatorName} ---\n${c.text}`).join('\n\n')
@@ -98,36 +235,19 @@ function buildSystemPrompt(
       ).join('\n')
     : 'No nyāya concepts explicitly linked to this passage.'
 
-  const ragSection = ragContext ? buildRagSection(ragContext) : ''
+  const ragSection = ragContext ? buildRagSection(ragContext, textConfig.textName) : ''
+  const commentatorIdentityBlock = buildCommentatorIdentityBlock(textConfig)
+  const citationLabelsBlock = buildCitationLabelsBlock(textConfig)
 
   return `You are a deeply learned traditional paṇḍit in Mādhva Dvaita Vedānta, \
-trained in the paramparā of Madhvācārya — Jayatīrtha — Rāghavendra Tīrtha. \
-You have mastered vādāvalī, nyāyasudhā, the full prasthānatrayī with Mādhva bhāṣyas, \
+trained in the paramparā of Madhvācārya. You have mastered ${textConfig.textName}, \
+nyāyasudhā, the full prasthānatrayī with Mādhva bhāṣyas, \
 navya-nyāya, pūrva-mīmāṃsā, and all ṣaḍdarśanas. You know Advaita, Viśiṣṭādvaita, \
 Sāṃkhya, Yoga, Vaiśeṣika, and Pūrva Mīmāṃsā deeply — not merely to describe them, \
-but to refute them precisely as Jayatīrtha and Rāghavendra Tīrtha do. \
+but to refute them precisely as the Mādhva ācāryas do. \
 You speak as a guru seated before an earnest student, with both rigour and warmth.
 
-## CRITICAL: COMMENTATOR IDENTITY — NEVER CONFUSE THESE
-
-The commentaries on vādāvalī loaded in your context are authored by \
-EXACTLY these two ācāryas and no others:
-
-1. Rāghavendra Tīrtha (राघवेन्द्रतीर्थः) — author of भावदीपिका
-   Also known as: Rāghavendra Svāmi, Śrī Rāghavendra Tīrtha
-   NEVER call him: Rāmānanda Tīrtha, Rāmānuja Tīrtha, or any other name
-
-2. Śrīnivāsa Tīrtha (श्रीनिवासतीर्थः) — author of वादावलीप्रकाशः
-   NEVER call him by any other name
-
-When attributing a commentary quote or interpretation, use ONLY these \
-exact names. If you are uncertain which commentator said something, \
-check the [भावदीपिका] or [वादावलीप्रकाशः] labels in the context \
-provided above. Never invent or substitute a commentator name.
-
-Rāmānanda Tīrtha is a DIFFERENT ācārya from a different tradition and \
-has NO connection to vādāvalī or its commentaries. Never use that name \
-in this context under any circumstances.
+${commentatorIdentityBlock}
 
 ## YOUR ROLE AND SCOPE
 
@@ -138,7 +258,7 @@ asks about broader concepts in nyāya, Vedānta, vyākaraṇa, or Mādhva siddh�
 fully and then draw the thread back to the current passage where it illuminates the question.
 
 You bring to bear:
-- The full vādāvalī text and the commentaries of Jayatīrtha (nyāyasudhā) and Rāghavendra Tīrtha
+- ${textConfig.scopeLine}
 - Navya-nyāya technical vocabulary (pratiyogitā, avacchedakatva, nirūpakatā, anuyogitā, \
   viśeṣaṇatā, upādhitva, etc.) used with precision, not as decoration
 - The Nyāyasūtra tradition (Gautama, Vātsyāyana, Udyotakara, Jayanta Bhaṭṭa) as background
@@ -152,14 +272,13 @@ You bring to bear:
 
 Answer at the level expected in a vidvat parīkṣā. Do not simplify unless the student \
 explicitly requests it. Show the logical structure of arguments — pūrva-pakṣa, khaṇḍana, \
-and siddhānta — when answering philosophical questions. Where Rāghavendra Tīrtha and \
-Śrīnivāsa Tīrtha diverge in their sub-commentary interpretations, note the distinction. \
+and siddhānta — when answering philosophical questions. ${textConfig.depthCommentatorLine} \
 Cite sūtras, kārikās, or bhāṣya passages by name (even if you cannot give exact folio) \
 when they bear directly on the question.
 
 Every philosophical claim must be grounded in one of:
 (a) the mūla text of this passage
-(b) Rāghavendra Tīrtha's or Śrīnivāsa Tīrtha's commentary on this passage
+(b) ${textConfig.depthSourceB}
 (c) a named śāstra source (sūtra, bhāṣya, kārikā) with the text identified
 (d) established Mādhva siddhānta with the specific principle named
 
@@ -188,9 +307,8 @@ A student preparing for vidvat parīkṣā must know not just what is true but w
   Jayatīrtha → jayatīrtha; \
   Śrīnivāsa Tīrtha → śrīnivāsa tīrtha; \
   Madhvācārya → madhvācārya; \
-  Bhāvadīpikā → bhāvadīpikā; \
-  Vādāvalī → vādāvalī; \
-  Vādāvalīprakāśaḥ → vādāvalīprakāśaḥ. \
+  Vyāsarāja Tīrtha → vyāsarāja tīrtha; \
+  Kāśītirumalācārya → kāśītirumalācārya. \
   Always write Sanskrit exclusively in Devanāgarī script when responding in Sanskrit. \
   Never mix Devanāgarī and IAST transliteration in the same response. IAST may only be \
   used in purely English responses as a pronunciation guide in parentheses, e.g. \
@@ -210,13 +328,7 @@ A student preparing for vidvat parīkṣā must know not just what is true but w
 ## CITATION AND SOURCE INTEGRITY
 
 When quoting or referencing text, always identify the source with one of these labels:
-- **[mūlam]** — Jayatīrtha's vādāvalī mūla text (the anchor passage)
-- **[bhāvadīpikā]** — Rāghavendra Tīrtha's commentary on vādāvalī
-- **[vādāvalīprakāśaḥ]** — Śrīnivāsa Tīrtha's commentary on vādāvalī
-- **[sūtram: ...]** — a brahmasūtra, mīmāṃsāsūtra, or nyāyasūtra (cite by number)
-- **[gītā: ...]** — Bhagavadgītā (cite by chapter.verse)
-- **[upaniṣat: ...]** — Upaniṣad passage (name the Upaniṣad and section)
-- **[śāstram: ...]** — other named śāstra source
+${citationLabelsBlock}
 
 Confidence rule: If you can reproduce the approximate wording of a passage, use a source \
 label. If you are recalling a general doctrinal position but not a specific text, write \
@@ -243,7 +355,7 @@ In Sanskrit responses specifically:
 - Use proper section headers in Sanskrit (e.g. **प्रथमविकल्पदूषणम्**)
 - Show the reasoning and logical chain fully — do not compress reasoning into single \
   lines when the argument has multiple steps
-- Include concrete examples (दृष्टान्त) where Rāghavendra Tīrtha uses them
+- Include concrete examples (दृष्टान्त) where the commentators use them
 - End with a crisp एकवाक्येन summary and a probing follow-up question
 - A well-structured Sanskrit response of 200-400 words is better than \
   either a 50-word telegram or a 600-word padded essay
@@ -266,7 +378,7 @@ ${nyayaBlock}
 
 Use the above as your primary reference material. When the student asks about this passage, \
 ground your answer in the mūla and commentaries above. When the student asks questions that \
-range beyond this passage — about other sections of vādāvalī, about nyāya or Vedānta in \
+range beyond this passage — about other sections of ${textConfig.textName}, about nyāya or Vedānta in \
 general, about Sanskrit grammar, about rival darśanas — answer them fully, bringing the \
 light of the broader tradition to bear, and connect back to this passage wherever the \
 connection is illuminating.${ragSection}`
@@ -285,7 +397,6 @@ export async function POST(req: Request) {
   }
   const resolvedModel = model === 'claude-opus-4-6' ? 'claude-opus-4-6' : 'claude-sonnet-4-6'
 
-  // Fetch passage context and semantic context in parallel
   const latestUserMessage = [...messages].reverse().find(m => m.role === 'user')?.content ?? ''
 
   const [
@@ -294,7 +405,7 @@ export async function POST(req: Request) {
     { data: nyayaLinks },
     ragContext,
   ] = await Promise.all([
-    supabase.from('passages').select('mula_text, mula_transliterated').eq('id', passageId).single(),
+    supabase.from('passages').select('mula_text, mula_transliterated, text_id').eq('id', passageId).single(),
     supabase.from('commentaries')
       .select('commentary_text, commentator:commentators(name)')
       .eq('passage_id', passageId)
@@ -308,6 +419,8 @@ export async function POST(req: Request) {
   ])
 
   if (!passage) return NextResponse.json({ error: 'Passage not found' }, { status: 404 })
+
+  const textConfig = getTextConfig(passage.text_id)
 
   const commentaryContext = (commentaries ?? [])
     .filter(c => c.commentary_text)
@@ -332,15 +445,14 @@ export async function POST(req: Request) {
     commentaryContext,
     nyayaContext,
     ragContext,
+    textConfig,
   )
 
-  // Build conversation for Claude
   const claudeMessages = messages.map(m => ({
     role: m.role as 'user' | 'assistant',
     content: m.content,
   }))
 
-  // Stream response
   const stream = anthropic.messages.stream({
     model: resolvedModel,
     max_tokens: 4096,
@@ -364,7 +476,6 @@ export async function POST(req: Request) {
       } finally {
         controller.close()
 
-        // Save session to database (fire-and-forget)
         const assistantMessage: TutorMessage = {
           role: 'assistant',
           content: fullResponse,

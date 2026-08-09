@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import type { Passage } from '@/types/database'
 import Badge from '@/components/ui/Badge'
+import { stripPassageMarkup } from '@/lib/render-passage-text'
 
 interface PassageListProps {
   passages: (Passage & { text_id: string })[]
@@ -14,16 +15,50 @@ interface PassageListProps {
 export default function PassageList({ passages: initial, textId }: PassageListProps) {
   const [passages, setPassages] = useState(initial)
   const [filter, setFilter] = useState<'all' | 'pending' | 'approved'>('all')
+  const [bulkApproving, setBulkApproving] = useState(false)
 
   async function toggleApproval(passageId: string, currentApproved: boolean) {
     const supabase = createClient()
-    await supabase.from('passages')
-      .update({ is_approved: !currentApproved })
-      .eq('id', passageId)
+    const nextApproved = !currentApproved
+    // commentaries have their OWN separate is_approved flag -- approving a
+    // passage alone leaves its commentary invisible to non-curator contexts
+    // (e.g. the AI Tutor, which unconditionally filters is_approved=true with
+    // no curator bypass). Keep passage + commentary approval in sync as one
+    // action, matching how a curator actually thinks about "approving a passage".
+    await Promise.all([
+      supabase.from('passages').update({ is_approved: nextApproved }).eq('id', passageId),
+      supabase.from('commentaries').update({ is_approved: nextApproved }).eq('passage_id', passageId),
+    ])
 
     setPassages(prev =>
-      prev.map(p => p.id === passageId ? { ...p, is_approved: !currentApproved } : p)
+      prev.map(p => p.id === passageId ? { ...p, is_approved: nextApproved } : p)
     )
+  }
+
+  const pendingCount = passages.filter(p => !p.is_approved).length
+
+  async function approveAllPending() {
+    if (pendingCount === 0) return
+    const confirmed = window.confirm(
+      `Approve all ${pendingCount} pending passage(s) AND their commentaries for this text? This cannot be bulk-undone -- you'd have to unapprove them one at a time.`
+    )
+    if (!confirmed) return
+
+    setBulkApproving(true)
+    const supabase = createClient()
+    const pendingIds = passages.filter(p => !p.is_approved).map(p => p.id)
+
+    const [{ error: passageErr }, { error: commentaryErr }] = await Promise.all([
+      supabase.from('passages').update({ is_approved: true }).eq('text_id', textId).eq('is_approved', false),
+      supabase.from('commentaries').update({ is_approved: true }).in('passage_id', pendingIds),
+    ])
+    setBulkApproving(false)
+
+    if (passageErr || commentaryErr) {
+      alert(`Bulk approve failed: ${passageErr?.message ?? commentaryErr?.message}`)
+      return
+    }
+    setPassages(prev => prev.map(p => ({ ...p, is_approved: true })))
   }
 
   const filtered = passages.filter(p => {
@@ -34,24 +69,35 @@ export default function PassageList({ passages: initial, textId }: PassageListPr
 
   return (
     <div>
-      {/* Filter tabs */}
-      <div className="flex gap-1 mb-4">
-        {(['all', 'pending', 'approved'] as const).map(f => (
+      {/* Filter tabs + bulk approve */}
+      <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
+        <div className="flex gap-1">
+          {(['all', 'pending', 'approved'] as const).map(f => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium capitalize transition-colors ${
+                filter === f
+                  ? 'bg-stone-800 text-white'
+                  : 'text-stone-500 hover:text-stone-700 hover:bg-stone-100'
+              }`}
+            >
+              {f}
+              <span className="ml-1.5 text-xs opacity-60">
+                ({f === 'all' ? passages.length : passages.filter(p => f === 'approved' ? p.is_approved : !p.is_approved).length})
+              </span>
+            </button>
+          ))}
+        </div>
+        {pendingCount > 0 && (
           <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium capitalize transition-colors ${
-              filter === f
-                ? 'bg-stone-800 text-white'
-                : 'text-stone-500 hover:text-stone-700 hover:bg-stone-100'
-            }`}
+            onClick={approveAllPending}
+            disabled={bulkApproving}
+            className="text-xs font-medium px-3 py-1.5 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            {f}
-            <span className="ml-1.5 text-xs opacity-60">
-              ({f === 'all' ? passages.length : passages.filter(p => f === 'approved' ? p.is_approved : !p.is_approved).length})
-            </span>
+            {bulkApproving ? 'Approving…' : `Approve All Pending (${pendingCount})`}
           </button>
-        ))}
+        )}
       </div>
 
       <div className="space-y-2">
@@ -67,7 +113,7 @@ export default function PassageList({ passages: initial, textId }: PassageListPr
                 </Badge>
               </div>
               <p className="font-devanagari text-stone-800 text-sm leading-relaxed truncate">
-                {passage.mula_text.slice(0, 120)}…
+                {stripPassageMarkup(passage.mula_text).slice(0, 120)}…
               </p>
             </div>
 

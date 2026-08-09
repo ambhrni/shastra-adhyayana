@@ -23,7 +23,7 @@ export default function PassageArgumentMap({ passageId, textId, isLoggedIn, isCu
     const supabase = createClient()
     const { data } = await supabase
       .from('argument_nodes')
-      .select('id, stream, node_type, content_english, content_sanskrit, logical_flaw, refutation_type, parent_node_id, display_order')
+      .select('id, stream, node_type, content_english, content_sanskrit, source_excerpt, logical_flaw, refutation_type, parent_node_id, display_order')
       .eq('passage_id', passageId)
       .order('display_order')
     setNodes((data ?? []) as ArgumentNodeRow[])
@@ -35,7 +35,7 @@ export default function PassageArgumentMap({ passageId, textId, isLoggedIn, isCu
     const supabase = createClient()
     supabase
       .from('argument_nodes')
-      .select('id, stream, node_type, content_english, content_sanskrit, logical_flaw, refutation_type, parent_node_id, display_order')
+      .select('id, stream, node_type, content_english, content_sanskrit, source_excerpt, logical_flaw, refutation_type, parent_node_id, display_order')
       .eq('passage_id', passageId)
       .order('display_order')
       .then(({ data }) => {

@@ -22,6 +22,7 @@ interface ArgumentNodeRow {
   node_type: string
   content_english: string
   content_sanskrit: string | null
+  source_excerpt: string | null
   logical_flaw: string | null
   refutation_type: string | null
   parent_node_id: string | null
@@ -50,6 +51,7 @@ interface NodeEditDraft {
   node_type: string
   content_english: string
   content_sanskrit: string
+  source_excerpt: string
   logical_flaw: string
   refutation_type: string
 }
@@ -72,6 +74,7 @@ const STREAM_LABELS: Record<ArgumentStream, string> = {
   mula: 'मूलम्',
   bhavadipika: 'भावदीपिका',
   vadavaliprakasha: 'वादावलीप्रकाशः',
+  kashika: 'काशिका',
 }
 
 const ARGUMENT_TYPE_OPTIONS: { value: ArgumentType; label: string; color: string }[] = [
@@ -109,7 +112,7 @@ export default function ArgumentMapAdmin({ passages, textId }: Props) {
   const [editingNode, setEditingNode] = useState<ArgumentNodeRow | null>(null)
   const [editDraft, setEditDraft] = useState<NodeEditDraft>({
     stream: 'mula', node_type: 'purva_paksha',
-    content_english: '', content_sanskrit: '', logical_flaw: '', refutation_type: '',
+    content_english: '', content_sanskrit: '', source_excerpt: '', logical_flaw: '', refutation_type: '',
   })
   const [editSaving, setEditSaving] = useState(false)
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
@@ -146,11 +149,19 @@ export default function ArgumentMapAdmin({ passages, textId }: Props) {
   async function handleSectionColorChange(sectionNumber: number, argType: ArgumentType) {
     setSectionArgTypes(prev => ({ ...prev, [sectionNumber]: argType }))
     const supabase = createClient()
+    // Upsert, not update: vadavali already has rows for every section (seeded via
+    // migration), but a newly-onboarded text like bhedojjivanam starts with ZERO
+    // rows here. An update() against a non-existent row succeeds with 0 rows
+    // changed and NO error -- meaning the UI would show "Saved" while nothing
+    // actually persisted. Upsert handles both the "row exists" and "row doesn't
+    // exist yet" cases correctly.
+    const sectionName = sections.find(([n]) => n === sectionNumber)?.[1]?.[0]?.section_name ?? ''
     const { error } = await supabase
       .from('section_argument_types')
-      .update({ argument_type: argType })
-      .eq('text_id', textId)
-      .eq('section_number', sectionNumber)
+      .upsert(
+        { text_id: textId, section_number: sectionNumber, section_name: sectionName, argument_type: argType },
+        { onConflict: 'text_id,section_number' }
+      )
     setSavedSection({ sectionNumber, ok: !error })
     setTimeout(() => setSavedSection(null), 2000)
     if (!error) router.refresh()
@@ -182,7 +193,12 @@ export default function ArgumentMapAdmin({ passages, textId }: Props) {
 
       let commentaryText: string | null = null
       if (selectedStream !== 'mula') {
-        const targetName = selectedStream === 'bhavadipika' ? 'raghavendra' : 'shrinivasa'
+        const fragmentMap: Record<string, string> = {
+          bhavadipika:      'raghavendra',
+          vadavaliprakasha: 'shrinivasa',
+          kashika:          'kashitirumal',
+        }
+        const targetName = fragmentMap[selectedStream] ?? selectedStream
         const found = (commentaryRes.data ?? []).find((c: any) =>
           (c.commentator?.name_transliterated ?? '').toLowerCase().includes(targetName)
         )
@@ -280,6 +296,7 @@ export default function ArgumentMapAdmin({ passages, textId }: Props) {
       node_type:        node.node_type,
       content_english:  node.content_english,
       content_sanskrit: node.content_sanskrit ?? '',
+      source_excerpt:   node.source_excerpt ?? '',
       logical_flaw:     node.logical_flaw ?? '',
       refutation_type:  node.refutation_type ?? '',
     })
@@ -297,6 +314,7 @@ export default function ArgumentMapAdmin({ passages, textId }: Props) {
         node_type:        editDraft.node_type,
         content_english:  editDraft.content_english,
         content_sanskrit: editDraft.content_sanskrit || null,
+        source_excerpt:   editDraft.source_excerpt   || null,
         logical_flaw:     editDraft.logical_flaw     || null,
         refutation_type:  editDraft.refutation_type  || null,
       })
@@ -410,7 +428,7 @@ export default function ArgumentMapAdmin({ passages, textId }: Props) {
         </select>
 
         <div className="flex gap-1">
-          {(['mula', 'bhavadipika', 'vadavaliprakasha'] as ArgumentStream[]).map(stream => (
+          {(['mula', 'bhavadipika', 'vadavaliprakasha', 'kashika'] as ArgumentStream[]).map(stream => (
             <button
               key={stream}
               onClick={() => setSelectedStream(stream)}
@@ -441,7 +459,7 @@ export default function ArgumentMapAdmin({ passages, textId }: Props) {
                   {passageText.sectionName}
                 </p>
               )}
-              <p className="font-devanagari text-[18px] text-stone-900 leading-relaxed">
+              <p className="font-devanagari text-[18px] text-stone-900 leading-relaxed whitespace-pre-line">
                 {passageText.mulaText}
               </p>
               {passageText.commentaryText && (
@@ -450,7 +468,7 @@ export default function ArgumentMapAdmin({ passages, textId }: Props) {
                   <p className="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-3 font-devanagari">
                     {STREAM_LABELS[selectedStream]}
                   </p>
-                  <p className="font-devanagari text-sm text-stone-700 leading-relaxed">
+                  <p className="font-devanagari text-sm text-stone-700 leading-relaxed whitespace-pre-line">
                     {passageText.commentaryText}
                   </p>
                 </>
@@ -639,6 +657,31 @@ export default function ArgumentMapAdmin({ passages, textId }: Props) {
                       )}
                     </div>
 
+                    {/* source_excerpt — kept editable (click to add/fix), but no longer
+                        shown as a prominent card block -- redundant with content_sanskrit's
+                        own bold spans, per curator feedback */}
+                    {editState?.nodeId === node.id && editState.field === 'source_excerpt' ? (
+                      <div className="mt-2">
+                        <textarea
+                          autoFocus
+                          value={editState.value}
+                          onChange={e => setEditState(prev => prev ? { ...prev, value: e.target.value } : null)}
+                          onBlur={saveEdit}
+                          rows={2}
+                          placeholder="Exact verbatim source quote…"
+                          className="w-full text-sm font-devanagari border border-amber-300 bg-amber-50 rounded p-2 focus:outline-none focus:ring-1 focus:ring-amber-400 resize-y"
+                        />
+                      </div>
+                    ) : node.source_excerpt ? (
+                      <span
+                        onClick={() => setEditState({ nodeId: node.id, field: 'source_excerpt', value: node.source_excerpt ?? '' })}
+                        className="mt-2 inline-block text-[10px] text-stone-300 cursor-pointer hover:text-stone-500 transition-colors"
+                        title={`Source quote on file (click to edit): ${node.source_excerpt}`}
+                      >
+                        [has source quote — click to view/edit]
+                      </span>
+                    ) : null}
+
                     {/* Editable chips: logical_flaw + refutation_type */}
                     <div className="flex gap-2 mt-3 flex-wrap">
                       {/* logical_flaw */}
@@ -716,6 +759,7 @@ export default function ArgumentMapAdmin({ passages, textId }: Props) {
                   <option value="mula">मूलम् — Mūla</option>
                   <option value="bhavadipika">भावदीपिका — Bhāvadīpikā</option>
                   <option value="vadavaliprakasha">वादावलीप्रकाशः — Vādāvalīprakāśa</option>
+                  <option value="kashika">काशिका — Kāśikā</option>
                 </select>
               </div>
               <div className="flex-1">
@@ -743,6 +787,17 @@ export default function ArgumentMapAdmin({ passages, textId }: Props) {
                 rows={3}
                 placeholder="Sanskrit content…"
                 className="w-full text-sm font-devanagari border border-stone-200 rounded-lg p-2 focus:outline-none focus:ring-1 focus:ring-saffron-400 resize-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-amber-700 mb-1">Source quote (exact verbatim text)</label>
+              <textarea
+                value={editDraft.source_excerpt}
+                onChange={e => setEditDraft(d => ({ ...d, source_excerpt: e.target.value }))}
+                rows={2}
+                placeholder="Copy the exact mūla/commentary phrase this node explains…"
+                className="w-full text-sm font-devanagari border border-amber-300 bg-amber-50/40 rounded-lg p-2 focus:outline-none focus:ring-1 focus:ring-amber-400 resize-none"
               />
             </div>
 

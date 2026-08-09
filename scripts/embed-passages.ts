@@ -7,6 +7,8 @@
  * USAGE
  *   npx ts-node --project tsconfig.scripts.json scripts/embed-passages.ts
  *   npx ts-node --project tsconfig.scripts.json scripts/embed-passages.ts --start-from 50
+ *   npx ts-node --project tsconfig.scripts.json scripts/embed-passages.ts --text-id <uuid>
+ *   npx ts-node --project tsconfig.scripts.json scripts/embed-passages.ts --text-id <uuid> --approved
  *
  * Requires in .env.local:
  *   NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, GEMINI_API_KEY
@@ -50,15 +52,25 @@ function getArg(flag: string): string | undefined {
   return idx !== -1 ? process.argv[idx + 1] : undefined
 }
 
-async function main() {
-  const startFrom = parseInt(getArg('--start-from') ?? '0', 10)
-  const endAtArg  = getArg('--end-at')
+function hasFlag(flag: string): boolean {
+  return process.argv.includes(flag)
+}
 
-  const { data: passages, error } = await supabase
+async function main() {
+  const startFrom  = parseInt(getArg('--start-from') ?? '0', 10)
+  const endAtArg   = getArg('--end-at')
+  const textId     = getArg('--text-id')
+  const approvedOnly = hasFlag('--approved')
+
+  let query = supabase
     .from('passages')
-    .select('id, mula_text, section_name, section_number, sequence_order')
-    .eq('is_approved', true)
+    .select('id, mula_text, section_name, section_number, sequence_order, text_id')
     .order('sequence_order', { ascending: true })
+
+  if (textId)      query = query.eq('text_id', textId)
+  if (approvedOnly) query = query.eq('is_approved', true)
+
+  const { data: passages, error } = await query
 
   if (error || !passages) {
     console.error('Failed to fetch passages:', error?.message)
@@ -66,7 +78,9 @@ async function main() {
   }
 
   const endAt = parseInt(endAtArg ?? String(passages.length - 1), 10)
-  console.log(`Total approved passages : ${passages.length}`)
+  console.log(`Text filter   : ${textId ?? '(all texts)'}`)
+  console.log(`Approved only : ${approvedOnly}`)
+  console.log(`Total passages: ${passages.length}`)
   if (startFrom > 0) console.log(`Resuming from index     : ${startFrom}`)
   if (endAt < passages.length - 1) console.log(`Stopping at index       : ${endAt}`)
   console.log()
@@ -99,6 +113,7 @@ async function main() {
         .upsert(
           {
             passage_id: p.id,
+            text_id:    p.text_id,
             embedding:  JSON.stringify(embedding),
             updated_at: new Date().toISOString(),
           },

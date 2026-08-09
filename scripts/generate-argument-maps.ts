@@ -8,7 +8,7 @@
  *   npx ts-node --project tsconfig.scripts.json scripts/generate-argument-maps.ts
  *     [--passage-id UUID]     process a single passage
  *     [--start-from N]        skip passages with sequence_order < N
- *     [--model claude-opus-4-6]
+ *     [--model claude-opus-4-8]
  *     [--force]               regenerate even if nodes already exist
  *
  * Default: processes all approved passages, skipping any that already have nodes.
@@ -46,9 +46,10 @@ loadEnv()
 
 // ── Config ────────────────────────────────────────────────────────────────────
 
-const TEXT_ID       = 'c0219559-a8a9-4ebb-be5b-eca29b921457'
+const DEFAULT_TEXT_ID = 'c0219559-a8a9-4ebb-be5b-eca29b921457'
 const DELAY_MS      = 2000
-const DEFAULT_MODEL = 'claude-opus-4-6'
+const DEFAULT_MODEL = 'claude-opus-4-8'  // curator-confirmed 2026-08-06 via side-by-side
+                                          // comparison vs Sonnet 5 on bhedojjivanam -- see CLAUDE.md
 
 const SUPABASE_URL      = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const SERVICE_ROLE_KEY  = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -93,9 +94,9 @@ function hasFlag(name: string): boolean {
   return process.argv.includes(name)
 }
 
-function streamBreakdown(counts: Record<ArgumentStream, number>): string {
-  return (['mula', 'bhavadipika', 'vadavaliprakasha'] as ArgumentStream[])
-    .map(s => `${s}:${counts[s]}`)
+function streamBreakdown(counts: Record<string, number>): string {
+  return Object.entries(counts)
+    .map(([s, n]) => `${s}:${n}`)
     .join('  ')
 }
 
@@ -105,11 +106,13 @@ async function main() {
   console.log('=== generate-argument-maps ===\n')
   showRecentProgress()
 
+  const textId       = getArg('--text-id') ?? DEFAULT_TEXT_ID
   const passageIdArg = getArg('--passage-id')
   const startFrom    = parseInt(getArg('--start-from') ?? '1')
   const model        = getArg('--model') ?? DEFAULT_MODEL
   const force        = hasFlag('--force')
 
+  console.log(`Text ID: ${textId}`)
   console.log(`Model  : ${model}`)
   console.log(`Force  : ${force ? 'yes — will delete existing nodes and regenerate' : 'no — skipping passages with existing nodes'}`)
   if (startFrom > 1) console.log(`Start  : sequence_order >= ${startFrom}`)
@@ -118,11 +121,15 @@ async function main() {
   let passages: Array<{ id: string; sequence_order: number; section_number: number | null; section_name: string | null }>
 
   if (passageIdArg) {
+    // passage_id is already a globally-unique primary key -- no need to ALSO
+    // filter by text_id, and doing so is actively harmful: since textId
+    // silently defaults to DEFAULT_TEXT_ID (vadavali) when --text-id isn't
+    // given, combining it with a passage_id from a DIFFERENT text (e.g.
+    // bhedojjivanam) matches zero rows and fails with a confusing "not found".
     const { data, error } = await supabase
       .from('passages')
       .select('id, sequence_order, section_number, section_name')
       .eq('id', passageIdArg)
-      .eq('text_id', TEXT_ID)
       .single()
     if (error || !data) {
       console.error(`ERROR: Passage ${passageIdArg} not found — ${error?.message}`)
@@ -133,8 +140,7 @@ async function main() {
     const { data, error } = await supabase
       .from('passages')
       .select('id, sequence_order, section_number, section_name')
-      .eq('text_id', TEXT_ID)
-      .eq('is_approved', true)
+      .eq('text_id', textId)
       .order('sequence_order')
     if (error || !data) {
       console.error('ERROR: Failed to fetch passages:', error?.message)

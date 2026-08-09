@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import type { Commentary } from '@/types/database'
 import InlineEditor from './InlineEditor'
+import { renderPassageText } from '@/lib/render-passage-text'
 
 interface CommentaryTabsProps {
   commentaries: Commentary[]
@@ -14,9 +15,17 @@ interface CommentaryTabsProps {
 // included as alternating elements in the resulting array.
 // Declared outside the component so the RegExp object is shared, but we
 // always call it via split (not test/exec) so lastIndex is not mutated.
+// This is a VADAVALI-specific fallback: that pipeline's commentary text has
+// no explicit **bold** markers, so pratika-like hook phrases are detected by
+// this ending-pattern heuristic instead. bhedojjivanam's pipeline DOES emit
+// explicit **bold** for pratikas plus [^key] footnote refs -- for any text
+// that actually contains a ** span, renderPassageText (which also handles
+// footnote tooltips) is used instead, leaving vadavali's existing rendering
+// completely unaffected.
 const HOOK_RE = /([^\u0964\u0965]{1,50}?\u0907\u0924\u093F\s*(?:\u0964\u0964|\u0965))/g
 
-function renderWithHooks(text: string): React.ReactNode[] {
+function renderWithHooks(text: string): React.ReactNode {
+  if (text.includes('**')) return renderPassageText(text)
   // split with a capturing group returns: [before, match, between, match, after, …]
   const parts = text.split(HOOK_RE)
   return parts.map((part, i) => {
@@ -70,13 +79,13 @@ export default function CommentaryTabs({ commentaries, isCurator }: CommentaryTa
                 recordId={active.id}
                 initialValue={active.commentary_text}
                 isDevanagari
-                displayClassName="text-[18px] leading-relaxed"
+                displayClassName="text-[18px] leading-relaxed whitespace-pre-line"
                 renderDisplay={renderWithHooks}
               />
             ) : (
-              <p className="text-[18px] text-stone-800 leading-relaxed font-devanagari">
+              <div className="text-[18px] text-stone-800 leading-relaxed font-devanagari whitespace-pre-line">
                 {renderWithHooks(active.commentary_text)}
-              </p>
+              </div>
             )
           ) : (
             <p className="text-sm text-stone-400 italic">No commentary available for this passage.</p>

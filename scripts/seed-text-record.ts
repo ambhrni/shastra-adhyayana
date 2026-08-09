@@ -53,21 +53,20 @@ const supabase = createClient(SUPABASE_URL, SERVICE_KEY)
 // Text definition
 // ----------------------------------------------------------------
 const TEXT = {
-  title:               'वादावली',
-  title_transliterated: 'Vādāvalī',
-  author:              'Jayatīrtha',
-  description:         'A systematic refutation of Advaita Vedānta positions, examining ' +
-                       'the doctrines of avidyā from the Dvaita Vedānta perspective',
+  title:               'भेदोज्जीवनम्',
+  title_transliterated: 'Bhēdōjjīvanam',
+  author:              'Vyāsarāja Tīrtha',
+  description:         'Bhēdōjjīvanam is a seminal polemical treatise by Śrī Vyāsarāja Tīrtha that employs rigorous logical dialectics to resuscitate the foundational Dvaita principle of Pañcabheda (fivefold difference) against the monistic onslaught of Advaita Māyāvāda. Through a sophisticated application of Navya-Nyāya epistemology, the text systematically deconstructs the ontological validity of non-duality while establishing the inherent reality of the world and the eternal distinction between the individual soul and the Supreme Brahman.',
   is_published:        false,
 }
 
-const COMMENTATOR_NAMES = ['Rāghavendra Tīrtha', 'Śrīnivāsa Tīrtha']
+const KASITIRUMALACHARYA_ID = '576e423e-a9b7-4b5b-8f81-be7edea48845'
 
 // ----------------------------------------------------------------
 // Main
 // ----------------------------------------------------------------
 async function main() {
-  console.log('Seeding vādāvalī text record…\n')
+  console.log('Seeding Bhēdōjjīvanam text record…\n')
 
   // 1. Insert text
   const { data: text, error: textErr } = await supabase
@@ -87,41 +86,17 @@ async function main() {
   console.log(`  title_transliterated: ${TEXT.title_transliterated}`)
   console.log(`  author             : ${TEXT.author}`)
 
-  // 2. Fetch commentators
-  const { data: commentators, error: cErr } = await supabase
-    .from('commentators')
-    .select('id, name')
-    .in('name', COMMENTATOR_NAMES)
+  // 2. Link Kāśītirumalācārya as the single commentator
+  const { error: linkErr } = await supabase.from('text_commentators').insert({
+    text_id:        text.id,
+    commentator_id: KASITIRUMALACHARYA_ID,
+    order_index:    0,
+  })
 
-  if (cErr || !commentators || commentators.length === 0) {
-    console.error('\nError: Could not find commentators in the database.')
-    console.error('Make sure you have run supabase/schema.sql first (it seeds them).')
-    process.exit(1)
-  }
-
-  const found = commentators.map(c => c.name)
-  const missing = COMMENTATOR_NAMES.filter(n => !found.includes(n))
-  if (missing.length > 0) {
-    console.warn(`\nWarning: These commentators were not found: ${missing.join(', ')}`)
-    console.warn('They will not be linked. Add them to the commentators table and re-link manually.')
-  }
-
-  // 3. Link commentators in display order (schema order = Rāghavendra first)
-  for (let i = 0; i < commentators.length; i++) {
-    const c = commentators[i]
-    const orderIndex = COMMENTATOR_NAMES.indexOf(c.name)  // preserve intended tab order
-
-    const { error: linkErr } = await supabase.from('text_commentators').insert({
-      text_id:        text.id,
-      commentator_id: c.id,
-      order_index:    orderIndex >= 0 ? orderIndex : i,
-    })
-
-    if (linkErr) {
-      console.error(`  ✗ Failed to link ${c.name}: ${linkErr.message}`)
-    } else {
-      console.log(`✓ Linked commentator [tab ${orderIndex}]: ${c.name}`)
-    }
+  if (linkErr) {
+    console.error(`  ✗ Failed to link Kāśītirumalācārya: ${linkErr.message}`)
+  } else {
+    console.log(`✓ Linked commentator [tab 0]: Kāśītirumalācārya`)
   }
 
   // 4. Print next step
@@ -131,7 +106,7 @@ async function main() {
   console.log(
     `  npx ts-node --project tsconfig.scripts.json scripts/ingest-text.ts \\`
   )
-  console.log(`    --file path\\to\\your\\vadavali.txt \\`)
+  console.log(`    --file path\\to\\your\\bhedojjivanam.xlsx \\`)
   console.log(`    --text-id ${text.id}`)
   console.log()
   console.log('The text will be hidden from learners (is_published = false) until')
@@ -139,7 +114,6 @@ async function main() {
   console.log('─'.repeat(60))
 }
 
-main().catch(err => {
-  console.error('Unexpected error:', err)
-  process.exit(1)
-})
+main()
+  .then(() => { console.log('Done.'); process.exit(0); })
+  .catch(err => { console.error('Fatal error:', err); process.exit(1); })
