@@ -154,9 +154,23 @@ export interface FlaggedError {
   flagged_by: string
   description_of_error: string
   status: FlagStatus
+  curator_response: string | null
   created_at: string
   resolved_at: string | null
   resolved_by: string | null
+}
+
+export interface ArgumentMapFlag {
+  id: string
+  passage_id: string
+  text_id: string
+  user_id: string | null
+  issue_type: string
+  description: string
+  node_id: string | null
+  status: FlagStatus
+  curator_response: string | null
+  created_at: string
 }
 
 export interface Notebook {
@@ -223,6 +237,7 @@ export interface ArgumentNode {
   node_type: ArgumentNodeType
   content_english: string
   content_sanskrit: string | null
+  source_excerpt: string | null
   logical_flaw: string | null
   refutation_type: RefutationType | null
   parent_node_id: string | null

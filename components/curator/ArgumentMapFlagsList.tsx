@@ -1,27 +1,49 @@
 'use client'
 
 import { useState } from 'react'
-import type { FlaggedError, FlagStatus } from '@/types/database'
 import Badge from '@/components/ui/Badge'
 
-interface FlaggedErrorsListProps {
-  flags: (FlaggedError & { passage?: { mula_text: string } | null; commentator?: { name: string } | null })[]
+interface ArgumentMapFlagRow {
+  id: string
+  passage_id: string
+  text_id: string
+  user_id: string | null
+  issue_type: string
+  description: string
+  node_id: string | null
+  status: string
+  curator_response: string | null
+  created_at: string
+  passage?: { mula_text: string; section_name: string | null; sequence_order: number } | null
+  text?: { title_transliterated: string } | null
 }
 
-const statusVariant: Record<FlagStatus, 'amber' | 'green' | 'stone'> = {
-  open:       'amber',
-  resolved:   'green',
-  dismissed:  'stone',
+interface Props {
+  flags: ArgumentMapFlagRow[]
 }
 
-export default function FlaggedErrorsList({ flags: initialFlags }: FlaggedErrorsListProps) {
+const statusVariant: Record<string, 'amber' | 'green' | 'stone'> = {
+  open:      'amber',
+  resolved:  'green',
+  dismissed: 'stone',
+}
+
+const issueTypeVariant: Record<string, 'amber' | 'stone'> = {
+  'Incorrect Sanskrit':    'amber',
+  'Wrong logical flow':    'amber',
+  'Incorrect attribution': 'amber',
+  'Missing node':          'amber',
+  'Other':                 'stone',
+}
+
+export default function ArgumentMapFlagsList({ flags: initialFlags }: Props) {
   const [flags, setFlags] = useState(initialFlags)
   const [updating, setUpdating] = useState<string | null>(null)
   const [drafts, setDrafts] = useState<Record<string, string>>({})
 
-  async function updateStatus(flagId: string, status: FlagStatus) {
+  async function updateStatus(flagId: string, status: 'resolved' | 'dismissed') {
     setUpdating(flagId)
-    await fetch('/api/flags', {
+    await fetch('/api/argument-map-flags', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ flag_id: flagId, status }),
@@ -33,39 +55,44 @@ export default function FlaggedErrorsList({ flags: initialFlags }: FlaggedErrors
   async function saveResponse(flagId: string) {
     const curator_response = drafts[flagId] ?? ''
     setUpdating(flagId)
-    await fetch('/api/flags', {
+    await fetch('/api/argument-map-flags', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ flag_id: flagId, curator_response }),
     })
-    setFlags(prev => prev.map(f => f.id === flagId ? { ...f, curator_response } as any : f))
+    setFlags(prev => prev.map(f => f.id === flagId ? { ...f, curator_response } : f))
     setUpdating(null)
   }
 
   const openFlags = flags.filter(f => f.status === 'open')
   const closedFlags = flags.filter(f => f.status !== 'open')
 
-  const renderFlag = (flag: typeof flags[0]) => {
-    const existing = (flag as any).curator_response ?? ''
-    const draft = drafts[flag.id] ?? existing
-    const dirty = draft !== existing
+  const renderFlag = (flag: ArgumentMapFlagRow) => {
+    const draft = drafts[flag.id] ?? flag.curator_response ?? ''
+    const dirty = draft !== (flag.curator_response ?? '')
 
     return (
       <div key={flag.id} className="bg-white border border-stone-200 rounded-xl p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <Badge variant={statusVariant[flag.status]}>{flag.status}</Badge>
-              <span className="text-xs text-stone-400">
-                {flag.commentator ? flag.commentator.name : 'Mūla text'}
-              </span>
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
+              <Badge variant={statusVariant[flag.status] ?? 'stone'}>{flag.status}</Badge>
+              <Badge variant={issueTypeVariant[flag.issue_type] ?? 'stone'}>{flag.issue_type}</Badge>
+              {flag.text && (
+                <span className="text-xs text-stone-400 font-devanagari">{flag.text.title_transliterated}</span>
+              )}
+              {flag.passage?.section_name && (
+                <span className="text-xs text-stone-400">
+                  §{flag.passage.sequence_order} {flag.passage.section_name}
+                </span>
+              )}
             </div>
             {flag.passage && (
               <p className="text-xs text-stone-400 font-devanagari truncate mb-1">
                 {flag.passage.mula_text.slice(0, 80)}…
               </p>
             )}
-            <p className="text-sm text-stone-700">{flag.description_of_error}</p>
+            <p className="text-sm text-stone-700">{flag.description}</p>
             <p className="text-xs text-stone-400 mt-1">
               {new Date(flag.created_at).toLocaleDateString()}
             </p>
@@ -91,10 +118,12 @@ export default function FlaggedErrorsList({ flags: initialFlags }: FlaggedErrors
           )}
         </div>
 
-        {/* Curator response -- independent of status */}
+        {/* Curator response -- independent of status, so a curator can ask a
+            clarifying question without closing the flag, or add a note after
+            resolving */}
         <div className="mt-3 pt-3 border-t border-stone-100">
           <label className="block text-xs font-medium text-stone-500 mb-1">
-            Response to reporter
+            Response to reporter {flag.user_id ? '' : '(anonymous -- not visible to anyone)'}
           </label>
           <textarea
             value={draft}
@@ -124,7 +153,7 @@ export default function FlaggedErrorsList({ flags: initialFlags }: FlaggedErrors
           Open ({openFlags.length})
         </h3>
         {openFlags.length === 0 ? (
-          <p className="text-sm text-stone-400 italic">No open flags.</p>
+          <p className="text-sm text-stone-400 italic">No open argument map flags.</p>
         ) : (
           <div className="space-y-2">{openFlags.map(renderFlag)}</div>
         )}

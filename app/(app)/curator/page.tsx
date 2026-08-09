@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import PassageList from '@/components/curator/PassageList'
 import FlaggedErrorsList from '@/components/curator/FlaggedErrorsList'
+import ArgumentMapFlagsList from '@/components/curator/ArgumentMapFlagsList'
 import NotebooksAdmin from '@/components/curator/NotebooksAdmin'
 import VideosAdmin from '@/components/curator/VideosAdmin'
 import TextThumbnailEdit from '@/components/curator/TextThumbnailEdit'
@@ -35,6 +36,7 @@ export default async function CuratorPage({ searchParams }: Props) {
   let texts: any[] = []
   let passagesByText: Record<string, any[]> = {}
   let flags: any[] = []
+  let argumentMapFlags: any[] = []
   let notebooks: any[] = []
   let videoChannels: any[] = []
   let argumentMapPassages: any[] = []
@@ -58,6 +60,14 @@ export default async function CuratorPage({ searchParams }: Props) {
       .select('*, passage:passages(mula_text), commentator:commentators(name)')
       .order('created_at', { ascending: false })
     flags = flagsData ?? []
+  }
+
+  if (activeTab === 'argument-map-flags') {
+    const { data: argMapFlagsData } = await supabase
+      .from('argument_map_flags')
+      .select('*, passage:passages(mula_text, section_name, sequence_order), text:texts(title_transliterated)')
+      .order('created_at', { ascending: false })
+    argumentMapFlags = argMapFlagsData ?? []
   }
 
   if (activeTab === 'notebooks' && isAdmin) {
@@ -91,10 +101,16 @@ export default async function CuratorPage({ searchParams }: Props) {
     .select('*', { count: 'exact', head: true })
     .eq('status', 'open')
 
+  const { count: openArgMapFlagCount } = await supabase
+    .from('argument_map_flags')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'open')
+
   // ── Tab definition ────────────────────────────────────────────────────────
   const tabs = [
     { id: 'passages', label: 'Passages', href: '/curator' },
     { id: 'flags', label: 'Flagged Errors', href: '/curator?tab=flags', badge: openFlagCount ?? 0 },
+    { id: 'argument-map-flags', label: 'Argument Map Flags', href: '/curator?tab=argument-map-flags', badge: openArgMapFlagCount ?? 0 },
     ...(isAdmin ? [{ id: 'notebooks', label: 'Notebooks', href: '/curator?tab=notebooks', badge: 0 }] : []),
     ...(isAdmin ? [{ id: 'videos', label: 'Videos', href: '/curator?tab=videos', badge: 0 }] : []),
     { id: 'argument-maps', label: 'Argument Maps', href: '/curator?tab=argument-maps', badge: 0 },
@@ -190,6 +206,12 @@ export default async function CuratorPage({ searchParams }: Props) {
       {activeTab === 'flags' && (
         <section>
           <FlaggedErrorsList flags={flags as any} />
+        </section>
+      )}
+
+      {activeTab === 'argument-map-flags' && (
+        <section>
+          <ArgumentMapFlagsList flags={argumentMapFlags as any} />
         </section>
       )}
 

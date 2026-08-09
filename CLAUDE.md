@@ -18,7 +18,7 @@ not a substitute.
 
 | Sub-Project | Location | Own CLAUDE.md | One-line status |
 | --- | --- | --- | --- |
-| Gītā Vivṛtti | `gItAvivRttiH_Claude/` | `gItAvivRttiH_Claude/CLAUDE.md` | (as of 2026-07) Ch. X complete (42 śhlokas); Ch. XI underway (11.1–11.4 done), next: 11.5 |
+| Gītā Vivṛtti | `gItAvivRttiH_Claude/` | `gItAvivRttiH_Claude/CLAUDE.md` | (as of 2026-08) Ch. X complete (42 śhlokas); Ch. XI underway (11.1–11.15 done), next: 11.16 |
 | bhēdōjjīvanam Source Transcription | `C:\Users\naray\OneDrive\Documents\bhEdojjIvanam\BJ_working\` (transcription.md); own CLAUDE.md at `C:\Users\naray\OneDrive\Documents\Claude\Code\BJ_working\CLAUDE.md` | see path above | (as of 2026-07) Segmentation + curator review COMPLETE — 176 passage entries, curator-corrected (see `corrections.json`). Ingestion script + cleanup SQL written (`scripts/ingest-bhedojjivanam-v2.ts`, `scripts/bhedojjivanam-v2-cleanup.sql`). Next: curator places `bhedojjivanam-units.json` in `scripts/data/` and runs the pipeline (see bhēdōjjīvanam status section below). |
 
 ## Sub-Project: Gītā Vivṛtti (श्रीराघवेन्द्रतीर्थस्य गीताविवृत्तिः)
@@ -46,12 +46,34 @@ commentary literature.
 ### Current Status (update this line whenever picking work back up)
 **Chapter X (Vibhūti Yoga) — ✅ COMPLETE.** All 42 śhlokas (1–11, 12–13 combined,
 14–42) written and fully proofread.
-**Chapter XI (Viśvarūpa-darśana Yoga) — underway.** Śhlokas 11.1–11.4 written and
+**Chapter XI (Viśvarūpa-darśana Yoga) — underway.** Śhlokas 11.1–11.15 written and
 proofread (includes a chapter-level footnote mechanism on the chapter heading
-itself, plus two verse-level footnotes at 11.2 and 11.3). Next to add: **11.5** —
-the point where the speaker changes to `श्रीभगवानुवाच` (Kṛṣṇa begins answering
-Arjuna's request from 11.1–4); this śhloka is longer than usual, spanning four
-mūla lines.
+itself, plus two verse-level footnotes at 11.2 and 11.3). Speaker changed to
+`श्रीभगवानुवाच` at 11.5 (Kṛṣṇa begins answering Arjuna's request from 11.1–4)
+and continues through 11.8; 11.9 changes speaker to `सञ्जय उवाच` (first non-Kṛṣṇa/Arjuna speaker since 11.1), continuing through 11.14, then `अर्जुन उवाच` from 11.15 (Arjuna's own praise of the viśvarūpa begins). Verse-level footnotes also at 11.11 (मयट् grammar) and 11.15 (Pādma citation). 11.14 supplies `॥ १४ ॥` for a bare-`॥` print omission (same situation as 11.7). **Firm standing requirement (curator-confirmed):**
+pratīkas are always bolded densely by matching every mūla word echoed in the
+commentary, regardless of whether OCR or the print itself shows bold — a brief
+session-internal deviation (gating bold on visible print-bold only) left 11.6/
+11.7 under-bolded and was corrected; 11.8 applies the rule cleanly, including
+bolding repeated occurrences of the same mūla word (e.g. `ददामि`, `पश्य`, and
+again at 11.15's `सर्वान्`/`तव देहे`).
+11.9 embeds a Mokṣadharma citation with its own verse-level footnote (citation
+sits mid-commentary, footnote text appended last per convention) and adds two
+new DEFS entries (`hariḥ`, `mahāyogeśvara`); 11.11 adds `sarvāścaryamaya`.
+
+**Bolding exception — vigraha is not a citation (introduced 11.9, SHARPENED at
+11.10–11.15 after a curator-caught over-bolding error):** when the commentary
+analyzes a mūla compound word via vigraha (grammatical decomposition), the
+analytical wording is not bolded — and this holds even when the vigraha reuses
+the compound's own root words, just re-inflected into a different case/number
+to make the analysis sentence work (e.g. 11.10's `अनेकानि वक्त्राणि नयनानि`
+for mūla `अनेकवक्त्रनयनम्`, or 11.15's `कमलासने...स्थितम्` for mūla
+`कमलासनस्थम्` — both initially bolded in error, corrected on curator review).
+Bold now requires an **exact word-form match** to the mūla (same stem/case/
+number; sandhi spelling changes are fine, grammatical re-inflection is not).
+Two patterns stay valid: a bare word cited as a lemma before `इति`, and a
+compound restated verbatim right after `इति` closing a vigraha. Full worked
+examples in `gItAvivRttiH_Claude/CLAUDE.md`. Next to add: **11.16**.
 **Chapters I–IX and XII–XVIII:** not yet started.
 
 *(Always check the "Current Status" / "Resume Pointer" table at the top of
@@ -1126,6 +1148,164 @@ session's work, but curator wanted it fixed before going live. Added
 in `app/layout.tsx` -- inherited by every page's own metadata (including the
 per-passage `generateMetadata` in the study page), so this one line fixes all
 instances of the warning. NOT YET RE-VERIFIED via a fresh build.
+
+## 🚀 DEPLOYED TO PRODUCTION (2026-08-08)
+
+Clean `npm run build` (0 errors, metadataBase warnings resolved) →
+`git push` (master @ 0b8f870) → `vercel --prod` → aliased to
+**https://www.tattvasudha.org**. bhēdōjjīvanam is now publicly live, alongside
+vādāvalī, as the platform's second full course.
+
+**NOT YET VERIFIED against the actual production URL** -- everything up to this
+point was tested against localhost only. Curator should do one pass on
+www.tattvasudha.org itself before considering this fully closed: home page shows
+both courses correctly ordered, a bhēdōjjīvanam passage loads with working
+argument map + source-quote coloring + line breaks, the AI tutor responds, and
+the intro page renders (EN + SA) with the corrected Sanskrit and CE dates.
+
+**Production verified (2026-08-08):** curator confirmed everything looks good on
+www.tattvasudha.org itself, not just localhost.
+
+**WhatsApp link preview -- resolved:** curator initially saw no thumbnail/image
+when pasting the bare domain into WhatsApp. Checked the live site's actual served
+`<head>` directly (via fetch, not assumption) -- confirmed og:image, dimensions,
+and twitter:card were all correctly present and absolute
+(`https://tattvasudha.org/og-image.png`, 1200x630) -- the metadataBase fix had
+worked correctly. Root cause was WhatsApp/Meta's own aggressive link-preview
+caching (shared with Facebook's crawler), almost certainly from an earlier
+test/share before the metadataBase fix went live. Curator resolved it simply by
+using the full `https://tattvasudha.org` URL instead of the bare domain --
+likely gave the crawler a fresh, uncached target. (Facebook Sharing Debugger --
+developers.facebook.com/tools/debug/sharing/ -- "Scrape Again" is the fallback
+if this resurfaces, since it forces a cache refresh WhatsApp also draws from.)
+
+---
+
+## ✅ PHASE 1 COMPLETE -- bhēdōjjīvanam Live on tattvasudha.org (2026-08-08)
+
+This closes out the full bhēdōjjīvanam onboarding project. Consolidated summary for
+whoever/whenever this resumes:
+
+**What shipped:**
+- Full re-ingestion (176 passages, 125 sections) with corrected passage boundaries
+- Passage + nyāya-concept embeddings (Gemini Embedding 2, 3072-dim)
+- Curator approval workflow for all passages + commentaries (RLS bug fixed along
+  the way -- see "Fixed: passage approval didn't approve commentaries" above)
+- 697 nyāya concepts generated + embedded
+- Full argument maps for all 176 passages (Opus 4.8) -- mūla + kāśikā streams,
+  with 2 passages individually regenerated after the stream-purity prompt fix
+- 142 section links (124 spine + 21 cross-links)
+- Section colors for all 125 sections (heuristic-derived, curator-reviewed)
+- NEW platform feature: `source_excerpt` field on argument nodes, with real
+  cross-stream validation (a genuine accuracy bug was found + fixed here --
+  see the multi-round "source_excerpt" saga above, resolved via direct SQL
+  verification after two insufficient fixes)
+- NEW platform feature: stream-purity enforcement in argument-node generation
+  prompts (a mūla node's explanation can no longer lean on commentary-only
+  interpretation -- data-layer validated, not just prompt-requested)
+- bhēdōjjīvanam added to the home page, navbar Courses dropdown, and search --
+  found these were already dynamic, only ordering (`display_order` column,
+  new migration) and a hardcoded search placeholder needed fixing
+- Bilingual (EN+SA) intro page content for bhēdōjjīvanam -- curator-authorized,
+  web-researched, with real errors caught on review (2 non-Sanskrit words, 1
+  grammatical inversion, 1 spelling inconsistency, then a further "ख्रीष्टाब्दे
+  → CE" style change applied consistently across BOTH texts)
+- Platform-wide bug fixes surfaced during this work: AI Tutor chat crash
+  (react-markdown className), mobile home-page layout clipping course cards,
+  line-breaks not rendering in passage/commentary display text, metadataBase
+  warning
+
+**Explicitly deferred to the next phase:**
+- Tier 3 intro content: full 125-section-by-section overview (matching
+  vādāvalī's existing 40-section one) -- `sectionOverview: []` currently, the
+  page handles this gracefully (that block just doesn't render)
+- `texts.thumbnail_url` for bhēdōjjīvanam -- curator chose to skip for now,
+  gradient+title card is fine
+- General: keep an eye out for whether the stream-purity fix needs to be
+  applied more broadly via full regeneration, or whether the single-passage
+  fix + prompt-only-for-future approach (curator's chosen scope) proves
+  sufficient as more of the text gets studied/reviewed in practice
+
+**Deployment record:** `npm run build` clean → `git push` (master @ 0b8f870) →
+`vercel --prod` → aliased to www.tattvasudha.org. Verified against production,
+not just localhost.
+
+Curator is moving to a different project for now and will return to this later --
+this file should be a sufficient resume point. Nothing is in a half-finished
+state; everything above is either shipped-and-verified or explicitly deferred.
+
+---
+
+## New feature: Argument Map Flags tab + curator-to-user response system (2026-08-08)
+
+Curator found two real gaps while testing as a non-curator user:
+1. Non-curator users saw NO argument maps at all for bhēdōjjīvanam. Root cause:
+   RLS on `argument_nodes` requires `is_approved = true` for non-curator roles
+   (confirmed via `pg_policies` -- `arg_nodes_auth_read`:
+   `is_approved = true OR role IN (curator, admin)`), and all 1,055 bhēdōjjīvanam
+   argument nodes were sitting at `is_approved = false` -- generated but never
+   formally approved, a step I never called out explicitly in earlier guidance.
+   Fixed via a bulk `UPDATE argument_nodes SET is_approved = true WHERE ...` --
+   curator's informed choice, not a per-node review, given the site was already
+   live and framed as "Phase 1, ongoing refinement." Curator verified with an
+   actual non-curator login afterward, not just the row count changing.
+2. `argument_map_flags` (submitted via the flag icon on the Argument Map view)
+   had NO curator-facing display anywhere -- unlike `flagged_errors`, which has
+   its own Curator Portal tab. Users could submit reports that just sat
+   invisible in the database.
+
+Built a full fix, all shipped:
+
+**New tab:** Curator Portal → "Argument Map Flags", mirroring the existing
+Flagged Errors tab -- `components/curator/ArgumentMapFlagsList.tsx` (new),
+wired into `app/(app)/curator/page.tsx` (new tab entry, data fetch, open-count
+badge). New route `app/api/argument-map-flags/route.ts` (PATCH-only, curator/
+admin role-checked, matching `/api/flags`'s pattern).
+
+**Curator → user communication (the deeper gap):** neither flags table had ANY
+response field, and neither table was even readable by the submitting user --
+marking something "Resolved" was purely internal, the reporter never found out.
+Fixed with:
+- Migration `20260808010000_flags_curator_response.sql`: `curator_response`
+  TEXT column on both `flagged_errors` and `argument_map_flags`, plus new RLS
+  SELECT policies letting a user read (only) their own submitted flags
+  (`flagged_by = auth.uid()` / `user_id = auth.uid()` respectively -- note the
+  two tables use different column names for the submitter).
+- Both `/api/flags` and `/api/argument-map-flags` PATCH handlers now accept an
+  optional `curator_response` independently of `status` -- a curator can save a
+  clarifying question without closing the flag, not just a final resolution note.
+- Both curator list components (`FlaggedErrorsList.tsx`, `ArgumentMapFlagsList.tsx`)
+  got a small per-flag textarea + "Save response" button, decoupled from the
+  Resolve/Dismiss actions.
+- New page `app/(app)/my-reports/page.tsx` -- a logged-in user's own submitted
+  flags (both types), status, and any curator response. Read-only, server
+  component, relies on the new RLS policies rather than re-filtering defensively
+  (though it does filter explicitly too, for clarity).
+- New "My Reports" navbar link (desktop + mobile), shown whenever logged in.
+
+**Type definitions updated** in `types/database.ts`: added `curator_response`
+to `FlaggedError`, added a new `ArgumentMapFlag` interface (didn't exist before),
+and fixed an unrelated pre-existing gap noticed along the way -- `ArgumentNode`
+was missing `source_excerpt` (added earlier this session to the actual table,
+never added to the TS type).
+
+**Tooling note worth remembering:** `create_file` exhibited a real, reproducible
+stale-cache bug this session -- twice, for brand-new paths
+(`app/api/argument-map-flags/`, `app/(app)/my-reports/`), it reported "File
+created successfully" while `read_text_file`/`edit_file` immediately
+disagreed (ENOENT / "parent directory does not exist"). `filesystem:write_file`
+(create-or-overwrite, no existence-check) worked reliably every time as a
+workaround. If this recurs, try `write_file` before assuming the target code is
+wrong.
+
+**NOT YET DEPLOYED** -- this is all new code + a new migration, only tested
+against localhost so far (implicitly, via the earlier RLS/is_approved diagnosis --
+the NEW flag-response feature itself has not been exercised at all yet). Needs,
+in order: run the migration → `npm run build` → verify locally (submit a test
+flag, respond as curator, check it shows on `/my-reports`) → `git push` →
+`vercel --prod` → verify on production. Curator was about to step away to
+another project when this was built -- this is the next concrete action when
+resuming.
 
 ## Known Gotchas
 

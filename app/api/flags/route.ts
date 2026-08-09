@@ -31,13 +31,19 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
-  const { flag_id, status } = await req.json()
+  const { flag_id, status, curator_response } = await req.json()
 
-  await supabase.from('flagged_errors').update({
-    status,
-    resolved_at: status !== 'open' ? new Date().toISOString() : null,
-    resolved_by: status !== 'open' ? user.id : null,
-  }).eq('id', flag_id)
+  // status is optional now -- a curator can save/update a response (e.g. a
+  // clarifying question) without necessarily closing the flag
+  const update: Record<string, any> = {}
+  if (status !== undefined) {
+    update.status = status
+    update.resolved_at = status !== 'open' ? new Date().toISOString() : null
+    update.resolved_by = status !== 'open' ? user.id : null
+  }
+  if (curator_response !== undefined) update.curator_response = curator_response
+
+  await supabase.from('flagged_errors').update(update).eq('id', flag_id)
 
   return NextResponse.json({ ok: true })
 }

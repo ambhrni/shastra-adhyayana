@@ -231,6 +231,12 @@ export default function Navbar({ displayName, role, texts }: NavbarProps) {
           </Link>
         )}
 
+        {displayName && (
+          <Link href="/my-reports" className={linkClass(pathname === '/my-reports')}>
+            My Reports
+          </Link>
+        )}
+
         {role === 'curator' || role === 'admin' ? (
           <Link href="/curator" className={linkClass(pathname.startsWith('/curator'))}>
             Curator
@@ -458,6 +464,12 @@ export default function Navbar({ displayName, role, texts }: NavbarProps) {
             {displayName && (
               <Link href="/dashboard" className={mobileLinkClass(pathname === '/dashboard')}>
                 Dashboard
+              </Link>
+            )}
+
+            {displayName && (
+              <Link href="/my-reports" className={mobileLinkClass(pathname === '/my-reports')}>
+                My Reports
               </Link>
             )}
 
