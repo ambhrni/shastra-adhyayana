@@ -18,8 +18,8 @@ not a substitute.
 
 | Sub-Project | Location | Own CLAUDE.md | One-line status |
 | --- | --- | --- | --- |
-| Gītā Vivṛtti | `gItAvivRttiH_Claude/` | `gItAvivRttiH_Claude/CLAUDE.md` | (as of 2026-08) Ch. X complete (42 śhlokas); Ch. XI underway (11.1–11.15 done), next: 11.16 |
-| bhēdōjjīvanam Source Transcription | `C:\Users\naray\OneDrive\Documents\bhEdojjIvanam\BJ_working\` (transcription.md); own CLAUDE.md at `C:\Users\naray\OneDrive\Documents\Claude\Code\BJ_working\CLAUDE.md` | see path above | (as of 2026-07) Segmentation + curator review COMPLETE — 176 passage entries, curator-corrected (see `corrections.json`). Ingestion script + cleanup SQL written (`scripts/ingest-bhedojjivanam-v2.ts`, `scripts/bhedojjivanam-v2-cleanup.sql`). Next: curator places `bhedojjivanam-units.json` in `scripts/data/` and runs the pipeline (see bhēdōjjīvanam status section below). |
+| Gītā Vivṛtti | `sub-projects/gita-vivrutti/` | `sub-projects/gita-vivrutti/CLAUDE.md` | (as of 2026-08) Ch. X complete (42 śhlokas); Ch. XI underway (11.1–11.24 done), next: 11.25 |
+| bhēdōjjīvanam Source Transcription | `sub-projects/bhedojjivanam/BJ_working/` | `sub-projects/bhedojjivanam/BJ_working/CLAUDE.md` | (as of 2026-08-08) Pages 2–137 transcription COMPLETE (batches 1–14) — since ingested (176 passages), embedded, and LIVE on tattvasudha.org (see "✅ PHASE 1 COMPLETE" section below). Raw scan PDFs/page-render PNGs kept local-only per machine, not in git (see BJ_working/ .gitignore rules). |
 
 ## Sub-Project: Gītā Vivṛtti (श्रीराघवेन्द्रतीर्थस्य गीताविवृत्तिः)
 
@@ -28,7 +28,7 @@ Tīrtha's *Gītā Vivṛtti* (also *Gītārthasaṅgraha*, 1623–1671 A.D.) —
 on the Bhagavadgītā in the **Tattvavāda Vedānta** tradition (never call it "Dvaita").
 Destined to be embedded/hosted at **tattvasudha.org**.
 
-**Location:** `gItAvivRttiH_Claude/` folder, with its own dedicated `CLAUDE.md` — that
+**Location:** `sub-projects/gita-vivrutti/` folder, with its own dedicated `CLAUDE.md` — that
 file is the single source of truth for this sub-project and should be read in full
 before any session touching it.
 
@@ -46,7 +46,7 @@ commentary literature.
 ### Current Status (update this line whenever picking work back up)
 **Chapter X (Vibhūti Yoga) — ✅ COMPLETE.** All 42 śhlokas (1–11, 12–13 combined,
 14–42) written and fully proofread.
-**Chapter XI (Viśvarūpa-darśana Yoga) — underway.** Śhlokas 11.1–11.15 written and
+**Chapter XI (Viśvarūpa-darśana Yoga) — underway.** Śhlokas 11.1–11.24 written and
 proofread (includes a chapter-level footnote mechanism on the chapter heading
 itself, plus two verse-level footnotes at 11.2 and 11.3). Speaker changed to
 `श्रीभगवानुवाच` at 11.5 (Kṛṣṇa begins answering Arjuna's request from 11.1–4)
@@ -60,6 +60,17 @@ again at 11.15's `सर्वान्`/`तव देहे`).
 11.9 embeds a Mokṣadharma citation with its own verse-level footnote (citation
 sits mid-commentary, footnote text appended last per convention) and adds two
 new DEFS entries (`hariḥ`, `mahāyogeśvara`); 11.11 adds `sarvāścaryamaya`.
+11.16 is the first verse with **two separate footnotes** on one verse (one on a
+mūla word, one on राॕ's own citation), both appended in citation order with the
+closing marker only on the last, and enriches the existing `viśvarūpa` DEFS
+entry; 11.17 has no footnote. 11.18 has no footnote; 11.19's footnote belongs
+only to राॕ's own citation (a second footnote on the same page belongs to the
+always-ignored 〔वि〕 section and was correctly skipped). **Footnote numbering
+resets per page** (confirmed at 11.20–11.21, where page 402's १/२ belong to
+entirely different verses than page 401's १/२) — always trace a superscript to
+its citation point rather than assuming by digit. 11.20 is the densest single
+verse so far (15 commentary sentences, two alternative glosses of "lokatrayam").
+11.14 and 11.23 both supply a missing `॥ N ॥` for a bare-`॥` print omission.
 
 **Bolding exception — vigraha is not a citation (introduced 11.9, SHARPENED at
 11.10–11.15 after a curator-caught over-bolding error):** when the commentary
@@ -73,11 +84,11 @@ Bold now requires an **exact word-form match** to the mūla (same stem/case/
 number; sandhi spelling changes are fine, grammatical re-inflection is not).
 Two patterns stay valid: a bare word cited as a lemma before `इति`, and a
 compound restated verbatim right after `इति` closing a vigraha. Full worked
-examples in `gItAvivRttiH_Claude/CLAUDE.md`. Next to add: **11.16**.
+examples in `sub-projects/gita-vivrutti/CLAUDE.md`. Next to add: **11.25**.
 **Chapters I–IX and XII–XVIII:** not yet started.
 
 *(Always check the "Current Status" / "Resume Pointer" table at the top of
-`gItAvivRttiH_Claude/CLAUDE.md` for the exact live number — this line will drift
+`sub-projects/gita-vivrutti/CLAUDE.md` for the exact live number — this line will drift
 out of date.)*
 
 ### Workflow in One Paragraph
@@ -116,7 +127,7 @@ Pointer).
 Everything else — the exact data schema, the pratīka bold-formatting edge cases
 (mid-sandhi splits, etc.), footnote/citation handling, IAST transliteration
 rules, the navigation architecture, and the precise resume prompt — lives in
-`gItAvivRttiH_Claude/CLAUDE.md`. Treat that file as canonical for this
+`sub-projects/gita-vivrutti/CLAUDE.md`. Treat that file as canonical for this
 sub-project; do not duplicate its details here beyond this summary, to avoid drift.
 
 ## Critical Terminology — Never Get Wrong
@@ -1306,6 +1317,135 @@ flag, respond as curator, check it shows on `/my-reports`) → `git push` →
 `vercel --prod` → verify on production. Curator was about to step away to
 another project when this was built -- this is the next concrete action when
 resuming.
+
+## Fixed: navbar layout + reorganization (2026-08-08)
+
+Curator found `॥ श्रीः ॥` (centered via `left-1/2 -translate-x-1/2`, absolute positioning on the
+full navbar width) getting visually overwritten by "About" once inside a course,
+because "Parīkṣā" adds to the left-side nav group, making it wider -- but the
+centering had no awareness of that, since absolute-centering-on-full-width and
+variable-width sibling content are fundamentally incompatible.
+
+Root fix: restructured `Navbar.tsx` from `flex` + absolute positioning to a
+proper 3-column CSS grid (`grid-cols-[1fr_auto_1fr]`). Left and right regions
+get equal, symmetric `1fr` shares; the center region is `auto`-sized to exactly
+fit `॥ श्रीः ॥` and can never be reached by either side's content, regardless of
+how many items exist on either side -- structurally guaranteed, not just
+patched for the current item count. Future-proof against more courses/links
+being added later.
+
+Alongside that, reorganized nav items per curator's request to simplify:
+**stays directly visible** (left) -- Courses ▾, Dashboard, Curator (role-
+conditional). **Moved into a new "More ▾" dropdown** (right, same pattern as
+Courses) -- Parīkṣā (still only shown in-course), My Reports, NotebookLMs,
+Videos, About. Mobile hamburger menu left as a flat list (already vertical,
+not competing for horizontal space, so the primary/more split wasn't needed
+there).
+
+**NOT YET VERIFIED live** -- curator to confirm across both curator and
+learner accounts, desktop and mobile.
+
+**Follow-up fixes + reorganization (2026-08-08):** curator found the Courses
+dropdown showed nothing. Root cause: the LEFT grid region had `overflow-hidden`
+(added to stop horizontal bleed into the center column) -- but this ALSO clips
+the Courses dropdown panel, which is absolutely positioned and needs to extend
+BELOW the navbar to be visible. Fixed by scoping to `overflow-x-hidden` instead
+(blocks horizontal overflow only, leaves vertical dropdowns free).
+
+Also reorganized per curator's explicit direction: "More" (My Reports, About)
+moved to the LEFT side, alongside Courses/Parīkṣā/Dashboard/Curator. New
+"Resources" dropdown added on the RIGHT side (NotebookLMs, Vēda & Stotra, Dāsa
+Sāhitya -- exact strings matched against the home page's own existing column
+headers in `app/(app)/page.tsx`, not guessed: note "Stotra" has NO macron on
+the home page, unlike "Vēda"). Both video items currently link generically to
+`/videos` rather than deep-linking to a specific channel anchor (the home page's
+"View all" links do this via `/videos#channel-${channel.id}`) -- would need
+channel IDs threaded through `layout.tsx` into `Navbar`, intentionally not done
+here to keep this fix scoped; worth doing as a follow-up if it matters.
+
+Clarified for curator: Dashboard/Curator links are intentionally conditional on
+being logged in (Curator additionally needs curator/admin role) -- their absence
+in the screenshot matched a logged-out view (Login/Register buttons visible),
+which is expected. Not yet confirmed whether this was also an issue while
+actually logged in.
+
+**NOT YET VERIFIED live** -- needs a full dev-server restart (not just browser
+refresh) per the established pattern for structurally-different files this
+session, then curator confirmation across logged-in/logged-out and both roles.
+
+**Second round (2026-08-08):** curator reported NONE of the dropdowns working
+after the previous fix, plus a stray up/down stepper-icon artifact in the bar.
+Given this matches the SAME stale-build pattern hit twice already today (new/
+restructured file, simple restart not always sufficient), and I could not find
+an actual code defect on re-review, treated this as very likely a stale bundle
+rather than chasing a phantom bug. Rewrote the file cleanly again via
+`write_file` (verified landed via read-back), added explicit `type="button"` to
+all dropdown trigger buttons (harmless defensive addition -- guards against any
+implicit-form-submission edge case, though not confirmed as the actual cause).
+
+Also reordered per curator's explicit spec: LEFT = Courses ▾, Parīkṣā (in-
+course only, unchanged conditional), Dashboard, Resources ▾ (moved from right),
+Curator (role-conditional), More ▾. RIGHT = search, auth only.
+
+**Curator asked for a THOROUGH cache clear this time, not just restart** --
+given repeated staleness issues, recommended: stop dev server, delete the
+`.next` folder entirely, then `npm run dev` fresh, rather than a normal
+restart. **NOT YET VERIFIED live.**
+
+**Session paused here (2026-08-08), navbar dropdowns still broken -- this is
+the next concrete action to resume with.** Full diagnostic trail so far, so
+tomorrow doesn't restart from zero:
+
+- `.next` cache clear did NOT fix it -- rules out staleness/Fast Refresh corruption.
+- Tested in an InPrivate/Incognito window -- SAME problem persists -- rules out
+  a browser extension.
+- The stray "up/down icon" curator kept seeing was inspected directly via
+  DevTools element-picker and confirmed to be my OWN chevron SVG
+  (`svg.inline-block.ml-1.w-3.h-3.opacity-60`, matches the code exactly) --
+  there is no foreign/mystery element. The "icon" curator was describing is
+  most likely just that static chevron being the only thing visible, precisely
+  BECAUSE the dropdown panel beneath it never appears.
+- Browser console: confirmed CLEAN, zero errors, across multiple checks --
+  rules out a JS crash/exception blocking execution.
+- Tried switching the outside-click-to-close listener from `mousedown` to
+  `click` (theory: event-ordering conflict with React's synthetic event
+  batching) -- NOT YET CONFIRMED whether this helped, session ended before
+  testing.
+- **Critical, most recent finding**: clicking "Courses" produces ZERO visible
+  change -- not even a brief flicker before closing again. This rules out the
+  mousedown/click race-condition theory entirely (that would show a flash of
+  the panel). Points toward either (a) the click event never reaching the
+  button's onClick handler at all -- something intercepting/absorbing it
+  first -- or (b) the state genuinely not updating despite the handler firing.
+
+**Next diagnostic step, not yet done**: use React DevTools (⚛️ Components tab,
+official extension) to watch the `Navbar` component's `coursesOpen` state
+directly while clicking -- this cleanly separates "state never toggles" (click
+not reaching the handler / handler not running) from "state toggles but nothing
+renders" (a CSS/render-layer bug instead). Whichever it is dictates a
+completely different next fix -- worth doing this BEFORE further code changes
+rather than guessing again.
+
+Other untried ideas worth considering next time: check for any overlay/portal
+element with a z-index or pointer-events issue sitting on top of the nav
+(inspect the exact click coordinates, not just the visible chevron); try an
+entirely different browser (not just Incognito in the same one) to fully rule
+out anything Chrome-specific; temporarily strip the Courses button down to a
+bare minimal `<button onClick={() => alert('clicked')}>` to test whether ANY
+click handler fires on that exact DOM position at all, isolating the problem
+from the dropdown logic entirely.
+
+**Second item queued for next session (2026-08-09):** curator separately
+reports the navbar looks visibly "crunched" on smaller laptop screens (not
+mobile -- the `md:` breakpoint's full desktop nav, just on a narrower desktop
+viewport, e.g. ~1366px-class laptops). Ask: proportionally scale the SAME
+desktop nav layout down on smaller screens (smaller font size, tighter
+spacing/gaps) rather than switching to a different/collapsed layout --
+preserve the full desktop-style experience, just more compact. Worth noting
+the nav has grown to 6 left-side items (Courses/Parīkṣā/Dashboard/Curator/
+More) + search + auth since the original design, likely contributing to why
+this is only now visibly tight. Explicitly queued AFTER the Courses-dropdown
+bug above -- fix that first, then this.
 
 ## Known Gotchas
 
