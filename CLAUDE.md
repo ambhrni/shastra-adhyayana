@@ -39,7 +39,7 @@ not a substitute.
 
 | Sub-Project | Location | Own CLAUDE.md | One-line status |
 | --- | --- | --- | --- |
-| Gītā Vivṛtti | `sub-projects/gita-vivrutti/` | `sub-projects/gita-vivrutti/CLAUDE.md` | (as of 2026-08) Ch. X complete (42 śhlokas); Ch. XI underway (11.1–11.24 done), next: 11.25 |
+| Gītā Vivṛtti | `sub-projects/gita-vivrutti/` | `sub-projects/gita-vivrutti/CLAUDE.md` | (as of 2026-09-13) Ch. X complete (42 śhlokas); Ch. XI underway (11.1–11.27 done), next: 11.28 |
 | bhēdōjjīvanam Source Transcription | `sub-projects/bhedojjivanam/BJ_working/` | `sub-projects/bhedojjivanam/BJ_working/CLAUDE.md` | (as of 2026-08-08) Pages 2–137 transcription COMPLETE (batches 1–14) — since ingested (176 passages), embedded, and LIVE on tattvasudha.org (see "✅ PHASE 1 COMPLETE" section below). Raw scan PDFs/page-render PNGs kept local-only per machine, not in git (see BJ_working/ .gitignore rules). |
 
 ## Sub-Project: Gītā Vivṛtti (श्रीराघवेन्द्रतीर्थस्य गीताविवृत्तिः)
@@ -67,7 +67,7 @@ commentary literature.
 ### Current Status (update this line whenever picking work back up)
 **Chapter X (Vibhūti Yoga) — ✅ COMPLETE.** All 42 śhlokas (1–11, 12–13 combined,
 14–42) written and fully proofread.
-**Chapter XI (Viśvarūpa-darśana Yoga) — underway.** Śhlokas 11.1–11.24 written and
+**Chapter XI (Viśvarūpa-darśana Yoga) — underway.** Śhlokas 11.1–11.27 written and
 proofread (includes a chapter-level footnote mechanism on the chapter heading
 itself, plus two verse-level footnotes at 11.2 and 11.3). Speaker changed to
 `श्रीभगवानुवाच` at 11.5 (Kṛṣṇa begins answering Arjuna's request from 11.1–4)
@@ -105,7 +105,7 @@ Bold now requires an **exact word-form match** to the mūla (same stem/case/
 number; sandhi spelling changes are fine, grammatical re-inflection is not).
 Two patterns stay valid: a bare word cited as a lemma before `इति`, and a
 compound restated verbatim right after `इति` closing a vigraha. Full worked
-examples in `sub-projects/gita-vivrutti/CLAUDE.md`. Next to add: **11.25**.
+examples in `sub-projects/gita-vivrutti/CLAUDE.md`. Next to add: **11.28**.
 **Chapters I–IX and XII–XVIII:** not yet started.
 
 *(Always check the "Current Status" / "Resume Pointer" table at the top of
