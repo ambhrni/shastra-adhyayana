@@ -8,6 +8,27 @@
 - Local: C:\Projects\vadavali-app
 - Contact: tattvasudhaa@gmail.com
 
+## Multi-Machine Session Discipline (READ FIRST, EVERY SESSION)
+
+This repo is worked on from more than one machine. Git is the *only* sync mechanism —
+there is no live sync between machines, only what's committed and pushed. Every Claude
+session working in this repo, on any machine, must:
+
+1. **At the start of the session:** run `git pull` before making or reading any changes,
+   so you're not working from a stale checkout another machine has already moved past.
+2. **At the end of the session (or before switching machines):** `git add` / `git commit`
+   / `git push` any changes worth keeping — including edits Claude made to this file or
+   to a sub-project's own CLAUDE.md, not just application code. Uncommitted work sitting
+   only on one machine's disk defeats the whole point of this setup.
+3. **Never assume another machine's disk state** — if resuming a sub-project, trust what
+   `git pull` just brought down over any memory/assumption of where things were left.
+
+See `claude/MULTI_MACHINE_SETUP.md` (claude.ai Project doc) for full new-machine setup
+steps. If a Claude session is working through a sandboxed/cloud connection to this
+machine rather than a native Claude Code CLI session, it may be able to commit but not
+`git push` (no GitHub credentials in that sandbox) — in that case it will say so, and a
+plain `git push origin master` from a normal terminal on this machine finishes the job.
+
 ## Sub-Projects Index
 
 Tattvasudhā is the super-project. Sub-projects below are independently developed
