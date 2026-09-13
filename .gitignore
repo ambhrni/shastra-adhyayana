@@ -36,3 +36,10 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+
+# bhedojjivanam sub-project: raw scan sources kept local-only per machine
+# (large PDFs/PNG page renders used for OCR verification; not needed once
+# transcription is complete — only the derived .md working files are tracked)
+sub-projects/bhedojjivanam/BJ_working/*.pdf
+sub-projects/bhedojjivanam/BJ_working/*.png
+sub-projects/bhedojjivanam/BJ_working/pilot/
