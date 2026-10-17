@@ -495,6 +495,7 @@ footer a:hover { color:var(--saffron); }
       <select id="chapSel" onchange="onChapChange()">
         <option value="10">X — Vibhūti Yoga</option>
         <option value="11">XI — Viśvarūpa-darśana Yoga</option>
+        <option value="12">XII — Bhakti Yoga</option>
       </select>
     </div>
     <div class="nav-seg">
@@ -892,6 +893,9 @@ const DEFS = {
   'guru':                 'Guru — "the weighty one" / "the teacher"; a Viṣṇusahasranāma epithet grouped with Gurutama ("the supreme teacher") and Dhāma ("the [supreme] abode").',
   /* śhloka 11.54 terms */
   'sāyujya':              'Sāyujya — "intimate union / association" with the Lord; in Madhva Vedānta, the highest liberation, in which the released soul enjoys bliss in the Lord\'s presence without becoming identical with Him.',
+  /* śhloka 12.3 terms */
+  'avyakta':              'Avyakta — "the unmanifest." In this chapter, per Rāghavendra, the name for the Śrī-principle (Lakṣmī) — so called because she is not well known and presides over the world\'s material-cause prakṛti — distinguished from Viṣṇu Himself.',
+  'kūṭastha':             'Kūṭastha — "stationed in the kūṭa"; per Rāghavendra, the one who stands, as presiding deity, in the unmanifested (avyākṛta) ether.',
 };
 
 
@@ -3464,6 +3468,194 @@ const CHAPTERS = {
             tr:`"He attains Me." ॥ 55 ॥` },
           { skt:'॥ इति श्रीमद्गीतार्थसङ्ग्रहे श्रीराघवेन्द्रयतिकृते एकादशोऽध्यायः ॥',
             tr:`Thus the Eleventh Chapter, in the ${T('gītārthasaṅgraha')} composed by Śrī Rāghavendra Yati.` }
+        ]
+      }
+    }
+  },
+  12: {
+    number:'XII', romanNum:12,
+    nameDev:'भक्तियोगः<sup class="ch-foot-sup">१</sup>',
+    nameEn:'Bhakti Yoga · The Yoga of Devotion',
+    desc:'Between the worship of the Lord (Deva) and the worship of the Goddess (Devī, Śrī), this chapter declares the Lord\'s worship to be superior and teaches that worship. By Rāghavendra\'s reckoning it belongs to the group of six chapters devoted to the Lord\'s greatness.',
+    footnotes:[
+      { num:1, skt:'अव्यक्तोपासनाद् भगवदुपासनस्योत्तमत्वं प्रदर्श्य तदुपायं प्रदर्शयत्यस्मिन्नध्याये - गी.भा. । साधननिर्णयोऽत्र । - गी.ता.',
+        tr:`Having shown that the worship of the Lord is superior to the worship of the unmanifest, this chapter shows the means to it. — गी.भा. "Here is the determination of the means (sādhana)." — गी.ता.` }
+    ],
+    verses: {
+      1: {
+        speaker:'अर्जुन उवाच',
+        lines:[
+          { dev:'एवं सततयुक्ता ये भक्तास्त्वां पर्युपासते ।',
+            tr:`Those devotees who, thus ever steadfast, worship You,` },
+          { dev:'ये चाप्यक्षरमव्यक्तं तेषां के योगवित्तमाः ॥१॥',
+            tr:`and those who [worship] the imperishable, the unmanifest — which of these are the best knowers of the means (yoga)? ॥ 1 ॥` }
+        ],
+        commentary:[
+          { skt:'देवदेव्युपासनयोर्मध्ये देवोपासनस्याधिक्याय तदुपासनमाह अस्मिन्नध्याये ।',
+            tr:`In this chapter [the Lord] speaks of the worship of the Deva, in order to establish that, as between worship of the Deva and of the Devī, the Deva's worship is superior.` },
+          { skt:'भगवदुपास्त्याधिक्यपरत्वादस्य भगवन्माहात्म्यपरषट्कान्तर्भावश्च ।',
+            tr:`And since this chapter is devoted to the superiority of the Lord's worship, it is included in the group of six [chapters] devoted to the Lord's greatness.` },
+          { skt:`'तमेवं विद्वान्<sup class="vr-foot-sup">१</sup>' इत्यादौ भगवदुपास्तेरिव 'श्रियं वसाना अमृतत्वमायन्' इत्यादि श्रुतौ 'श्रियं प्रत्युपासीना अमृतत्वं प्राप्ताः' इति श्रीदेव्युपास्तेरपि मुक्तिहेतुत्वावगमेन जायमानपरकीयसन्देहमाहृत्य विशेषयुक्तिबुभुत्सया पृच्छति - <b>एवमिति</b> ।`,
+            tr:`Taking up the doubt of others, which arises from the understanding that worship of Śrī Devī too is a cause of liberation — just as worship of the Lord is, in "tam evaṃ vidvān…" etc., and in the śruti "śriyaṃ vasānā amṛtatvam āyan" (meaning "those who worshipped Śrī attained immortality") — [Arjuna], wishing to learn the specific reasoning, asks: "evam" etc.` },
+          { skt:'न च देव्युपास्तेर्मुक्तिहेतुत्वमुपचरितम् ।',
+            tr:`[It is] not [to be thought] that Devī-worship's being a cause of liberation is merely figurative —` },
+          { skt:`'अन्तवत् तु फलं तेषाम्' इति साप्तमिकन्यायात् ।`,
+            tr:`[as one might argue] by the reasoning of the seventh [chapter]: "but the fruit of those [worshippers] is perishable";` },
+          { skt:'अतो नास्य सन्देहहेतुत्वमिति शङ्क्यम् ।',
+            tr:`"therefore this [śruti] is no ground for doubt" — [so] it is not to be suspected [thus].` },
+          { skt:`ब्रह्मादिदेवानां जनिमृतिमत्त्वेन तदुपास्तेरन्तवत्फलकत्वेऽपि श्रियस्तु 'चतुष्कपर्दा' इत्यादौ नित्ययौवनज्ञानमयत्वदेवपूज्यत्वादिमहामहिम्नः श्रवणेन तदुपास्तेर्मुक्तिहेतुत्वसम्भवेन सन्देहहेतुत्वं मन्वानस्यायं प्रश्नः ।`,
+            tr:`Though the worship of Brahmā and the other gods has a perishable fruit, since they are subject to birth and death, yet in the case of Śrī — because in "catuṣkapardā" etc. her great glory is heard (eternal youth, fullness of knowledge, being worshipped by the gods, and so on) — her worship may well be a cause of liberation. This is the question of one who regards [that śruti] as a ground for doubt.` },
+          { skt:'<b>ये भक्ताः सततयुक्ताः</b> सततं ध्यानकर्मयोगवन्तः ।',
+            tr:`Those devotees, "ever steadfast" — always possessed of the yoga of meditation and of action.` },
+          { skt:`<b>एवं</b> दृष्टश्रुतरूपं <b>त्वां</b>, एवं 'मत्कर्मकृत्' इत्याद्युक्तप्रकारेण <b>पर्युपासते</b> ।`,
+            tr:`"Thus" — [You] whose form was seen and heard of; and "thus" — in the manner stated in "matkarmakṛt" etc. [11.55] — they worship.` },
+          { skt:'<b>येऽपि चाक्षरनामकमव्यक्तं</b> चित्प्रकृतिं परिश्रद्धया भक्त्यादिपूर्वकमुपासते ।',
+            tr:`And those who also worship the unmanifest called "Akṣara" — the sentient prakṛti — with complete faith, preceded by devotion and so on.` },
+          { skt:'<b>तेषां</b> मध्ये ।',
+            tr:`Among them —` },
+          { skt:'<b>के योगवित्तमाः</b> मोक्षोपायज्ञेषु श्रेष्ठाः इत्युवाचार्जुनः इत्यन्वयः ।',
+            tr:`"Which are the best knowers of yoga" — the best among those who know the means to liberation — thus Arjuna spoke: this is the construal.` },
+          { skt:'एवमित्यस्य त्वामित्यत्रोपासत इत्यत्र चान्वयः ।',
+            tr:`The word "evam" is construed both with "tvām" and with "upāsate".` },
+          { skt:`'एवम्' इत्यस्य पूर्वपरामर्शित्वात् पूर्वानन्तर्यमप्यस्याध्यायस्य ध्येयम् ।`,
+            tr:`Since "evam" refers back to what precedes, this chapter's immediate succession to the preceding one should also be borne in mind.` },
+          { skt:'अत्राव्यक्तमित्येव वाच्ये अक्षरमिति तद्विशेषेणोक्तिः क्षरणवद्भ्यो ब्रह्मादिदेवान्तरेभ्यो वैलक्षण्यप्रदर्शनेन प्रश्नसम्भावनार्था ॥१॥',
+            tr:`Here, when "avyaktam" alone could have been said, the addition of the qualifier "akṣaram" is to make the question possible, by showing its distinctness from other gods such as Brahmā, who are subject to perishing. ॥ 1 ॥` },
+          { skt:'<sup class="vr-foot-sup">१</sup> तै.आ. ३-१२-७',
+            tr:`Taittirīya Āraṇyaka 3.12.7 (for the passage "tam evaṃ vidvān…").` }
+        ]
+      },
+      2: {
+        speaker:'श्रीभगवानुवाच',
+        lines:[
+          { dev:'मय्यावेश्य मनो ये मां नित्ययुक्ता उपासते ।',
+            tr:`Those who, fixing the mind on Me, ever steadfast, worship Me,` },
+          { dev:'श्रद्धया परयोपेतास्ते मे युक्ततमा मताः ॥२॥',
+            tr:`endowed with supreme faith — they are considered by Me the most steadfast (yuktatamāḥ). ॥ 2 ॥` }
+        ],
+        commentary:[
+          { skt:'अव्यक्तोपासकेभ्यो मदुपासका एवोत्तमा इत्याह - <b>मयीति</b> ।',
+            tr:`He says that those who worship Me are indeed superior to the worshippers of the unmanifest: "mayi" etc.` },
+          { skt:'<b>ये मयि</b> सम्यक् <b>मन आवेश्य</b> ।',
+            tr:`Those who, having fixed the mind well on Me.` },
+          { skt:'<b>नित्ययुक्ताः</b> नित्यं कर्मयोगध्यानयोगवत्त्वेन नित्ययुक्ताः ।',
+            tr:`"Ever steadfast" — ever steadfast through always possessing both karma-yoga and dhyāna-yoga.` },
+          { skt:'<b>परया श्रद्धयोपेताश्च</b> सन्तः ।',
+            tr:`And being endowed with supreme faith.` },
+          { skt:'<b>मामुपासते</b> ।',
+            tr:`Worship Me.` },
+          { skt:'<b>ते युक्ततमाः</b> मोक्षोपायवत्सु श्रेष्ठाः ।',
+            tr:`They are the "most steadfast" — the best among those who have the means to liberation.` },
+          { skt:'<b>मे मताः</b> ।',
+            tr:`"Considered by Me."` },
+          { skt:'इत्यर्थः ॥२॥',
+            tr:`This is the meaning. ॥ 2 ॥` }
+        ]
+      },
+      3: {
+        lines:[
+          { dev:'ये त्वक्षरमनिर्देश्यमव्यक्तं पर्युपासते ।',
+            tr:`But those who worship the imperishable, the indeterminable, the unmanifest,` },
+          { dev:'सर्वत्रगमचिन्त्यं च कूटस्थमचलं ध्रुवम् ॥३॥',
+            tr:`the all-pervading, the unthinkable, the kūṭastha, the immovable, the constant — ॥ 3 ॥` }
+        ],
+        commentary:[
+          { skt:`नन्वव्यक्तोपासकानां मोक्षाभावे 'श्रियं वसाना अमृतत्वमायन्' इत्यादि श्रुतिविरोधः ।`,
+            tr:`An objection: if the worshippers of the unmanifest had no liberation, there would be a contradiction with the śruti "śriyaṃ vasānā amṛtatvam āyan" etc.` },
+          { skt:'मोक्षसत्वे च कथं त्वदुपासकानामेव युक्ततमत्वं फलसाम्यादित्यत आह - <b>ये त्विति</b> ।',
+            tr:`And if they do attain liberation, how are only Your worshippers "most steadfast", since the fruit is the same? To this He answers: "ye tu" etc.` },
+          { skt:'यद्वा - उक्तश्रुत्यादिनाऽव्यक्तोपासकानां मत्प्राप्तिरूपमोक्षसत्वेऽपि तदुपासनं कष्टसाध्यम् ।',
+            tr:`Or else: even granting that the worshippers of the unmanifest attain liberation in the form of reaching Me, by the above śruti etc., their worship is hard to accomplish.` },
+          { skt:'मदुपासनं न तथा ।',
+            tr:`My worship is not so.` },
+          { skt:'अतो मदुपासका एवोत्तमा इत्याह <b>ये तु</b> इत्यादिना श्लोकपञ्चकेन ।',
+            tr:`Hence He says that those who worship Me are indeed superior, through the five verses beginning "ye tu".` },
+          { skt:'<b>अक्षरमविनाशि</b> ।',
+            tr:`"Akṣaram": imperishable.` },
+          { skt:'सूक्ष्मत्वात् <b>अनिर्देश्यम्</b> ।',
+            tr:`"Anirdeśyam": because of subtlety.` },
+          { skt:'अप्रसिद्धत्वात् <b>जगदुपादानप्रकृत्यभिमानित्वाच्चाव्यक्तनामकं</b> श्रीतत्त्वम् ।',
+            tr:`The Śrī-principle, named "${T('avyakta')}" because of its being not well-known and because of its presiding over the world's material-cause prakṛti.` },
+          { skt:'<b>पर्युपासते</b> ।',
+            tr:`"Paryupāsate": [they] worship.` },
+          { skt:'विष्णुभक्तिविष्णूत्तमत्वज्ञानविष्णूपासनादिपूर्वकमुपासते ।',
+            tr:`They worship [her], preceded by devotion to Viṣṇu, knowledge of Viṣṇu's supremacy, worship of Viṣṇu, and so on.` },
+          { skt:'तद्विशिनष्टि - <b>सर्वत्रगमिति</b> ।',
+            tr:`He qualifies it: "sarvatragam" etc.` },
+          { skt:'देशतो व्याप्तम् ।',
+            tr:`Pervading in respect of place.` },
+          { skt:'<b>गुणबाहुल्यादचिन्त्यम्</b> ।',
+            tr:`"Unthinkable" because of the abundance of her qualities.` },
+          { skt:'<b>कूटस्थं</b> कूटेऽव्याकृताकाशे अभिमानितया स्थितम् ।',
+            tr:`"${T('kūṭastha')}": stationed, as the presiding deity, in the kūṭa — the unmanifested (avyākṛta) ether.` },
+          { skt:'कदाऽपि <b>स्वपदादभ्रष्टत्वादचलम्</b> ।',
+            tr:`"Acalam" because she never falls from her own station.` },
+          { skt:'<b>ध्रुवं</b> निर्विकारमिति ॥३॥',
+            tr:`"Dhruvam": unchanging. ॥ 3 ॥` }
+        ]
+      },
+      4: {
+        lines:[
+          { dev:'सन्नियम्येन्द्रियग्रामं सर्वत्र समबुद्धयः ।',
+            tr:`Having fully restrained the group of senses, even-minded everywhere,` },
+          { dev:'ते प्राप्नुवन्ति मामेव सर्वभूतहिते रताः ॥४॥',
+            tr:`they attain Me alone, devoted to the welfare of all beings. ॥ 4 ॥` }
+        ],
+        commentary:[
+          { skt:'तदुपासनायामितिकर्तव्यतामाह - <b>सन्नियम्येति</b> ।',
+            tr:`He states what must accompany that worship (itikartavyatā): "sanniyamya" etc.` },
+          { skt:'<b>इन्द्रियग्रामम्</b> इन्द्रियसमुदायम् ।',
+            tr:`"Indriyagrāmam": the whole body of senses.` },
+          { skt:'<b>सन्नियम्य</b> विषयेभ्य उपसंहृत्य ।',
+            tr:`"Sanniyamya": having withdrawn [them] from sense-objects.` },
+          { skt:'<b>सर्वत्र समबुद्धयः</b> ।',
+            tr:`"Even-minded everywhere."` },
+          { skt:'षष्ठाध्यायोक्तदिशा सम्यग्ज्ञानवन्तः ।',
+            tr:`Possessing right knowledge in the manner stated in the sixth chapter.` },
+          { skt:'<b>सर्वभूतहिते रताश्च</b> सन्तः ।',
+            tr:`And being devoted to the welfare of all beings.` },
+          { skt:'पर्युपासत इत्यन्वयः ।',
+            tr:`The construal is: "[they] worship (paryupāsate)." (Bhāva: this verse has no finite verb for the worship; the "ye … paryupāsate" of verse 3 is completed here, with "te" picking it up.)` },
+          { skt:'अत्र अक्षरत्वादिविशेषणं मोक्षदानशक्तिद्योतनाय ।',
+            tr:`Here the qualifiers "imperishable" etc. [of verse 3] are to indicate her power to bestow liberation.` },
+          { skt:'<b>ते मामेव</b> ।',
+            tr:`"They … Me alone."` },
+          { skt:'<b>प्राप्नुवन्तीति</b> ॥४॥',
+            tr:`"They attain" — thus. ॥ 4 ॥` }
+        ]
+      },
+      5: {
+        lines:[
+          { dev:'क्लेशोऽधिकतरस्तेषामव्यक्तासक्तचेतसाम्<sup class="vr-foot-sup">१</sup> ।',
+            tr:`The difficulty is greater for those whose minds are attached to the unmanifest,` },
+          { dev:'अव्यक्ता हि गतिर्दुःखं देहवद्भिरवाप्यते ॥५॥',
+            tr:`for the path of the unmanifest is attained with difficulty by embodied beings. ॥ 5 ॥` }
+        ],
+        commentary:[
+          { skt:'अव्यक्तोपासकानामपि त्वत्प्राप्तिरूपमोक्षसत्वे कथं त्वदुपासकानां उत्तमतेत्यत आह - <b>क्लेश इति</b> ।',
+            tr:`"If even the worshippers of the unmanifest attain liberation in the form of reaching You, how are Your worshippers superior?" — to this He says: "kleśa" etc.` },
+          { skt:'अव्यक्ते विष्णुं विनाकृतश्रीतत्त्वे ।',
+            tr:`"In the unmanifest" — in the Śrī-principle taken apart from Viṣṇu.` },
+          { skt:'आसक्तचित्तानां <b>तेषाम्</b> ।',
+            tr:`Of those whose minds are attached [thereto].` },
+          { skt:'<b>क्लेशः अधिकतरः</b> अत्यन्ताधिकः ।',
+            tr:`"Greater difficulty" — extremely great.` },
+          { skt:'कथमित्यत आह - <b>अव्यक्ता हीति</b> ।',
+            tr:`"How so?" — to this He says: "avyaktā hi" etc.` },
+          { skt:'<b>गतिशब्दो</b> गम्यतेऽनेनेति करणव्युत्पत्त्या मार्गपरः ।',
+            tr:`The word "gati" refers to a path, by the instrumental derivation "that by which one goes".` },
+          { skt:'अव्यक्तशब्दस्तदुपासनं लक्षयित्वा तद्द्वारकलक्षकः ।',
+            tr:`The word "avyakta", after implying the worship of that [unmanifest], implies in turn what operates through it (tad-dvāraka).` },
+          { skt:'अव्यक्तोपासनद्वारको भगवत्प्राप्तिमार्गः <b>दुःखं</b> यथा भवति तथा <b>देहवद्भिरवाप्यते हि</b> ।',
+            tr:`The path to attaining the Lord that operates through worship of the unmanifest is attained by embodied beings in such a way that it is painful.` },
+          { skt:'प्रागुक्तपरिशब्दार्थपूर्वकमुपासनम्, इन्द्रियग्रामातिनियमनम्, षष्ठोक्तप्रकारेण सर्वत्र समबुद्धित्वम्, सर्वभूतहितकरत्वम्, सुष्ट्वाचारं च विना न देवीप्रसादः ।',
+            tr:`Without worship preceded by the sense of "pari" stated earlier, complete restraint of the senses, even-mindedness everywhere as stated in the sixth chapter, benefiting all beings, and good conduct, there is no grace of the Devī.` },
+          { skt:'तेन विना नेश्वरप्रसादः ।',
+            tr:`Without that, no grace of Īśvara.` },
+          { skt:'तेन विना न तत्प्राप्तिरिति तदुपास्तिद्वारकभगवत्प्राप्तिमार्गस्य क्लेशतरत्वं ध्येयम् ॥५॥',
+            tr:`Without that, no attaining of Him — thus the path to the Lord that comes through worship of that [Devī] should be understood as exceedingly painful. ॥ 5 ॥` },
+          { skt:`<sup class="vr-foot-sup">१</sup> 'ये तु विष्णुमवज्ञाय श्रियमेव ह्युपासते । उपेक्ष्य वा हरिं ते तु भूत्वा याज्याः पतन्त्यधः ॥' इति प्रवृत्तसंहितायाम् । -भा.ता. (११/५/१०)`,
+            tr:`"Those who, disregarding Viṣṇu, worship Śrī alone, or neglect Hari — they, having become [only] yājyas, fall downward." — Pravṛtta-saṃhitā, as cited in Bhāgavata-tātparya (11/5/10).` }
         ]
       }
     }
