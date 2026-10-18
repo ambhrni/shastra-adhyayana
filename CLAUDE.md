@@ -39,7 +39,7 @@ not a substitute.
 
 | Sub-Project | Location | Own CLAUDE.md | One-line status |
 | --- | --- | --- | --- |
-| Gītā Vivṛtti | `sub-projects/gita-vivrutti/` | `sub-projects/gita-vivrutti/CLAUDE.md` | (as of 2026-10-17) Ch. X complete (42 śhlokas); Ch. XI complete (55); Ch. XII underway (12.1–12.5 done), next: 12.6 |
+| Gītā Vivṛtti | `sub-projects/gita-vivrutti/` | `sub-projects/gita-vivrutti/CLAUDE.md` | (as of 2026-10-18) Ch. X complete (42 śhlokas); Ch. XI complete (55); Ch. XII complete (20, via the new Sanskrit-first proofreading cycle); next: Ch. XIII, 13.1 |
 | bhēdōjjīvanam Source Transcription | `sub-projects/bhedojjivanam/BJ_working/` | `sub-projects/bhedojjivanam/BJ_working/CLAUDE.md` | (as of 2026-08-08) Pages 2–137 transcription COMPLETE (batches 1–14) — since ingested (176 passages), embedded, and LIVE on tattvasudha.org (see "✅ PHASE 1 COMPLETE" section below). Raw scan PDFs/page-render PNGs kept local-only per machine, not in git (see BJ_working/ .gitignore rules). |
 
 ## Sub-Project: Gītā Vivṛtti (श्रीराघवेन्द्रतीर्थस्य गीताविवृत्तिः)
@@ -105,8 +105,8 @@ Bold now requires an **exact word-form match** to the mūla (same stem/case/
 number; sandhi spelling changes are fine, grammatical re-inflection is not).
 Two patterns stay valid: a bare word cited as a lemma before `इति`, and a
 compound restated verbatim right after `इति` closing a vigraha. Full worked
-examples in `sub-projects/gita-vivrutti/CLAUDE.md`. Next to add: **12.6** (Chapter XII underway; Chapters X–XI are complete). Chapter titles come only from the curator-supplied "Authentic Chapter Names" table in the sub-project CLAUDE.md — never invent a chapter title.
-**Chapters I–IX and XIII–XVIII:** not yet started.
+examples in `sub-projects/gita-vivrutti/CLAUDE.md`. Next to add: **13.1** (Chapters X, XI and XII are complete). From 12.6 onward the chapter workflow is the **Sanskrit-first proofreading cycle** — Claude verifies the Sanskrit against the PDF and builds a Sanskrit-only Word proofing sheet; the curator proofreads it (Suggesting/Track Changes); Claude reads the tracked changes, then drafts the English for approval; only then is the HTML written (details and tools in the sub-project CLAUDE.md and `sub-projects/gita-vivrutti/proofing/tools/`). The curator's proofread bold is the print's bold and is reproduced exactly. Chapter titles come only from the curator-supplied "Authentic Chapter Names" table in the sub-project CLAUDE.md — never invent a chapter title.
+**Chapters I–IX and XIII–XVIII:** not yet started (Chapter XIII is next).
 
 *(Always check the "Current Status" / "Resume Pointer" table at the top of
 `sub-projects/gita-vivrutti/CLAUDE.md` for the exact live number — this line will drift
