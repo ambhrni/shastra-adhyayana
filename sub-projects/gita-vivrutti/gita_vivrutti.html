@@ -362,6 +362,18 @@ body.study-on .study-hint { display: block; }
   border-bottom:1px solid rgba(168,134,28,0.08);
 }
 .vr-row:last-child { border-bottom:none; }
+.vr-row.vr-foot-first {
+  margin-top:14px; padding-top:16px;
+  border-top:1px solid rgba(168,134,28,0.55);
+}
+.vr-row.vr-foot .vr-skt { font-size:0.92rem; color:var(--ink-mid); }
+.vr-row.vr-foot .vr-tr { font-size:0.88rem; }
+.vr-row.vr-colophon {
+  margin-top:14px; padding-top:16px;
+  border-top:1px solid rgba(168,134,28,0.28);
+  text-align:center;
+}
+.vr-row.vr-colophon .vr-tr { border-left:none; padding-left:0; }
 
 .vr-skt {
   font-family:'Noto Sans Devanagari',sans-serif;
@@ -496,6 +508,7 @@ footer a:hover { color:var(--saffron); }
         <option value="10">X — Vibhūti Yoga</option>
         <option value="11">XI — Viśvarūpa-darśana Yoga</option>
         <option value="12">XII — Bhakti Yoga</option>
+        <option value="13">XIII — Kṣetra-kṣetrajña-vibhāga Yoga</option>
       </select>
     </div>
     <div class="nav-seg">
@@ -902,6 +915,13 @@ const DEFS = {
   'harṣa':                'Harṣa — here, per Rāghavendra, not mere gladness but "the mind\'s inclination toward adharma out of intoxication (mada)."',
   'amarṣa':               'Amarṣa — intolerance, i.e. anger (roṣa).',
   'udvega':               'Udvega — agitation: a particular trembling of the mind (manaḥ-kampa-viśeṣa).',
+  /* śhloka 13.1–13.12 terms */
+  'kṣetra':               'Kṣetra — "the field": the body, and the unmanifest (avyakta) etc. denoted by the word śarīra; so called, per Rāghavendra, because the Lord dwells in it — kṣīyate \'tra īśvareṇa (13.3).',
+  'kṣetrajña':            'Kṣetrajña — "knower of the kṣetra": one who knows this body-field (13.2). The Lord is also the kṣetrajña in all kṣetras (13.3).',
+  'śarīra':               'Śarīra — "body": per Rāghavendra, from śar (that which brings harm to the jīva) + īra (that which is impelled by the Lord).',
+  'abhimāni-devatā':      'Abhimāni-devatā — the presiding deity of an element, organ or faculty of the kṣetra; Rāghavendra names these deities one by one (13.7).',
+  'dambha':               'Dambha — hypocrisy: displaying greatness even after knowing one\'s own smallness (13.8). Adambhitva is its absence.',
+  'Anabhiṣvaṅga':        'Anabhiṣvaṅga — absence of overripe affection (atipakva-sneha-abhāva) toward son, wife, home and the like (13.10).',
 };
 
 
@@ -3450,7 +3470,8 @@ const CHAPTERS = {
             tr:`"Affection that is preceded by knowledge of the Lord's greatness, is firm and surpasses all else, is called bhakti. By it there is liberation, and not otherwise." — ${T('mbtn')} (1/85).` },
           { skt:'परमेश्वरभक्तिर्नाम निरवधिकानन्तकल्याणगुणात्मकः स्वात्मात्मीयसमस्तवस्तुभ्योऽनेकगुणाधिकोऽन्तरायसहस्रेणाप्यप्रतिबद्धनिरन्तरप्रेमप्रवाहः ॥ - न्यायसुधा',
             tr:`"Devotion to the Supreme Lord is an unbroken stream of love toward One of limitless, infinite auspicious qualities, many times greater than [love for] oneself and all that is one's own, and unimpeded even by a thousand obstacles." — Nyāyasudhā.` }
-        ]
+        ],
+        footFrom:4
       },
       55: {
         lines:[
@@ -4089,6 +4110,438 @@ const CHAPTERS = {
         ]
       }
     }
+  },
+  13: {
+    number:'XIII', romanNum:13,
+    nameDev:'क्षेत्रक्षेत्रज्ञविभागयोगः<sup class="ch-foot-sup">१</sup>',
+    nameEn:'Kṣetra-kṣetrajña-vibhāga Yoga · The Yoga of the Distinction between the Field and the Knower of the Field',
+    desc:'This chapter condenses the meanings taught across the two preceding sets of six chapters — the means of knowledge, the nature of the jīva, the nature of the Lord, and the kṣetra as the Lord\'s dwelling — and, at Arjuna\'s question, presents them together in a form easy for the intellect to grasp.',
+    footnotes:[
+      { num:1, skt:'पूर्वोक्तज्ञानज्ञेयक्षेत्रपुरुषान् पिण्डीकृत्य विविच्य दर्शयत्यनेनाध्यायेन - गी.भा. सर्वार्थसङ्क्षेपोऽयम् । - गी.ता.',
+        tr:`“[He] gathers together and distinguishes the previously stated knowledge, object of knowledge, kṣetra and puruṣa, and shows them in this chapter” — Gītā-bhāṣya. “This is a summary of all the meanings” — Gītā-tātparya.` }
+    ],
+    verses: {
+      1: {
+        speaker:'अर्जुन उवाच',
+        lines:[
+          { dev:'प्रकृतिं<sup class="vr-foot-sup">२</sup> पुरुषं चैव क्षेत्रं क्षेत्रज्ञमेव च ।',
+            tr:`Prakṛti and Puruṣa, and likewise the kṣetra and the kṣetrajña —` },
+          { dev:'एतद्वेदितुमिच्छामि ज्ञानं ज्ञेयं च केशव ॥१॥',
+            tr:`this I wish to know, along with knowledge and the object of knowledge, O Keśava. ॥ 1 ॥` }
+        ],
+        commentary:[
+          { skt:'पूर्वषट्कद्वयोक्तार्थसङ्ग्रहपरोऽयमध्यायः ।',
+            tr:`This chapter is a compendium of the meanings stated in the two preceding sets of six chapters.` },
+          { skt:'तथाहि ।',
+            tr:`To elaborate:` },
+          { skt:'यत्प्रथमषट्के \'त्रैगुण्यविषया वेदाः\'<sup class="vr-foot-sup">३</sup> इत्यादिना प्राचुर्येण ज्ञानसाधनमाषष्ठसमाप्तेरुक्तम्, यच्च तत्र द्वितीयेऽध्याये \'न त्वेवाहम्\'<sup class="vr-foot-sup">४</sup> इत्यादिनाऽनादिनित्यत्वादिना जीवस्वरूपमुक्तम्, यच्च द्वितीयषट्के भगवत्स्वरूपमुक्तम्, यदपि सप्तमे \'भूमिरापः\'<sup class="vr-foot-sup">५</sup> इत्यादिना क्षेत्रशब्दितं भगवदावासस्थानमुक्तम्, तद्विकीर्णतयोक्तं सर्वं बुद्ध्यारोहार्थं सङ्क्षिप्यास्मिन्नध्याये प्रश्नपूर्वकं प्रदर्श्यते - <b>प्रकृतिमित्यादिना</b> ।',
+            tr:`In the first six chapters, the means of knowledge (jñāna-sādhana) was stated at length up to the end of the sixth chapter, beginning with “the Vedas have the three guṇas as their domain” (Gītā 2.46)<sup class="vr-foot-sup">३</sup> and so on; and there, in the second chapter, with “never indeed was I not” (Gītā 2.12)<sup class="vr-foot-sup">४</sup> and so on, the nature of the jīva was stated through its being beginningless, eternal, and so on; and in the second six chapters the nature of the Lord was stated; and also, in the seventh [chapter], with “earth, water…” (Gītā 7.4)<sup class="vr-foot-sup">५</sup> and so on, the dwelling-place of the Lord, termed “${T('kṣetra')},” was stated. All of that, stated in scattered fashion, is condensed — to make it easy for the intellect to take in — and shown in this chapter by way of a question: “prakṛtim” etc.` },
+          { skt:'<b>पुरुषं</b> जीवम् ।',
+            tr:`“Puruṣa” is the jīva.` },
+          { skt:'<b>ज्ञानं</b> ज्ञानसाधनम् ॥१॥',
+            tr:`“Jñāna” is the means of knowledge. ॥ 1 ॥` },
+          { skt:'<sup class="vr-foot-sup">२</sup> अयं श्लोकः क्वचिन्न पठ्यते । परन्तु श्रीमदाचार्यसम्मत इति ज्ञायते ।',
+            tr:`This verse is not read in some [texts]; but it is known to be accepted by Śrīmad Ācārya (Madhva).` },
+          { skt:'<sup class="vr-foot-sup">३</sup> गी. (२-४६)',
+            tr:`Gītā (2.46).` },
+          { skt:'<sup class="vr-foot-sup">४</sup> गी. (२-१२)',
+            tr:`Gītā (2.12).` },
+          { skt:'<sup class="vr-foot-sup">५</sup> गी.(७-४)',
+            tr:`Gītā (7.4).` }
+        ]
+      },
+      2: {
+        speaker:'श्रीभगवानुवाच',
+        lines:[
+          { dev:'इदं शरीरं कौन्तेय क्षेत्रमित्यभिधीयते ।',
+            tr:`This body, O Kaunteya, is called the “kṣetra”;` },
+          { dev:'एतद्यो वेत्ति तं प्राहुः क्षेत्रज्ञ<sup class="vr-foot-sup">६</sup> इति तद्विदः ॥२॥',
+            tr:`one who knows this, the knowers of it call “kṣetrajña.” ॥ 2 ॥` }
+        ],
+        commentary:[
+          { skt:'ननु भगवत्स्वरूपज्ञानस्यैव पूर्वोक्तदिशा मुक्तिहेतुत्वात् तत्स्वरूपोक्तिर्युक्ता ।',
+            tr:`Objection: since only knowledge of the Lord’s own nature is the cause of liberation, as was said before, stating that nature [alone] would be proper.` },
+          { skt:'क्षेत्रस्वरूपं \'महाभूतानि\'<sup class="vr-foot-sup">२</sup> इत्यादिना किमर्थमत्रोच्यत इति चेन्न ।',
+            tr:`“Why, then, is the nature of the kṣetra stated here, with ‘mahābhūtāni’ etc.<sup class="vr-foot-sup">२</sup>?” — if it be so asked: no [there is no fault].` },
+          { skt:'क्षेत्रज्ञत्वविशिष्टभगवज्ज्ञानोपयोगित्वात्, क्षेत्रोक्तिरिति क्षेत्रोद्देशपूर्वं भगवतः क्षेत्रज्ञत्वमाह - <b>इदमिति</b> ।',
+            tr:`Because it is of use for knowledge of the Lord as qualified by being the kṣetrajña, the mention of the kṣetra is [made]; so, first indicating the kṣetra, He states the Lord’s kṣetrajña-hood: “idam” etc.` },
+          { skt:'<b>कौन्तेय</b> ।',
+            tr:`“O Kaunteya.”` },
+          { skt:'<b>इदं शरीरम्</b> अव्यक्तमहदहङ्कारादिकम् ।',
+            tr:`“This body” — the unmanifest, the mahat, ahaṅkāra and the rest.` },
+          { skt:'भगवदावासस्थानत्वात् क्षीयते स्थीयतेऽत्र भगवतेति व्युत्पत्त्या <b>क्षेत्रमित्यभिधीयते</b> ।',
+            tr:`Because it is the Lord’s dwelling-place, by the derivation “kṣīyate — it is dwelt in here by the Lord (sthīyate ’tra bhagavatā),” it is called (abhidhīyate) “kṣetra.”` },
+          { skt:'<b>एतत्</b> अव्यक्तादिकं क्षेत्रशब्दितम् ।',
+            tr:`“This” — [the body] beginning with the unmanifest, termed “kṣetra.”` },
+          { skt:'<b>यो वेत्ति</b> जानाति ।',
+            tr:`“Who knows (vetti)” — [i.e.] understands.` },
+          { skt:'<b>तम्</b> ।',
+            tr:`“Him.”` },
+          { skt:'<b>तद्विदः</b> क्षेत्रविदः ।',
+            tr:`“Tadvidaḥ” — those who know the kṣetra.` },
+          { skt:'<b>क्षेत्रज्ञमिति प्राहु</b>रित्यर्थः ।',
+            tr:`“They call [him] ‘${T('kṣetrajña')}’” — that is the meaning.` },
+          { skt:'शरीरशब्दस्याव्यक्तादिपरत्वं च स्वपरिणामदेहादिवियोगद्वारा जीवस्य हिंसादिहेतुत्वात् ।',
+            tr:`And the reason the word “${T('śarīra')}” denotes the unmanifest etc. is that [it] is a cause of harm and the like to the jīva by way of separation from its own modifications, the body and so on.` },
+          { skt:'\'शर् शृ हिंसायाम्\' इति धातोः भगवता प्रेर्यत्वादीरं च ।',
+            tr:`[It comes] from the root “śar śṛ” in the sense of harming — “śar”; and, because it is to be impelled by the Lord, “īra” as well.` },
+          { skt:'\'ईर् प्रेरणे\' इति धातोः ।',
+            tr:`From the root “īr” in the sense of impelling.` },
+          { skt:'शर् च तदीरं चेति शरीरमिति व्युत्पत्तेरिति ज्ञेयम् ।',
+            tr:`“Śar” and that “īra” — thus “śarīra” by derivation — so it should be understood. (Bhāva: “śarīra” = śar, that which brings harm to the jīva + īra, that which is impelled by the Lord.)` },
+          { skt:'तेन \'सङ्घातश्चेतना\' इति सङ्घातपदेन क्षेत्रविकारेष्वेकदेशत्वेनोक्तशरीरस्य कथं समस्तक्षेत्रत्वमुच्यत इति शङ्का निरस्ता ॥२॥',
+            tr:`Thereby is set aside the doubt: given “saṅghātaś cetanā” [13.7], how can the body, stated by the word “saṅghāta” as only one part among the modifications of the kṣetra, be said to be the whole kṣetra? ॥ 2 ॥` },
+          { skt:'<sup class="vr-foot-sup">६</sup> स्वात्माधारः स्वेच्छयैव जीवदृष्टेस्तिरोहितः । क्षेत्रज्ञेत्युच्यते विष्णुर्जीवस्य पुरुषोत्तमः ॥ इति च । - भा.ता. (५/११/१४)',
+            tr:`“The Lord Viṣṇu, the support of Himself, who by His own will is hidden from the jīva’s sight, is called ‘kṣetrajña’ — the Supreme Person of the jīva.” — so too in Bhāgavata-tātparya (5/11/14).` },
+          { skt:'<sup class="vr-foot-sup">२</sup> गी. (१३-६)',
+            tr:`Gītā (13.6).` }
+        ]
+      },
+      3: {
+        lines:[
+          { dev:'क्षेत्रज्ञं चापि मां विद्धि सर्वक्षेत्रेषु भारत ।',
+            tr:`Know Me, too, as the kṣetrajña in all kṣetras, O Bhārata;` },
+          { dev:'क्षेत्रक्षेत्रज्ञयोर्ज्ञानं यत् तज्ज्ञानं मतं मम ॥३॥',
+            tr:`that which is knowledge of kṣetra and kṣetrajña — that, in My view, is [true] knowledge. ॥ 3 ॥` }
+        ],
+        commentary:[
+          { skt:'जीवस्यापि किञ्चित् क्षेत्रज्ञानात् स किं क्षेत्रज्ञः, इत्यत आह - <b>क्षेत्रज्ञं चेति</b> ।',
+            tr:`“Since the jīva too has some knowledge of the kṣetra, is he then the kṣetrajña?” — to this He says: “kṣetrajñaṃ ca” etc.` },
+          { skt:'<b>सर्वक्षेत्रेषु</b> अव्यक्तादिषु ।',
+            tr:`“In all kṣetras” — in the unmanifest and the rest.` },
+          { skt:'<b>क्षेत्रज्ञं</b> तु <b>मां विद्धि</b> ।',
+            tr:`“But know Me as the kṣetrajña.”` },
+          { skt:'न जीवम् ।',
+            tr:`Not the jīva.` },
+          { skt:'क्षेत्रक्षेत्रज्ञयोर्यज्ज्ञानं <b>तज्ज्ञानम्</b> ।',
+            tr:`The knowledge of kṣetra and kṣetrajña — that is “[the] knowledge.”` },
+          { skt:'<b>मम</b> सम्यग्ज्ञानं <b>मतमि</b>त्यर्थः ।',
+            tr:`“Mama samyagjñānaṃ mataṃ” — “it is considered by Me to be right knowledge” — that is the meaning.` },
+          { skt:'अत्र \'सर्वक्षेत्रेषु\' इत्युक्तिरिदं शरीरमित्यत्र शरीरपदोक्ताव्यक्तादेः क्षीयतेऽत्रेश्वरेणेति व्युत्पत्त्या क्षेत्रपदवाच्यत्वमिति सूचनाय ॥३॥',
+            tr:`Here, the expression “in all kṣetras” is for the purpose of indicating that the unmanifest etc., denoted by the word “śarīra” in “idaṃ śarīram,” are called by the word “kṣetra” through the derivation “kṣīyate ’tra īśvareṇa” (it is dwelt in here by the Lord). ॥ 3 ॥` }
+        ]
+      },
+      4: {
+        lines:[
+          { dev:'तत्क्षेत्रं यच्च यादृक् च यद्विकारि यतश्च यत् ।',
+            tr:`That kṣetra — what it is, of what kind it is, what modifications it has, and from what [source] it arises —` },
+          { dev:'स च यो यत्प्रभावश्च तत्समासेन मे श्रुणु ॥४॥',
+            tr:`and who he is [that knows it], and what his power is — hear that from Me in brief. ॥ 4 ॥` }
+        ],
+        commentary:[
+          { skt:'क्षेत्रादिस्वरूपं वक्तुं प्रतिजानीते - <b>तत्क्षेत्रमिति</b> ।',
+            tr:`Wishing to state the nature of the kṣetra and the rest, He announces: “tat kṣetram” etc.` },
+          { skt:'<b>तत्क्षेत्रं</b> यद्भगवन्निवासस्थानतया क्षेत्रपदोक्तम् ।',
+            tr:`“That kṣetra” — that which, as the Lord’s dwelling-place, was spoken of by the word “kṣetra.”` },
+          { skt:'देहद्वारा जीवहिंसाहेतुतया ईश्वरप्रेर्यत्वहेतुना च शरीरपदेन प्रकृतम् अव्यक्तादि <b>यच्च</b> यत्स्वरूपं <b>यादृक्</b> यत्प्रकारं <b>यद्विकारि</b> ।',
+            tr:`That unmanifest etc. which, through the body, as a cause of harm to the jīva and as that which is impelled by the Lord, was introduced by the word “śarīra” — “yac ca,” of what nature it is; “yādṛk,” of what kind; “yadvikāri,” with what modification.` },
+          { skt:'कर्मधारयात् मतुप् ।',
+            tr:`[The word is formed by adding] the suffix matup to a karmadhāraya [compound].` },
+          { skt:'येन विकारेण युक्तम् ।',
+            tr:`[It means] endowed with which modification.` },
+          { skt:'<b>यतः</b> यादृशप्रवृत्त्यनुकूलधर्मयुक्तात् पुरुषात् ।',
+            tr:`“Yataḥ” — from the person endowed with the properties conducive to whatever kind of activity.` },
+          { skt:'<b>यत्</b> इणः शत्रन्तं रूपम् ।',
+            tr:`“Yat” — the present-participle (śatṛ) form of the root “iṇ.”` },
+          { skt:'गतिमत् ।',
+            tr:`“Gatimat” — moving.` },
+          { skt:'प्रवर्तत इति यावत् ।',
+            tr:`That is, “acting.”` },
+          { skt:'<b>स च</b> प्रवर्तकः ।',
+            tr:`“Sa ca” — that impeller as well.` },
+          { skt:'<b>यः</b> यत्स्वरूपः ।',
+            tr:`“Yaḥ” — of what nature.` },
+          { skt:'<b>यत्प्रभावः</b> यादृशप्रवृत्त्यनुकूलधर्मेतरसामर्थ्यवान् ।',
+            tr:`“Yatprabhāvaḥ” — possessed of a capacity other than the properties conducive to whatever kind of activity.` },
+          { skt:'<b>तत्</b> सर्वम् ।',
+            tr:`“All that.”` },
+          { skt:'<b>समासेन</b> सङ्क्षेपेण ।',
+            tr:`“Samāsena” — in brief.` },
+          { skt:'<b>मे</b> सकाशात् ।',
+            tr:`“From Me.”` },
+          { skt:'<b>श्रुणु</b> श्रुत्वा निष्ठां कुरु ॥४॥',
+            tr:`“Hear” — having heard, make it your firm conviction. ॥ 4 ॥` }
+        ]
+      },
+      5: {
+        lines:[
+          { dev:'ऋषिभिर्बहुधा गीतं <sup class="vr-foot-sup">१</sup>छन्दोभिर्विविधैः पृथक् ।',
+            tr:`Sung by the sages in many ways, separately in various meters,` },
+          { dev:'<sup class="vr-foot-sup">२</sup>ब्रह्मसूत्रपदैश्चैव हेतुमद्भिर्विनिश्चितम् ॥५॥',
+            tr:`and likewise in the well-reasoned words of the Brahma-sūtras, it has been firmly ascertained. ॥ 5 ॥` }
+        ],
+        commentary:[
+          { skt:'श्रोतृविश्वासजननायोच्यमानं प्रामाणिकमित्याह - <b>ऋषिभिरिति</b> ।',
+            tr:`To generate the listeners’ faith, He says that what is being stated is authoritative: “ṛṣibhiḥ” etc.` },
+          { skt:'तदित्यनुषज्यते ।',
+            tr:`“Tat” is to be supplied.` },
+          { skt:'यत् \'श्रुणु\' इत्युक्तं क्षेत्रादिस्वरूपं तत् ।',
+            tr:`That nature of the kṣetra and the rest which was spoken of with “hear” — that.` },
+          { skt:'<b>ऋषिभिर्बहुधा गीतम्</b> ।',
+            tr:`“Sung by the sages in many ways.”` },
+          { skt:'गै शब्दे ।',
+            tr:`[The root] “gai” is in the sense of sound.` },
+          { skt:'उक्तमित्यर्थः ।',
+            tr:`The meaning is: “said.”` },
+          { skt:'<b>विविधैः छन्दोभि</b>र्वेदैः ।',
+            tr:`“Vividhaiḥ chandobhiḥ” — by various meters, that is, Vedas.` },
+          { skt:'प्रत्येकं <b>गीतमिति</b> सर्वत्रानुषज्यते ।',
+            tr:`“Gītam” [“sung”] is to be connected with each, throughout.` },
+          { skt:'<b>हेतुमद्भिः</b> न्यायोपेतैः ।',
+            tr:`“Hetumadbhiḥ” — furnished with reasoning.` },
+          { skt:'<b>ब्रह्मसूत्रपदैश्च</b> ।',
+            tr:`“And by the Brahma-sūtra words.”` },
+          { skt:'<b>विनिश्चितमे</b>व <b>श्रुणु</b> इत्यन्वयः ॥५॥',
+            tr:`“Hear what has been well ascertained” — this is the construction. ॥ 5 ॥` },
+          { skt:'<sup class="vr-foot-sup">१</sup> \'छन्दः पद्ये च वेदे च स्वैराचाराभिलाषयोः\' इति मेदिनी ।',
+            tr:`“Chandas” [is used] in the senses of verse, Veda, and unrestrained conduct or desire — so [says] the Medinī [lexicon].` },
+          { skt:'<sup class="vr-foot-sup">२</sup> ब्रह्मसूत्राणि शारीरकसूत्राणि - गी.भा. ब्रह्मणः सूचकानि वाक्यानि ब्रह्मसूत्राणि (प्रमेयदीपिका) ब्रह्म - वेदः तदर्थः परब्रह्म वा, तस्य सूत्राणि ब्रह्मसूत्राणि । सकलवेदार्थभूतस्य परब्रह्मणो विष्णोः स्वरूपनिर्णयार्थानि सूत्राणि इति यावत् ॥ - न्यायसुधायाम् अतः शारीरः परमात्मैव । शारीरौ तावुभौ ज्ञेयौ जीवश्चेश्वरसञ्ज्ञितः । तस्य सकलगुणपूर्णत्वादिविषयत्वेन शारीरकमीमांसा ॥ - न्यायसुधायाम्',
+            tr:`“Brahma-sūtras are the Śārīraka-sūtras” — Gītā-bhāṣya. “Brahma-sūtras are the statements that point to Brahman” (Prameya-dīpikā). “Brahma [means] the Veda, its meaning, or the Supreme Brahman; the sūtras of that are the Brahma-sūtras — that is, the sūtras meant to determine the nature of the Supreme Brahman, Viṣṇu, who embodies the meaning of the entire Veda.” — Nyāya-sudhā. “Hence the Śārīra is the Supreme Self alone. Both [the jīva and Īśvara] are to be known as ‘śārīra’ — the jīva and the one called Īśvara. Because it concerns Him, who is full of all qualities, the inquiry is called Śārīraka-mīmāṃsā.” — Nyāya-sudhā.` }
+        ]
+      },
+      6: {
+        lines:[
+          { dev:'महाभूतान्यहङ्कारो बुद्धिरव्यक्तमेव च ।',
+            tr:`The great elements, ahaṅkāra, buddhi, and the unmanifest too;` },
+          { dev:'इन्द्रियाणि दशैकं च पञ्च चेन्द्रियगोचराः ॥६॥',
+            tr:`the ten senses and one, and the five objects of the senses — ॥ 6 ॥` }
+        ],
+        commentary:[
+          { skt:'क्षेत्रं यच्च यादृक् च तच्छ्रुण्विति प्रतिज्ञातमाह - <b>महाभूतानीति</b> ।',
+            tr:`“Kṣetraṃ yac ca yādṛk ca tac chṛṇu” — [the thing] so announced, He states: “mahābhūtāni” etc.` },
+          { skt:'<b>पञ्चमहाभूतानि</b> ।',
+            tr:`The five great elements.` },
+          { skt:'महत्तत्त्वमप्यहङ्कारशब्देन गृह्यते ।',
+            tr:`The mahat-tattva too is taken by the word “ahaṅkāra.”` },
+          { skt:'<b>बुद्धिरन्तःकरणविशेषः</b> ।',
+            tr:`Buddhi — a particular [function] of the inner instrument.` },
+          { skt:'<b>अव्यक्तं</b> त्रिगुणात्मकं प्रधानम् ।',
+            tr:`The unmanifest — the pradhāna, made of the three guṇas.` },
+          { skt:'<b>\'इन्द्रियाणि दशैकं च\'</b> इति ज्ञानेन्द्रियमनोभेदेनैकादशेन्द्रियाणि ।',
+            tr:`“The ten and one senses” — [that is,] the eleven senses, by way of the division into the cognitive senses and the mind.` },
+          { skt:'<b>इन्द्रियगोचराः</b> श्रोत्रादिविषयाः शब्दाद्याः <b>पञ्च च</b> ।',
+            tr:`“Indriyagocarāḥ” — the objects of the senses beginning with hearing, sound and the rest, five in number.` },
+          { skt:'<b>एतत्क्षेत्रम्</b> ।',
+            tr:`“This kṣetra.”` },
+          { skt:'<b>समासेन</b> सङ्क्षेपेण ।',
+            tr:`“In brief.”` },
+          { skt:'महाभूतत्वादिप्रकारोपेतमुदाहृतमित्यन्वयः ॥६॥',
+            tr:`The construction is: “[the kṣetra] has been described as possessed of such features as being the great elements.” ॥ 6 ॥` }
+        ]
+      },
+      7: {
+        lines:[
+          { dev:'<sup class="vr-foot-sup">१</sup>इच्छा द्वेषः सुखं दुःखं सङ्घातश्चेतना धृतिः ।',
+            tr:`Desire, aversion, pleasure, pain, the aggregate, consciousness, fortitude —` },
+          { dev:'एतत् क्षेत्रं समासेन सविकारमुदाहृतम् ॥७॥',
+            tr:`this is the kṣetra, briefly described together with its modifications. ॥ 7 ॥` }
+        ],
+        commentary:[
+          { skt:'\'क्षेत्रं यद्विकारि\' इति प्रतिज्ञातक्षेत्रविकारमाह - <b>इच्छेति</b> ।',
+            tr:`“Kṣetraṃ yadvikāri” — the kṣetra’s modifications, thus announced, He states: “icchā” etc.` },
+          { skt:'<b>सङ्घातो</b> देहः ।',
+            tr:`“Saṅghāta” is the body.` },
+          { skt:'<b>चेतना</b> चेतसो व्याप्तिः ।',
+            tr:`“Cetanā” is the pervasion of the mind.` },
+          { skt:'<b>धृति</b>र्धैर्यम् ।',
+            tr:`“Dhṛti” is fortitude.` },
+          { skt:'<b>एतत्</b> प्रागुक्तम् ।',
+            tr:`“This” — as stated before.` },
+          { skt:'<b>क्षेत्रम्</b> इच्छादिविकारोपेतं सङ्क्षेपेणोक्तमित्यर्थः ।',
+            tr:`“Kṣetra” — endowed with modifications such as desire — [has been] briefly stated: that is the meaning.` },
+          { skt:'महाभूतादिक्षेत्राभिमानिनः ।',
+            tr:`[Now follow] the presiding deities (${T('abhimāni-devatā')}) of the great elements and the other items of the kṣetra.` },
+          { skt:'तद्विकारेच्छाद्यभिमानिनश्चावश्यं ज्ञेयत्वादुच्यन्ते ।',
+            tr:`And the presiders over its modifications — desire and the rest — are also mentioned, because they too must necessarily be known.` },
+          { skt:'आकाशाभिमानी <b>विघ्नेशः</b> ।',
+            tr:`Of ākāśa, the presider is Vighneśa.` },
+          { skt:'वायुमानी मुख्यवायुजो <b>मरीचि</b>नामा ।',
+            tr:`Of air, the presider is Marīci by name, born of Mukhyavāyu.` },
+          { skt:'अग्निमानी <b>वह्निः</b> ।',
+            tr:`Of fire, Vahni.` },
+          { skt:'अबभिमानी <b>वरुणः</b> ।',
+            tr:`Of water, Varuṇa.` },
+          { skt:'भूमिमानिनी <b>धरादेवी</b> ।',
+            tr:`Of earth, the presiding goddess Dharādevī.` },
+          { skt:'अहङ्कारः <b>शिवः</b> ।',
+            tr:`Ahaṅkāra: Śiva.` },
+          { skt:'महान् <b>ब्रह्मा</b> ।',
+            tr:`Mahat: Brahmā.` },
+          { skt:'बुद्धिः <b>उमा</b> ।',
+            tr:`Buddhi: Umā.` },
+          { skt:'अव्यक्तम् <b>श्रीदेवी</b> ।',
+            tr:`The unmanifest: Śrīdevī.` },
+          { skt:'इन्द्रियेषु मनोऽभिमानिनः <b>स्कन्देन्द्रानिरुद्धाः</b> ।',
+            tr:`Among the senses, the presiders of the mind: Skanda, Indra and Aniruddha.` },
+          { skt:'श्रोत्रं <b>चन्द्रः</b> ।',
+            tr:`The ear: Candra.` },
+          { skt:'त्वक् वायुसुतो <b>मरुत्</b> ।',
+            tr:`The skin: Marut, the son of Vāyu.` },
+          { skt:'चक्षुः <b>सूर्यः</b> ।',
+            tr:`The eye: Sūrya.` },
+          { skt:'जिह्वा <b>वरुणस्य</b> रूपान्तरम् ।',
+            tr:`The tongue: another form of Varuṇa.` },
+          { skt:'घ्राणम् <b>अश्विनौ</b> ।',
+            tr:`The nose: the two Aśvins.` },
+          { skt:'वाक् <b>अग्निः</b> ।',
+            tr:`Speech: Agni.` },
+          { skt:'हस्तौ वायुसुतौ <b>मरुतौ</b> ।',
+            tr:`The hands: the two Maruts, sons of Vāyu.` },
+          { skt:'पादौ तु विष्णुनाऽऽविष्टौ शचीसुतौ <b>यज्ञशम्भु</b>नामकौ ।',
+            tr:`The feet: the two sons of Śacī, entered by Viṣṇu, named Yajña and Śambhu.` },
+          { skt:'पायु<b>र्यमः</b> ।',
+            tr:`The organ of excretion: Yama.` },
+          { skt:'उपस्थः <b>शिवः, मनु</b>श्च ।',
+            tr:`The organ of generation: Śiva and Manu.` },
+          { skt:'इन्द्रियगोचरेषु शब्दस्पर्शरूपरसगन्धाभिमानिनः <b>शिवपुत्राः</b> पञ्च ज्ञेयाः ।',
+            tr:`Among the objects of the senses — sound, touch, form, taste and smell — the presiders are to be known as the five sons of Śiva.` },
+          { skt:'विकारेषु इच्छा <b>श्रीर्भारती</b> च ।',
+            tr:`Among the modifications, desire: Śrī and Bhāratī.` },
+          { skt:'द्वेषदुःखाभिमानिनौ <b>कलिद्वापरौ</b> ।',
+            tr:`The presiders of aversion and pain: Kali and Dvāpara.` },
+          { skt:'सुखं <b>मुख्यवायुः</b> ।',
+            tr:`Pleasure: Mukhyavāyu.` },
+          { skt:'धृतिः <b>सरस्वती भारती</b> च ।',
+            tr:`Fortitude: Sarasvatī and Bhāratī.` },
+          { skt:'चेतना <b>श्रीः</b> ।',
+            tr:`Consciousness: Śrī.` },
+          { skt:'सङ्घातमानिनोऽन्ये चेतनाः ज्ञेयाः ।',
+            tr:`The presiders of the aggregate are other conscious beings; they are to be known [as such].` },
+          { skt:'अभिमानिनां प्रागुक्तव्युत्पत्त्या भगवन्निवासत्वादेव क्षेत्रनामत्वम् ।',
+            tr:`That the presiders too are named “kṣetra” is only because they are the Lord’s dwelling — by the derivation stated earlier.` },
+          { skt:'क्षेत्रविकारित्वमपि महदादिभ्योऽतिशयेन विकारितया स्थितत्वादिति ज्ञेयम् ॥७॥',
+            tr:`And that the kṣetra has modifications is because, in relation to the mahat and the rest, it stands as a modification in a still higher degree — thus it should be understood. ॥ 7 ॥` },
+          { skt:'<sup class="vr-foot-sup">१</sup> आनन्दानुभवस्तूम उत्कृष्टानुभवात्स्मृतः । तद्युक्तत्वं यथा सौम्यं गुणानामधिकं हि तत् । भक्तयादिगुणपूगोऽपि दुःखहेतुत्वभावनात् । निष्फलो भवति ह्यद्धा प्रीतस्य सफलो भवेत् । तस्मादानन्दमानं तु गुणेषूत्कृष्टमुच्यते । तस्याभिमानी ब्रह्मैको भक्तिज्ञानादिकस्य च । श्रद्धाभिमानिनी देवी तथैव तु सरस्वती । तदन्येषां गुणानां तु तदनु ये विबुधाः स्मृताः । गुणानां तु प्रभुर्ब्रह्मा तस्मादेकश्चतुर्मुखः । औत्पत्तिकगुणो नाम शुभप्राप्त्यैकयोग्यता । तस्याभिमानी प्राणस्तु स हि सर्वगुणाधिक इति च । गुणिनां मध्ये गुणिनि स्थितमौत्पत्तिकगुणरूपं सूत्रमित्यर्थः । गुणिनां गुणयोग्यत्वं यत्सर्वगुणिषु स्थितम् । वायुस्तदभिमान्येकः सर्वगुण्यधिकस्ततः ॥ इति प्रभञ्जने ।',
+            tr:`“The experience of bliss is held to be the best of all experiences. To be endowed with it — as with mildness (saumya) — is indeed superior among the guṇas. [The reason:] even a whole host of qualities such as devotion becomes fruitless when it is thought of as a cause of pain, whereas for one who is delighted it bears fruit. Therefore the state of bliss alone is declared the best among the guṇas. Its presiding deity is Brahmā alone — [he presides] also over devotion, knowledge and the like; likewise the goddess who presides over faith (śraddhā) is Sarasvatī. Of the remaining guṇas, the presiding deities are the gods remembered as following him. Brahmā is the lord of the guṇas; therefore the four-faced one alone [stands first among them]. The ‘autpattika-guṇa’ (innate quality) is the name for the one fitness for attaining the good. Its presiding deity is Prāṇa, who indeed excels all in guṇas. The meaning is this: the innate guṇa abides in each possessor of guṇas, like a thread (sūtra) running through them. That fitness for guṇas which abides in all possessors of guṇas — Vāyu alone is its presiding deity; therefore he excels all possessors of guṇas.” — so in the Prabhañjana.` }
+        ]
+      },
+      8: {
+        lines:[
+          { dev:'अमानित्वमदम्भित्वमहिंसा क्षान्तिरार्जवम् ।',
+            tr:`Absence of pride, absence of hypocrisy, non-violence, forbearance, uprightness,` },
+          { dev:'<sup class="vr-foot-sup">२</sup>आचार्योपासनं शौचं स्थैर्यमात्मविनिग्रहः ॥८॥',
+            tr:`service of the teacher, purity, steadfastness, self-control — ॥ 8 ॥` }
+        ],
+        commentary:[
+          { skt:'एवं प्रतिज्ञातार्थषट्कमध्ये यच्च यादृक् च यद्विकारीति त्रयमुक्त्वा स च यो यत्प्रभावश्चेति प्रतिज्ञातार्थद्वयं \'ज्ञेयं यत्तत्\' इत्यादिना वक्तुम्, न यादृश-तादृशेन श्रवणेन तदनुभवारूढं भवतीति भावेन वक्ष्यमाणज्ञेयद्वयभूतभगवज्ज्ञानस्य साधनान्याह - <b>अमानित्वमित्यादि पञ्चकेन</b> ।',
+            tr:`Having thus stated, among the six announced topics, the three — “yac ca,” “yādṛk ca,” and “yadvikārī” — and wishing to state the remaining two announced topics, “sa ca yaḥ” and “yatprabhāvaś ca,” with “jñeyaṃ yat tat” [13.13] and so on, [He does so] with the thought that these do not become realized in experience through hearing of just any sort; so He states the means of the knowledge of the Lord — who constitutes the two objects of knowledge to be spoken of — by the group of five [verses]: “amānitvam” etc.` },
+          { skt:'<b>अमानित्वम्</b> आत्मनः श्लाघनराहित्यम् ।',
+            tr:`“Amānitvam” — freedom from self-praise (the absence of praising oneself).` },
+          { skt:'आत्माल्पत्वं ज्ञात्वाऽपि महत्त्वप्रदर्शनं <b>दम्भः</b> ।',
+            tr:`Displaying greatness even after knowing one’s own smallness is “${T('dambha')}.”` },
+          { skt:'तद्राहित्यम<b>दम्भित्वम्</b> ।',
+            tr:`The absence of that is “adambhitvam.”` },
+          { skt:'<b>क्षान्तिः</b> सहिष्णुत्वम् ।',
+            tr:`“Kṣānti” — forbearance.` },
+          { skt:'<b>आर्जवं</b> सन्मार्गे मनोवाक्कायकर्मणामवैपरीत्यम् ।',
+            tr:`“Ārjavam” — non-contradiction among mind, speech, body and action, in the right path.` },
+          { skt:'<b>आचार्योपासनं</b> ज्ञानिनां सेवा ।',
+            tr:`“Ācāryopāsanam” — service of those who know.` },
+          { skt:'<b>शौचं</b> बाह्यान्तरशुद्धिः ।',
+            tr:`“Śaucam” — outer and inner purity.` },
+          { skt:'\'शौचं तु द्विविधं प्रोक्तं बाह्यमाभ्यन्तरं तथा । मृज्जलाभ्यां स्मृतं बाह्यं भावशुद्धिस्तथाऽऽन्तरम् ॥\' इति स्मृतेः ।',
+            tr:`“Purity is declared twofold, external and likewise internal; external is held to be by earth and water, internal by purity of the inner state (bhāva)” — according to this smṛti.` },
+          { skt:'<b>स्थैर्यं</b> भयादिना स्वधर्मादचलनम् ।',
+            tr:`“Sthairyam” — not swerving from one’s own dharma through fear and the like.` },
+          { skt:'<b>आत्मविनिग्रहः</b> विशेषेण मनसो नियमनम् ॥८॥',
+            tr:`“Ātmavinigraha” — special restraint of the mind. ॥ 8 ॥` },
+          { skt:'<sup class="vr-foot-sup">२</sup> \'आचिनोति य आचारान् आचारान् ग्राहयत्यपि । स्वयमाचरते यस्तु तमाचार्यं प्रचक्षते ॥\' इति भारते । मुख्यतः आचार्यो हि श्रीमन्मध्वाचार्य एव - \'आचार्याः श्रीमदाचार्याः\' इत्युक्तेः ।',
+            tr:`“He who gathers (ācinoti) right conduct, makes others adopt right conduct, and himself practises it — him they call ācārya” — so in the Bhārata. Principally, the ācārya is Śrīmad Madhvācārya alone — because of the statement “the ācāryas are the glorious Ācārya.”` }
+        ]
+      },
+      9: {
+        lines:[
+          { dev:'इन्द्रियार्थेषु वैराग्यमनहङ्कार एव च ।',
+            tr:`dispassion toward the objects of the senses, and absence of ahaṅkāra too;` },
+          { dev:'जन्ममृत्युजराव्याधिदुःखदोषानुदर्शनम् ॥९॥',
+            tr:`keeping in view the evil of birth, death, old age, disease and pain — ॥ 9 ॥` }
+        ],
+        commentary:[
+          { skt:'<b>इन्द्रियार्थेषु वैराग्यं</b> शब्दादिषु रागाभावः ।',
+            tr:`“Indriyārtheṣu vairāgyam” — absence of attachment to sound and the other [objects].` },
+          { skt:'<b>अनहङ्कारः</b> अविद्यमानात्मगुणाभिमानमोहाभावः ।',
+            tr:`“Anahaṅkāraḥ” — absence of the delusion of pride in qualities of the self that do not exist.` },
+          { skt:'जन्मादिषु दुःखदोषयोरनुदर्शनमिति वा, दुःखरूपस्य दोषस्यानुदर्शनमिति वा ।',
+            tr:`Either “the keeping in view of both pain and evil in birth and the rest,” or “the keeping in view of the evil that is of the nature of pain.”` },
+          { skt:'अनुक्षणमनुसन्धानमित्यर्थः ॥९॥',
+            tr:`Continuous reflection (anusandhāna) — that is the meaning. ॥ 9 ॥` }
+        ]
+      },
+      10: {
+        lines:[
+          { dev:'असक्तिरनभिष्वङ्गः <sup class="vr-foot-sup">१</sup>पुत्रदारगृहादिषु ।',
+            tr:`non-attachment and non-clinging toward son, wife, home and the like,` },
+          { dev:'नित्यं च समचित्तत्वमिष्टानिष्टोपपत्तिषु ॥१०॥',
+            tr:`and constant evenness of mind in the occurrence of the desired and the undesired — ॥ 10 ॥` }
+        ],
+        commentary:[
+          { skt:'पुत्रदारगृहादिषु <b>असक्तिः</b> स्नेहाभावः ।',
+            tr:`Toward son, wife, home and the like, “asakti” is absence of affection.` },
+          { skt:'<b>अनभिष्वङ्गः</b> अतिपक्वस्नेहाभावः ।',
+            tr:`“${T('Anabhiṣvaṅga')}” is absence of overripe affection.` },
+          { skt:'<b>इष्टानिष्टोपपत्तिषु</b> ।',
+            tr:`“Iṣṭāniṣṭopapattiṣu” —` },
+          { skt:'उपपत्तिः प्राप्तिः, तत्र <b>नित्यं समचित्तत्वं</b> हर्षविषादयोरभावः ॥१०॥',
+            tr:`“Upapatti” is attainment; in that, “constant evenness of mind” is absence of both joy and dejection. ॥ 10 ॥` },
+          { skt:'<sup class="vr-foot-sup">१</sup> सत्पुंसु च तथा स्त्रीषु न सङ्गो दोषमावहेत् । यथायोग्यं गुणायैव दोषकृद्दुष्टजन्तुषु ॥ इति वाराहे । -भा.ता.(३/३२/४१) अनित्यसम्बन्धयुताः पित्राद्या नित्ययुग्घरिः -इति च ॥ -भा.ता. (६/१६/९) नातिस्नेहः प्रसङ्गो वा कर्तव्यः कापि केनचित् । कुर्वन् विन्देत सन्तापं कपोत इव दीनधीः ॥ -भागवते (११/७/५२) सर्वे क्षयान्ता निचयाः पतनान्ताः समुच्छ्रयाः । संयोगा विप्रयोगान्ता मरणान्तं च जीवितम् । तस्मात्पुत्रेषु दारेषु मित्रेषु च धनेषु च । नातिप्रसङ्गः कर्तव्यो विप्रयोगो हि तैर्ध्रुवम् ॥ -वाल्मीकिरामायणे उ.६९४ सम्यक्स्वरूपाभिव्यक्तिरभावो जननस्य च । अप्रयत्नात्ततो वृद्धिहेतोः सत्सङ्गतिर्वरा -इति वायुप्रोक्ते ॥ भा.ता.(१/१८/१३) बह्वपेक्षो हि जिज्ञासुरतो देहादिवृत्तये । किञ्चित्सत्स्वपि सङ्गी स्यादशक्ये सति वर्तने । कृतकृत्यस्त्यजेत्सङ्गं सदा गुरुसुरादिषु । सङ्गी स्यान्न हि तत्सङ्गं विना तु सुखभाग्भवेत् । तस्मादनाद्यनन्तैव सक्तिर्गुरुसुरादिषु । अन्यत्र कृत्यापेक्षा स्यादिति सङ्गविनिर्णयः । -इति भविष्यत्पर्वणि ॥ -भा.ता.(११/३/२४) असज्जनैस्तु संवासो न कर्तव्यः कथञ्चन । यावद्यावच्च बहुभिः सज्जनैः स तु मुक्तिदः -इति षाड्गुण्ये ॥ -भा.ता. (११/९/१०)',
+            tr:`“Association with good men and likewise with women brings no fault; applied appropriately it is only for good; but toward the wicked and harmful creatures it makes for fault” — so in the Vārāha; Bhāgavata-tātparya (3/32/41). “[Relatives such as] father and the like are bound by transient relation; Hari alone is the eternally-related” — and so on; Bhāgavata-tātparya (6/16/9). “One should never become excessively attached or entangled with anyone anywhere; he who does so comes to grief, like the pitiable-minded dove” — Bhāgavata (11/7/52). “All accumulations end in loss, all risings in a fall, all unions in separation, and life in death; therefore toward sons, wives, friends and wealth one should not be over-attached, for separation from them is certain” — Vālmīki-Rāmāyaṇa. “True manifestation of one’s nature, and absence of [further] birth — [these come] without effort, thereafter growth; the best is the company of the good” — so in the Vāyu-proktam; Bhāgavata-tātparya (1/18/13). “The seeker who needs many things attaches himself somewhat even to the good, when it is impossible to carry on [otherwise]. One who has done what is to be done may give up attachment — always toward gurus, gods and so on. One does not become an [indiscriminate] attacher, nor does one get happiness without that attachment; therefore attachment to gurus, gods and the like is beginningless and endless; elsewhere it depends on need — such is the determination of attachment” — so in the Bhaviṣya-parva; Bhāgavata-tātparya (11/3/24). “One should never live with the wicked; as for the many good, association with them gives liberation” — so in the Ṣāḍguṇya; Bhāgavata-tātparya (11/9/10).` }
+        ]
+      },
+      11: {
+        lines:[
+          { dev:'मयि चानन्ययोगेन भक्तिरव्यभिचारिणी ।',
+            tr:`and unswerving devotion to Me through exclusive yoga,` },
+          { dev:'विविक्तदेशसेवित्वमरतिर्जनसंसदि ॥११॥',
+            tr:`resorting to secluded places, no delight in a crowd of people — ॥ 11 ॥` }
+        ],
+        commentary:[
+          { skt:'<b>अनन्ययोगेन</b> रमाब्रह्मादिस्वातन्त्र्यासम्बन्धेन तदविषयिणीति यावत् ।',
+            tr:`“Ananyayogena” — by [a yoga] unconnected with the independence of Ramā, Brahmā and others; that is, [devotion] that does not have those [as independent] for its object.` },
+          { skt:'अत एवा<b>व्यभिचारिणी</b> ।',
+            tr:`Hence it is “unswerving.”` },
+          { skt:'<b>मयि भक्तिः</b> ।',
+            tr:`“Devotion in Me.”` },
+          { skt:'<b>विविक्तदेशसेवित्वम्</b>, जनसम्मर्दहीनशुद्धस्थानस्थितिः ॥११॥',
+            tr:`“Viviktadeśasevitvam” — dwelling in a pure place free from the press of people. ॥ 11 ॥` }
+        ]
+      },
+      12: {
+        lines:[
+          { dev:'अध्यात्मज्ञाननित्यत्वं तत्त्वज्ञानार्थदर्शनम् ।',
+            tr:`constancy in knowledge concerning the Supreme Self, and vision of the object of true knowledge —` },
+          { dev:'एतज्ज्ञानमिति प्रोक्तमज्ञानं यदतोऽन्यथा ॥१२॥',
+            tr:`this is declared to be [the means of] knowledge; whatever is otherwise than this is ignorance. ॥ 12 ॥` }
+        ],
+        commentary:[
+          { skt:'<b>अध्यात्मज्ञाननित्यत्वम्</b> परमात्मानमधिकृत्य स्थिते ज्ञाने नियतत्वम् ।',
+            tr:`“Adhyātmajñānanityatvam” — steadiness in knowledge established with reference to the Supreme Self.` },
+          { skt:'<b>तत्त्वज्ञानार्थदर्शनम्</b> ।',
+            tr:`“Tattvajñānārthadarśanam” —` },
+          { skt:'अपरोक्षज्ञानार्थं शास्त्रपर्यालोचनम् ।',
+            tr:`Reflection on the scriptures for the sake of direct knowledge.` },
+          { skt:'<b>एतत्</b> \'अमानित्वम्\' इत्यादिनोक्तं विंशतिधर्मजातम् ।',
+            tr:`“This” — the group of twenty dharmas stated by “amānitvam” etc.` },
+          { skt:'<b>ज्ञानमिति</b> ज्ञायतेऽनेनेति करणव्युत्पत्त्या ज्ञानसाधनं प्रोक्तम् ।',
+            tr:`“Jñānam iti” — by the derivation “jñāyate ’nena” (that by which one knows), [the group] is said to be the means of knowledge.` },
+          { skt:'<b>अतोऽन्यथा यत्</b> अस्ति <b>तदज्ञानं</b> ज्ञानसाधनं नेत्यर्थः ।',
+            tr:`“Ato ’nyathā yat asti tad ajñānam” — whatever exists otherwise than this is ignorance; it is not a means of knowledge — that is the meaning.` },
+          { skt:'यद्वा - ज्ञानशब्दः भावव्युत्पत्त्या संवित्परश्च ।',
+            tr:`Or: the word “jñāna,” by the derivation in the sense of the action itself (bhāva), denotes awareness (saṃvit) as well.` },
+          { skt:'तत्त्वज्ञानार्थस्य तत्त्वज्ञानविषयस्य विष्णोर्दर्शनम्, अपरोक्षज्ञानमित्यर्थः ।',
+            tr:`“Tattvajñānārthasya” — of the object of true knowledge — “darśanam” — the vision of Viṣṇu; that is, direct knowledge (aparokṣa-jñāna).` },
+          { skt:'एतद्भगवद्विषयापरोक्षज्ञानं ज्ञानमिति प्रोक्तम् ।',
+            tr:`This direct knowledge of the Lord is declared to be “jñāna.”` },
+          { skt:'<b>अतोऽन्यथा यत् तज्ज्ञानं</b> न भवतीति ।',
+            tr:`“Ato ’nyathā yat” — whatever is otherwise than this is not knowledge.` },
+          { skt:'इह ज्ञानशब्दो ज्ञानतत्साधनोभयपरः ।',
+            tr:`Here the word “jñāna” denotes both knowledge and its means.` },
+          { skt:'तत्त्वज्ञानार्थदर्शनमित्ययमप्युक्तदिशा शास्त्रपर्यालोचनरूपज्ञानसाधनपरः, अपरोक्षज्ञानपरश्च ।',
+            tr:`And “tattvajñānārthadarśanam” too, as explained, denotes the means of knowledge consisting in scriptural reflection, and also direct knowledge.` },
+          { skt:'ततश्चैतच्छब्देनोभयं परामृश्य ज्ञानशब्देन भावकरणोभयव्युत्पत्त्या ज्ञानसाधनत्वज्ञानत्वयोर्विधानं युक्तमिति ज्ञेयम् ॥१२॥',
+            tr:`Therefore, referring to both by the word “etat,” the predication by the word “jñāna” of being a means of knowledge and of being knowledge — through the derivation in both the bhāva and the karaṇa senses — is proper: so it should be understood. ॥ 12 ॥` }
+        ]
+      }
+    }
   }
 };
 
@@ -4189,11 +4642,26 @@ function render() {
       <div class="sr-tr">${l.tr}</div>
     </div>`).join('');
 
-  const commHtml = v.commentary.map(c => `
-    <div class="vr-row">
+  // Footnotes = trailing run of entries that begin with a footnote superscript
+  // (or everything from v.footFrom onward, if given). A final colophon ("॥ इति …")
+  // is kept apart. Footnotes get a thin divider so they are not read as Vivṛtti text.
+  const _reFoot = /^\s*<sup class="vr-foot-sup">/, _reCol = /^\s*॥ इति/;
+  let _end = v.commentary.length;
+  const _hasCol = _end > 0 && _reCol.test(v.commentary[_end-1].skt);
+  if (_hasCol) _end--;
+  let _fs = _end;
+  if (typeof v.footFrom === 'number') _fs = v.footFrom;
+  else while (_fs > 0 && _reFoot.test(v.commentary[_fs-1].skt)) _fs--;
+  const commHtml = v.commentary.map((c, i) => {
+    let cls = 'vr-row';
+    if (i >= _fs && i < _end) cls += ' vr-foot' + (i === _fs ? ' vr-foot-first' : '');
+    else if (_hasCol && i === _end) cls += ' vr-colophon';
+    return `
+    <div class="${cls}">
       <div class="vr-skt">${c.skt}</div>
       <div class="vr-tr">${c.tr}</div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 
   document.getElementById('verseDisplay').innerHTML = `
     <div class="shloka-card">
